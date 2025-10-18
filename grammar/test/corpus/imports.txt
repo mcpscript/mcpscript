@@ -1,0 +1,46 @@
+================================================================================
+Named imports
+================================================================================
+
+import { processData, validateEmail } from "./utils.mcps"
+import { claude, gpt4 } from "./models.mcps"
+
+--------------------------------------------------------------------------------
+
+(program
+  (import_statement
+    (identifier)
+    (identifier)
+    (string_literal))
+  (import_statement
+    (identifier)
+    (identifier)
+    (string_literal)))
+
+================================================================================
+Namespace import
+================================================================================
+
+import * as utils from "./utils.mcps"
+
+--------------------------------------------------------------------------------
+
+(program
+  (import_statement
+    (identifier)
+    (string_literal)))
+
+================================================================================
+Multiple named imports
+================================================================================
+
+import { filesystem, github, slack } from "./connections.mcps"
+
+--------------------------------------------------------------------------------
+
+(program
+  (import_statement
+    (identifier)
+    (identifier)
+    (identifier)
+    (string_literal)))

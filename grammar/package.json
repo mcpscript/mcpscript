@@ -1,0 +1,42 @@
+{
+  "name": "tree-sitter-mcps",
+  "version": "0.1.0",
+  "description": "Tree-sitter grammar for MCP Script",
+  "main": "bindings/node",
+  "keywords": [
+    "parser",
+    "tree-sitter",
+    "mcps",
+    "mcp-script",
+    "dsl"
+  ],
+  "author": "Kun Chen",
+  "license": "MIT",
+  "dependencies": {
+    "nan": "^2.17.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "tree-sitter-cli": "^0.25.10"
+  },
+  "scripts": {
+    "build": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "parse": "tree-sitter parse",
+    "build-wasm": "tree-sitter build-wasm",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:docs": "prettier --write *.md"
+  },
+  "tree-sitter": [
+    {
+      "scope": "source.mcps",
+      "file-types": [
+        "mcps"
+      ],
+      "highlights": "queries/highlights.scm",
+      "locals": "queries/locals.scm",
+      "folds": "queries/folds.scm"
+    }
+  ]
+}

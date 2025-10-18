@@ -1,0 +1,13 @@
+// hello.mcps - Simple hello world example
+mcp filesystem {
+    command: "npx",
+    args: ["-y", "@modelcontextprotocol/server-filesystem"]
+}
+
+// Top-level code runs immediately
+message = "Hello from MCP Script!"
+print(message)
+
+// Write to a file
+filesystem.writeFile("greeting.txt", message)?
+print("Greeting saved!")

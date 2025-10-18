@@ -97,10 +97,34 @@ data: any = {"key": "value"}  // For JSON-like dynamic data
 
 ### Collections
 
+MCP Script follows TypeScript's approach to collections, using constructor syntax for Sets and Maps while keeping clean literal syntax for arrays and objects.
+
 ```mcps
+// Arrays - literal syntax with square brackets
 items: string[] = ["apple", "banana", "orange"]
-mapping: Map<string, number> = {"a": 1, "b": 2}
-unique: Set<number> = {1, 2, 3}
+numbers = [1, 2, 3, 4, 5]
+
+// Sets - constructor syntax (like TypeScript)
+uniqueIds: Set<number> = Set([1, 2, 3, 4, 5])
+tags: Set<string> = Set(["javascript", "typescript", "go"])
+emptySet = Set()
+
+// Maps - constructor syntax with array of tuples (like TypeScript)
+userAges: Map<string, number> = Map([
+    ["alice", 25],
+    ["bob", 30],
+    ["carol", 28]
+])
+emptyMap = Map()
+
+// Objects - literal syntax for structured data (like JSON)
+config = {
+    host: "localhost",
+    port: 8080,
+    enabled: true
+}
+user = {name: "Alice", email: "alice@example.com"}
+emptyObject = {}
 ```
 
 ### Variable Declarations
@@ -385,7 +409,6 @@ model customModel {
 Models support various configuration parameters depending on the provider:
 
 - **Common parameters:**
-
   - `provider`: The model provider type ("anthropic", "openai", "ollama", "custom")
   - `url`: API endpoint URL
   - `model`: Model identifier
@@ -465,8 +488,12 @@ In MCP Script, all tool calls and workflow calls are asynchronous by default. Th
 ```mcps
 // Parallel execution - happens naturally!
 workflow processAllFiles(files: string[]): Result<any[], Error> {
-    // All processFile calls start immediately in parallel
-    results = files.map(file => processFile(file))
+    // Process files in parallel
+    results = []
+    for file in files {
+        result = processFile(file)  // Each call starts immediately
+        results.push(result)
+    }
     // Return waits for all to complete
     return Ok(results)
 }
@@ -1068,4 +1095,3 @@ This syntax specification provides the foundation for the MCP Script. Future tec
 - Package management and distribution
 
 We welcome feedback from the engineering team on this syntax design before proceeding to implementation planning.
-

@@ -1,0 +1,249 @@
+================================================================================
+String interpolation
+================================================================================
+
+message = "Hello ${name}!"
+path = "/home/${USER}_backup"
+report = "Score: ${score}/100"
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (string_interpolation
+      (string_content)
+      (interpolation
+        (identifier))
+      (string_content)))
+  (variable_declaration
+    (identifier)
+    (string_interpolation
+      (string_content)
+      (interpolation
+        (identifier))
+      (string_content)))
+  (variable_declaration
+    (identifier)
+    (string_interpolation
+      (string_content)
+      (interpolation
+        (identifier))
+      (string_content))))
+
+================================================================================
+Agent delegation
+================================================================================
+
+result = "Analyze this data: ${data}" -> DataAnalyst
+conv = conv -> CodeReviewer
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (arrow_expression
+      (string_interpolation
+        (string_content)
+        (interpolation
+          (identifier)))
+      (identifier)))
+  (variable_declaration
+    (identifier)
+    (arrow_expression
+      (identifier)
+      (identifier))))
+
+================================================================================
+Tool calls with error handling
+================================================================================
+
+content = filesystem.readFile(path)?
+result = github.createIssue(title, body)?
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (postfix_expression
+      (call_expression
+        (member_expression
+          (identifier)
+          (identifier))
+        (argument_list
+          (identifier)))))
+  (variable_declaration
+    (identifier)
+    (postfix_expression
+      (call_expression
+        (member_expression
+          (identifier)
+          (identifier))
+        (argument_list
+          (identifier)
+          (identifier))))))
+
+================================================================================
+Binary expressions
+================================================================================
+
+total = a + b * c
+isValid = age >= 18 && name != ""
+result = x == y || z < 10
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (binary_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (variable_declaration
+    (identifier)
+    (binary_expression
+      (binary_expression
+        (identifier)
+        (number_literal))
+      (binary_expression
+        (identifier)
+        (string_literal))))
+  (variable_declaration
+    (identifier)
+    (binary_expression
+      (binary_expression
+        (identifier)
+        (identifier))
+      (binary_expression
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Match expressions
+================================================================================
+
+value = match riskyOperation() {
+    Ok(v) => v,
+    Err(e) => {
+        log.error("Failed: ${e}")
+        return Err(e)
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (match_expression
+      (call_expression
+        (identifier)
+        (argument_list))
+      (match_arm
+        (match_pattern
+          (identifier))
+        (identifier))
+      (match_arm
+        (match_pattern
+          (identifier))
+        (block
+          (expression_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (argument_list
+                (string_interpolation
+                  (string_content)
+                  (interpolation
+                    (identifier))))))
+          (return_statement
+            (call_expression
+              (identifier)
+              (argument_list
+                (identifier)))))))))
+
+================================================================================
+Array and object literals
+================================================================================
+
+items = ["apple", "banana", "orange"]
+config = {
+    host: "localhost",
+    port: 8080,
+    enabled: true
+}
+emptyObj = {}
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (array_literal
+      (string_literal)
+      (string_literal)
+      (string_literal)))
+  (variable_declaration
+    (identifier)
+    (object_literal
+      (object_property
+        (identifier)
+        (string_literal))
+      (object_property
+        (identifier)
+        (number_literal))
+      (object_property
+        (identifier)
+        (boolean_literal))))
+  (variable_declaration
+    (identifier)
+    (object_literal)))
+
+================================================================================
+Set and Map constructors
+================================================================================
+
+mySet = Set([1, 2, 3])
+emptySet = Set()
+userAges = Map([["alice", 25], ["bob", 30]])
+emptyMap = Map()
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (call_expression
+      (identifier)
+      (argument_list
+        (array_literal
+          (number_literal)
+          (number_literal)
+          (number_literal)))))
+  (variable_declaration
+    (identifier)
+    (call_expression
+      (identifier)
+      (argument_list)))
+  (variable_declaration
+    (identifier)
+    (call_expression
+      (identifier)
+      (argument_list
+        (array_literal
+          (array_literal
+            (string_literal)
+            (number_literal))
+          (array_literal
+            (string_literal)
+            (number_literal))))))
+  (variable_declaration
+    (identifier)
+    (call_expression
+      (identifier)
+      (argument_list))))

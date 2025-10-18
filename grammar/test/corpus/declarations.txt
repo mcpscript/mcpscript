@@ -1,0 +1,189 @@
+================================================================================
+Basic variable declaration
+================================================================================
+
+name = "Alice"
+age = 30
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (string_literal))
+  (variable_declaration
+    (identifier)
+    (number_literal)))
+
+================================================================================
+Variable with type annotation
+================================================================================
+
+port: number = 8080
+config: Map<string, number> = {"a": 1, "b": 2}
+
+--------------------------------------------------------------------------------
+
+(program
+  (variable_declaration
+    (identifier)
+    (type_annotation
+      (primitive_type))
+    (number_literal))
+  (variable_declaration
+    (identifier)
+    (type_annotation
+      (map_type
+        (primitive_type)
+        (primitive_type)))
+    (map_literal
+      (map_entry
+        (string_literal)
+        (number_literal))
+      (map_entry
+        (string_literal)
+        (number_literal)))))
+
+================================================================================
+MCP server declaration
+================================================================================
+
+mcp filesystem {
+    command: "npx",
+    args: ["-y", "@modelcontextprotocol/server-filesystem"]
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (mcp_declaration
+    (identifier)
+    (mcp_config_block
+      (mcp_config_item
+        (identifier)
+        (string_literal))
+      (mcp_config_item
+        (identifier)
+        (array_literal
+          (string_literal)
+          (string_literal))))))
+
+================================================================================
+Model declaration
+================================================================================
+
+model claude {
+    provider: "anthropic"
+    url: "https://api.anthropic.com/v1/messages"
+    model: "claude-3-opus-20240229"
+    apiKey: ANTHROPIC_API_KEY
+    temperature: 0.7
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (model_declaration
+    (identifier)
+    (model_config_block
+      (model_config_item
+        (identifier)
+        (string_literal))
+      (model_config_item
+        (identifier)
+        (string_literal))
+      (model_config_item
+        (identifier)
+        (string_literal))
+      (model_config_item
+        (identifier)
+        (identifier))
+      (model_config_item
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Agent declaration
+================================================================================
+
+agent DataAnalyst {
+    model: claude
+    systemPrompt: "You are a data analyst"
+    tools: [filesystem.readFile, database.query]
+    temperature: 0.5
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (agent_declaration
+    (identifier)
+    (agent_config_block
+      (agent_config_item
+        (identifier)
+        (identifier))
+      (agent_config_item
+        (identifier)
+        (string_literal))
+      (agent_config_item
+        (identifier)
+        (array_literal
+          (member_expression
+            (identifier)
+            (identifier))
+          (member_expression
+            (identifier)
+            (identifier))))
+      (agent_config_item
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Workflow declaration
+================================================================================
+
+workflow processData(input: string, count: number): Result<any, Error> {
+    content = filesystem.readFile(input)?
+    parsed = JSON.parse(content)?
+    return Ok(parsed)
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (workflow_declaration
+    (identifier)
+    (parameter_list
+      (parameter
+        (identifier)
+        (primitive_type))
+      (parameter
+        (identifier)
+        (primitive_type)))
+    (result_type
+      (primitive_type)
+      (identifier))
+    (block
+      (variable_declaration
+        (identifier)
+        (postfix_expression
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (identifier)))))
+      (variable_declaration
+        (identifier)
+        (postfix_expression
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (argument_list
+              (identifier)))))
+      (return_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))))))

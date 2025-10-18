@@ -1,0 +1,27 @@
+# Generated files
+src/
+build/
+node_modules/
+
+# Tree-sitter generated bindings
+bindings/go/
+bindings/node/
+bindings/python/
+bindings/rust/
+
+# Tree-sitter artifacts
+*.so
+*.dylib
+*.dll
+*.wasm
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

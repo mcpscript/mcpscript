@@ -1,0 +1,128 @@
+================================================================================
+If statement
+================================================================================
+
+if condition {
+    doSomething()
+} else if otherCondition {
+    doSomethingElse()
+} else {
+    doDefault()
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (if_statement
+    (identifier)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list))))
+    (else_if_clause
+      (identifier)
+      (block
+        (expression_statement
+          (call_expression
+            (identifier)
+            (argument_list)))))
+    (else_clause
+      (block
+        (expression_statement
+          (call_expression
+            (identifier)
+            (argument_list)))))))
+
+================================================================================
+For loop with single variable
+================================================================================
+
+for item in collection {
+    process(item)
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (for_statement
+    (identifier)
+    (identifier)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (identifier)))))))
+
+================================================================================
+For loop with key-value destructuring
+================================================================================
+
+for (key, value) in userData {
+    print("${key} is ${value} years old")
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (for_statement
+    (identifier)
+    (identifier)
+    (identifier)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list
+            (string_interpolation
+              (interpolation
+                (identifier))
+              (string_content)
+              (interpolation
+                (identifier))
+              (string_content))))))))
+
+================================================================================
+While loop
+================================================================================
+
+while condition {
+    doWork()
+    updateCondition()
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (while_statement
+    (identifier)
+    (block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list)))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (argument_list))))))
+
+================================================================================
+Return statements
+================================================================================
+
+return
+return value
+return Ok(result)
+
+--------------------------------------------------------------------------------
+
+(program
+  (return_statement)
+  (return_statement
+    (identifier))
+  (return_statement
+    (call_expression
+      (identifier)
+      (argument_list
+        (identifier)))))
