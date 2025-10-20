@@ -28,9 +28,12 @@ func New() *Parser {
 
 // Parse parses MCP Script source code and returns the syntax tree
 func (p *Parser) Parse(ctx context.Context, source []byte) (*sitter.Tree, error) {
-	tree := p.parser.ParseCtx(ctx, nil, source)
+	tree, err := p.parser.ParseCtx(ctx, nil, source)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse source code: %w", err)
+	}
 	if tree == nil {
-		return nil, fmt.Errorf("failed to parse source code")
+		return nil, fmt.Errorf("failed to parse source code: tree is nil")
 	}
 
 	// Check for parse errors

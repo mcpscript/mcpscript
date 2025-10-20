@@ -7,16 +7,16 @@ import (
 // Embedded query files from the grammar
 // These will be compiled into the binary for easy access
 
-//go:embed ../../../grammar/queries/highlights.scm
+//go:embed queries/highlights.scm
 var HighlightsQuery string
 
-//go:embed ../../../grammar/queries/locals.scm  
+//go:embed queries/locals.scm  
 var LocalsQuery string
 
-//go:embed ../../../grammar/queries/folds.scm
+//go:embed queries/folds.scm
 var FoldsQuery string
 
-//go:embed ../../../grammar/queries/errors.scm
+//go:embed queries/errors.scm
 var ErrorsQuery string
 
 // QueryType represents different types of Tree-sitter queries

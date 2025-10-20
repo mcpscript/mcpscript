@@ -29,16 +29,12 @@ grammar:
 
 # Generate Go bindings from the grammar
 go-bindings: grammar
-	@echo "🔗 Generating Go bindings..."
+	@echo "🔗 Setting up Go bindings..."
 	cd grammar && tree-sitter generate --build
-	mkdir -p internal/parser/tree_sitter_mcps
-	# Copy generated Go bindings to our internal package
-	if [ -d "grammar/bindings/go" ]; then \
-		cp grammar/bindings/go/* internal/parser/tree_sitter_mcps/; \
-	else \
-		echo "⚠️  Go bindings not found. Run 'cd grammar && tree-sitter generate --build' manually"; \
-	fi
-	@echo "✅ Go bindings generated"
+	mkdir -p internal/parser/queries
+	# Copy query files (required for go:embed)
+	cp grammar/queries/*.scm internal/parser/queries/
+	@echo "✅ Go bindings ready"
 
 test-grammar:
 	@echo "🧪 Testing Tree-sitter grammar..."

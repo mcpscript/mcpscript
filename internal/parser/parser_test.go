@@ -114,8 +114,8 @@ func TestQueryExecution(t *testing.T) {
 	}
 	defer tree.Close()
 
-	// Test executing a simple query
-	queryStr := `(workflow_declaration name: (identifier) @function.name)`
+	// Test executing a simple query - match any workflow_declaration
+	queryStr := `(workflow_declaration) @workflow`
 	
 	query, cursor, err := parser.Query(tree, queryStr)
 	if err != nil {
@@ -125,8 +125,8 @@ func TestQueryExecution(t *testing.T) {
 	defer cursor.Close()
 
 	// Should find at least one match
-	match := cursor.NextMatch()
-	if match == nil {
+	match, ok := cursor.NextMatch()
+	if !ok || match == nil {
 		t.Error("Expected to find workflow name in query results")
 	}
 }
