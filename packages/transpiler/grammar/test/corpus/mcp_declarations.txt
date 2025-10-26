@@ -1,0 +1,47 @@
+MCP with flexible properties
+=====================================
+
+mcp github {
+  command: "node",
+  timeout: 5000,
+  debug: true
+}
+
+---
+
+(source_file
+  (statement
+    (mcp_declaration
+      (identifier)
+      (object_literal
+        (property_list
+          (property
+            (identifier)
+            (expression
+              (literal
+                (string))))
+          (property
+            (identifier)
+            (expression
+              (literal
+                (number))))
+          (property
+            (identifier)
+            (expression
+              (literal
+                (boolean)))))))))
+
+=====================================
+Empty MCP declaration
+=====================================
+
+mcp simple {
+}
+
+---
+
+(source_file
+  (statement
+    (mcp_declaration
+      (identifier)
+      (object_literal))))

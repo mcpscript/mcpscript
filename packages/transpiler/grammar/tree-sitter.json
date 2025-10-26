@@ -1,0 +1,38 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "mcpscript",
+      "camelcase": "McpScript",
+      "title": "MCP Script",
+      "scope": "source.mcpscript",
+      "file-types": ["mcps"],
+      "injection-regex": "^mcpscript$",
+      "class-name": "TreeSitterMcpscript"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "MCP Script - A scripting language for agentic workflows with native MCP support",
+    "authors": [
+      {
+        "name": "Kun Chen",
+        "email": "kun@kunchen.xyz",
+        "url": "https://linktr.ee/kunchenxyz"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/atinylittleshell/mcp-script"
+    }
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "node": true,
+    "python": false,
+    "rust": false,
+    "swift": false,
+    "zig": false
+  }
+}

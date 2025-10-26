@@ -1,0 +1,62 @@
+=====================================
+Simple array
+=====================================
+
+data = ["hello", "world"]
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (array_literal
+            (expression
+              (literal
+                (string)))
+            (expression
+              (literal
+                (string)))))))))
+
+=====================================
+Mixed array
+=====================================
+
+config = ["string", 42, true]
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (array_literal
+            (expression
+              (literal
+                (string)))
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (boolean)))))))))
+
+=====================================
+Empty array
+=====================================
+
+empty = []
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (array_literal))))))

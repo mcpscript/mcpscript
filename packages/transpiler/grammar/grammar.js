@@ -1,38 +1,55 @@
-// Tree-sitter grammar for MCP Script MVP
+// Tree-sitter grammar for MCP Script with flexible expressions
 module.exports = grammar({
   name: 'mcpscript',
 
   rules: {
     source_file: $ => repeat($.statement),
 
-    statement: $ => choice($.mcp_declaration, $.assignment, $.print_statement),
+    statement: $ =>
+      choice($.mcp_declaration, $.assignment, $.expression_statement),
 
-    mcp_declaration: $ =>
-      seq(
-        'mcp',
+    expression_statement: $ => $.expression,
+
+    assignment: $ => seq($.identifier, '=', $.expression),
+
+    expression: $ =>
+      choice(
+        $.literal,
         $.identifier,
-        '{',
-        'command:',
-        $.string,
-        ',',
-        'args:',
-        '[',
-        optional($.string_list),
-        ']',
-        '}'
+        $.call_expression,
+        $.member_expression,
+        $.parenthesized_expression
       ),
 
-    assignment: $ => seq($.identifier, '=', choice($.string, $.tool_call)),
+    call_expression: $ =>
+      prec.left(1, seq($.expression, '(', optional($.argument_list), ')')),
 
-    tool_call: $ =>
-      seq($.identifier, '.', $.identifier, '(', optional($.string_list), ')'),
+    member_expression: $ => prec.left(2, seq($.expression, '.', $.identifier)),
 
-    print_statement: $ => seq('print', '(', $.identifier, ')'),
+    parenthesized_expression: $ => seq('(', $.expression, ')'),
 
-    string_list: $ => seq($.string, repeat(seq(',', $.string))),
+    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
+
+    literal: $ => choice($.string, $.number, $.boolean, $.array_literal),
+
+    array_literal: $ =>
+      seq(
+        '[',
+        optional(seq($.expression, repeat(seq(',', $.expression)))),
+        ']'
+      ),
+
+    mcp_declaration: $ => seq('mcp', $.identifier, $.object_literal),
+
+    object_literal: $ => seq('{', optional($.property_list), '}'),
+
+    property_list: $ => seq($.property, repeat(seq(',', $.property))),
+
+    property: $ => seq($.identifier, ':', $.expression),
 
     string: _$ => /"[^"]*"/,
-
+    number: _$ => /\d+(\.\d+)?/,
+    boolean: _$ => choice('true', 'false'),
     identifier: _$ => /[a-zA-Z][a-zA-Z0-9]*/,
   },
 });

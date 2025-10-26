@@ -1,0 +1,133 @@
+=====================================
+Complete MVP program with flexible syntax
+=====================================
+
+mcp filesystem {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-filesystem"],
+  timeout: 5000
+}
+
+message = "Hello from MCP Script!"
+filesystem.writeFile("greeting.txt", message)
+content = filesystem.readFile("greeting.txt")
+print(content)
+
+---
+
+(source_file
+  (statement
+    (mcp_declaration
+      (identifier)
+      (object_literal
+        (property_list
+          (property
+            (identifier)
+            (expression
+              (literal
+                (string))))
+          (property
+            (identifier)
+            (expression
+              (literal
+                (array_literal
+                  (expression
+                    (literal
+                      (string)))
+                  (expression
+                    (literal
+                      (string)))))))
+          (property
+            (identifier)
+            (expression
+              (literal
+                (number))))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string)))))
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (identifier))
+              (identifier)))
+          (argument_list
+            (expression
+              (literal
+                (string)))
+            (expression
+              (identifier)))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (identifier))
+              (identifier)))
+          (argument_list
+            (expression
+              (literal
+                (string))))))))
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (identifier))))))))
+
+=====================================
+Mixed expressions
+=====================================
+
+debug = true
+result = process(getData(), "format")
+print("Result:", result)
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (boolean)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (call_expression
+                (expression
+                  (identifier))))
+            (expression
+              (literal
+                (string))))))))
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (string)))
+            (expression
+              (identifier))))))))

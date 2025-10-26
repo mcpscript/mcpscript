@@ -1,15 +1,6 @@
 {
   "name": "tree-sitter-mcpscript",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Tree-sitter grammar for MCP Script",
-  "main": "bindings/node",
-  "tree-sitter": [
-    {
-      "scope": "source.mcpscript",
-      "file-types": [
-        "mcps"
-      ],
-      "generate": ["node"]
-    }
-  ]
+  "main": "bindings/node"
 }

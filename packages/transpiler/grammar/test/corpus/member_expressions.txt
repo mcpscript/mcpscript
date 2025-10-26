@@ -1,0 +1,69 @@
+=====================================
+Simple member expression call
+=====================================
+
+server.method("arg")
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (identifier))
+              (identifier)))
+          (argument_list
+            (expression
+              (literal
+                (string)))))))))
+
+=====================================
+Member call with mixed arguments
+=====================================
+
+server.method("greeting.txt", message)
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (identifier))
+              (identifier)))
+          (argument_list
+            (expression
+              (literal
+                (string)))
+            (expression
+              (identifier))))))))
+
+=====================================
+Chained member expression
+=====================================
+
+api.users.get()
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (member_expression
+                  (expression
+                    (identifier))
+                  (identifier)))
+              (identifier))))))))

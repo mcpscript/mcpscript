@@ -1,0 +1,78 @@
+=====================================
+String assignment
+=====================================
+
+message = "Hello World"
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string))))))
+
+=====================================
+Function call assignment
+=====================================
+
+content = readFile("test.txt")
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (string)))))))))
+
+=====================================
+Member expression assignment
+=====================================
+
+result = server.method("arg", variable)
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (call_expression
+          (expression
+            (member_expression
+              (expression
+                (identifier))
+              (identifier)))
+          (argument_list
+            (expression
+              (literal
+                (string)))
+            (expression
+              (identifier))))))))
+
+=====================================
+Number assignment
+=====================================
+
+count = 42
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number))))))

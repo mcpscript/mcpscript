@@ -1,0 +1,79 @@
+=====================================
+Simple function call
+=====================================
+
+print(message)
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (identifier))))))))
+
+=====================================
+Function call with string argument
+=====================================
+
+print("Hello World")
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (string)))))))))
+
+=====================================
+Function call with multiple arguments
+=====================================
+
+func(arg1, "string", true)
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (identifier))
+            (expression
+              (literal
+                (string)))
+            (expression
+              (literal
+                (boolean)))))))))
+
+=====================================
+Function call with no arguments
+=====================================
+
+getData()
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier)))))))
