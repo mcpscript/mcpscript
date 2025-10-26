@@ -1,9 +1,9 @@
 # MCP Script
 
-## Technical Proposal: Syntax Specification
+## Technical Proposal: Language Specification
 
 **Version:** 0.1.0
-**Author:** [Your Name]
+**Author:** [Kun Chen]
 **Date:** October 2025
 **Status:** Draft for Technical Review
 
@@ -22,16 +22,33 @@ Modern agentic workflows require orchestrating both deterministic computational 
 
 ### Why MCP Script?
 
-MCP Script is a scripting language designed specifically for building agentic workflows with native support for MCP servers. MCP Script treats agents and tools as first-class language constructs, making it natural to express complex workflows where some steps execute deterministically while others are delegated to intelligent agents.
+MCP Script is a scripting language designed specifically for building agentic workflows with native support for MCP servers. MCP Script treats agents and tools as first-class language constructs, making it natural to express complex logic where some steps execute deterministically while others are delegated to intelligent agents.
 
 ### Design Goals
 
-1. **Clarity**: Make the distinction between deterministic and agent-driven execution explicit in syntax
-2. **MCP-Native**: Treat MCP servers and tools as first-class citizens
-3. **Composability**: Enable easy composition of workflows, tools, and agents
-4. **Readability**: Prioritize code that reads like a workflow specification
-5. **Type Safety**: Provide strong typing with inference for compile-time safety while maintaining concise syntax
-6. **Scriptability**: Support both simple scripts and complex orchestrations with the same language
+1. **MCP-Native**: Treat MCP servers and tools as first-class citizens
+2. **Composability**: Enable easy composition of workflows, tools, and agents
+3. **Type Safety**: Provide strong typing with inference for compile-time safety while maintaining concise syntax
+4. **Familiarity**: Follow TypeScript conventions for most non-MCP features
+
+**⚠️ Important Compatibility Notes:**
+
+MCP Script syntax is **inspired by TypeScript** but is **NOT a TypeScript superset or extension**.
+
+- ✅ Uses familiar TypeScript-like syntax for types, control flow, and collections
+- ❌ **NOT compatible with TypeScript code** - different execution semantics
+- ❌ **NOT guaranteed to work with arbitrary npm packages**
+- ❌ **NOT a drop-in replacement for JavaScript/TypeScript**
+
+### Implementation Strategy
+
+MCP Script is implemented as a **transpiler to JavaScript**:
+
+- **Source language**: `.mcps` files with MCP-specific extensions
+- **Target language**: Standard JavaScript (ES modules)
+- **Transpiler**: Written in TypeScript
+- **Runtime**: TypeScript-based runtime library (`mcps` package)
+- **Execution**: Transpiled code runs in JavaScript environments (Node.js, Bun, Deno)
 
 ### Quick Example
 
@@ -49,7 +66,7 @@ message = "Hello from MCP Script!"
 print(message)
 
 // Write to a file
-filesystem.writeFile("greeting.txt", message)?
+filesystem.writeFile("greeting.txt", message)
 print("Greeting saved!")
 ```
 
@@ -57,35 +74,11 @@ Run with: `mcps run hello.mcps`
 
 ---
 
-## 2. Core Syntax Principles
-
-### Design Philosophy
-
-MCP Script's syntax is guided by several key principles:
-
-- **Declarative where possible, imperative where necessary**: Workflow structure should be clear and readable
-- **Async by default**: All tool and workflow calls are asynchronous, enabling natural parallel execution
-- **Explicit agent boundaries**: When control passes to an agent, it should be syntactically obvious
-- **Tool-centric thinking**: Tools are the atomic units of work
-- **Unified composition model**: Workflows compose by calling other workflows
-
-### First-Class Constructs
-
-The following are first-class language constructs in MCP Script:
-
-- MCP servers and their connections
-- Models and their configurations
-- Tools (both as deterministic calls and agent-available capabilities)
-- Agents and their configurations
-- Workflows (the only callable unit)
-
----
-
-## 3. Fundamental Syntax Elements
+## 2. Fundamental Syntax Elements
 
 ### Basic Types
 
-MCP Script provides standard primitive types with familiar TypeScript-like names:
+MCP Script uses **TypeScript-like type syntax**:
 
 ```mcps
 name: string = "Alice"
@@ -95,9 +88,11 @@ isActive: boolean = true
 data: any = {"key": "value"}  // For JSON-like dynamic data
 ```
 
+The type syntax is familiar to TypeScript developers, using similar primitives, union types, and type annotations.
+
 ### Collections
 
-MCP Script follows TypeScript's approach to collections, using constructor syntax for Sets and Maps while keeping clean literal syntax for arrays and objects.
+MCP Script uses **TypeScript-like collection syntax**:
 
 ```mcps
 // Arrays - literal syntax with square brackets
@@ -105,17 +100,17 @@ items: string[] = ["apple", "banana", "orange"]
 numbers = [1, 2, 3, 4, 5]
 
 // Sets - constructor syntax (like TypeScript)
-uniqueIds: Set<number> = Set([1, 2, 3, 4, 5])
-tags: Set<string> = Set(["javascript", "typescript", "go"])
-emptySet = Set()
+uniqueIds: Set<number> = new Set([1, 2, 3, 4, 5])
+tags: Set<string> = new Set(["javascript", "typescript", "go"])
+emptySet = new Set()
 
 // Maps - constructor syntax with array of tuples (like TypeScript)
-userAges: Map<string, number> = Map([
+userAges: Map<string, number> = new Map([
     ["alice", 25],
     ["bob", 30],
     ["carol", 28]
 ])
-emptyMap = Map()
+emptyMap = new Map()
 
 // Objects - literal syntax for structured data (like JSON)
 config = {
@@ -129,87 +124,83 @@ emptyObject = {}
 
 ### Variable Declarations
 
-MCP Script uses strong typing with type inference. Variables are declared with simple assignment syntax:
+Variables are declared using assignment syntax and are always mutable:
 
 ```mcps
-name = "Alice"           // type inferred as string
-count = 0                // type inferred as number
-count = count + 1        // reassignment
+name = "Alice"     // type inferred as string
+count = 0          // type inferred as number
+count = count + 1  // reassignment (all variables are mutable)
 
-// Explicit type annotation (optional for local variables)
+// Explicit type annotation (optional)
 port: number = 8080
 ```
 
 **Type System Philosophy:**
 
-MCP Script requires explicit type annotations at API boundaries to ensure safety and clarity:
-
-- Workflow parameters and return types
-
-Within workflow bodies, types are inferred from context:
-
-- Variable assignments infer types from the right-hand side
-- MCP tool calls infer return types from tool schemas
-- Operations preserve type information through the workflow
-
-This approach provides compile-time type safety while keeping workflow code concise and readable.
+MCP Script uses a TypeScript-inspired type system focused on clarity at function boundaries:
 
 ```mcps
-// Types required at boundaries
-workflow processData(path: string): Result<any, Error> {  // Required
-    content = filesystem.readFile(path)?  // Inferred as string
-    parsed = JSON.parse(content)?         // Inferred as any
-    return Ok(parsed)
+// Types required at function boundaries
+function processData(path: string): any {
+    content = filesystem.readFile(path)  // Implicitly async, throws on error
+    parsed = JSON.parse(content)
+    return parsed
 }
 
-workflow analyzeData(inputPath: string): Result<number, Error> {
-    data = processData(inputPath)?  // Inferred as any from processData return type
-    return Ok(data["count"])
+function analyzeData(inputPath: string): number {
+    data = processData(inputPath)
+    return data.count
 }
 ```
 
+Note: Return types look synchronous (`string`, `number`, `any`) but functions are implicitly async behind the scenes.
+
 ### Control Flow
 
+MCP Script uses **TypeScript-like control flow syntax**:
+
 ```mcps
-// Conditionals
-if condition {
+// Conditionals (TypeScript-style, parentheses required)
+if (condition) {
     // execute
-} else if otherCondition {
+} else if (otherCondition) {
     // execute
 } else {
     // execute
 }
 
-// Loops
-for item in collection {
+// Loops (TypeScript-style)
+for (item of collection) {
     // process item
 }
 
-// Iterating over Maps - destructure key-value pairs
-userData: Map<string, number> = {"alice": 25, "bob": 30, "carol": 28}
+// Iterating over Maps
+userData: Map<string, number> = new Map([["alice", 25], ["bob", 30]])
 
-for (key, value) in userData {
-    print("${key} is ${value} years old")
+for ([key, value] of userData) {
+    print(`${key} is ${value} years old`)
 }
 
-while condition {
+while (condition) {
     // execute
 }
 ```
 
-### Workflows
+All control flow is familiar to JavaScript/TypeScript developers.
+
+### Function Declarations
 
 Workflows are declared with typed parameters and return types using TypeScript-like syntax:
 
 ```mcps
-workflow processData(input: string): Result<any, Error> {
-    content = filesystem.readFile(input)?
-    parsed = JSON.parse(content)?
-    return Ok(parsed)
+function processData(input: string): any {
+    content = filesystem.readFile(input)
+    parsed = JSON.parse(content)
+    return parsed
 }
 ```
 
-See Section 5 for complete details on workflow syntax.
+See Section 6 for complete details on function syntax.
 
 ### Trailing Commas
 
@@ -240,7 +231,7 @@ mcp github {
 
 ---
 
-## 4. MCP Server Integration Syntax
+## 3. MCP Server Integration Syntax
 
 ### Server Declaration
 
@@ -252,7 +243,7 @@ mcp filesystem {
   command: "npx",
   args: ["-y", "@modelcontextprotocol/server-filesystem", "/home/user/project"],
   env: {
-    HOME  // Shorthand for HOME: HOME (reads from environment)
+    HOME: env.HOME
   }
 }
 
@@ -261,7 +252,7 @@ mcp github {
   command: "npx",
   args: ["-y", "@modelcontextprotocol/server-github"],
   env: {
-    GITHUB_TOKEN  // Shorthand syntax
+    GITHUB_TOKEN: env.GITHUB_TOKEN
   }
 }
 
@@ -276,65 +267,31 @@ mcp database {
 
 ### Environment Variables
 
-Environment variables are implicitly accessible as variables throughout MCP Script programs. Whenever a variable is referenced that doesn't exist in the current scope, MCP Script checks if an environment variable with that name exists and uses its value.
+Environment variables are accessed through the globally available `env` object:
 
 ```mcps
-// Environment variables can be used directly as variables
-token = GITHUB_TOKEN  // Reads from environment if no local variable exists
+// Environment variables accessed via env object (no import needed)
+token = env.GITHUB_TOKEN
+port = env.PORT ?? 3000  // Default if not set
 
-// In string interpolation
-message = "Token is: $GITHUB_TOKEN"
-path = "/home/${USER}_backup"
+// In string interpolation (TypeScript template literals)
+message = `Token is: ${env.GITHUB_TOKEN}`
+path = `/home/${env.USER}_backup`
 
-// In MCP configurations - use regular variable references
+// In MCP configurations
 mcp github {
   command: "npx",
   args: ["-y", "@modelcontextprotocol/server-github"],
   env: {
-    GITHUB_TOKEN: GITHUB_TOKEN,  // Pass environment variable to MCP server
-    API_KEY: API_KEY
-  }
-}
-
-// Shorthand when key and value are the same
-mcp github {
-  command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-github"],
-  env: {
-    GITHUB_TOKEN,  // Equivalent to GITHUB_TOKEN: GITHUB_TOKEN
-    API_KEY
+    GITHUB_TOKEN: env.GITHUB_TOKEN,
+    API_KEY: env.API_KEY
   }
 }
 
 // Can also use in computations
-baseUrl = "https://api.example.com/$REGION/v1"
-timeout = REQUEST_TIMEOUT  // Reads from environment
+baseUrl = `https://api.example.com/${env.REGION}/v1`
+timeout = env.REQUEST_TIMEOUT
 ```
-
-**Variable Resolution Order:**
-
-1. Local variables in current scope
-2. Environment variables
-3. Error if neither exists
-
-This design means environment variables behave like implicitly-declared global constants, making configuration and secrets management natural and straightforward.
-
-**Escaping Dollar Signs:**
-
-To include a literal `$` character in a string without triggering variable interpolation, use a backslash escape:
-
-```mcps
-price = "This item costs \$50"           // Literal: "This item costs $50"
-regex = "Match \$[0-9]+ for prices"      // Literal: "Match $[0-9]+ for prices"
-message = "Use \$VAR or \${VAR} syntax"  // Literal: "Use $VAR or ${VAR} syntax"
-```
-
-Other common escape sequences are also supported:
-
-- `\n` - newline
-- `\t` - tab
-- `\\` - backslash
-- `\"` - quote
 
 ### Tool Invocation (Deterministic)
 
@@ -342,18 +299,20 @@ Tools from MCP servers can be invoked directly as deterministic steps:
 
 ```mcps
 // Direct tool call with error handling
-fileContent = filesystem.readFile("/path/to/file.txt")?
+fileContent = filesystem.readFile("/path/to/file.txt")
 
 // Tool call with explicit error handling
-result = match github.createIssue(title, body) {
-    Ok(issue) => issue,
-    Err(e) => return Err(e)
+try {
+    issue = github.createIssue(title, body)
+    // Use issue...
+} catch (e) {
+    throw e  // Re-throw or handle
 }
 ```
 
 ---
 
-## 5. Model Configuration Syntax
+## 4. Model Configuration Syntax
 
 ### Model Declaration
 
@@ -365,7 +324,7 @@ model claude {
     provider: "anthropic"
     url: "https://api.anthropic.com/v1/messages"
     model: "claude-3-opus-20240229"
-    apiKey: ANTHROPIC_API_KEY  // from environment
+    apiKey: env.ANTHROPIC_API_KEY
     temperature: 0.7
     maxTokens: 4000
 }
@@ -375,7 +334,7 @@ model gpt4 {
     provider: "openai"
     url: "https://api.openai.com/v1/chat/completions"
     model: "gpt-4-turbo-preview"
-    apiKey: OPENAI_API_KEY
+    apiKey: env.OPENAI_API_KEY
     temperature: 0.5
     maxTokens: 8000
     topP: 0.9
@@ -409,6 +368,7 @@ model customModel {
 Models support various configuration parameters depending on the provider:
 
 - **Common parameters:**
+
   - `provider`: The model provider type ("anthropic", "openai", "ollama", "custom")
   - `url`: API endpoint URL
   - `model`: Model identifier
@@ -423,45 +383,43 @@ Models support various configuration parameters depending on the provider:
 
 ---
 
-## 6. Workflows: The Fundamental Construct
+## 5. Functions and Async Execution
 
 ### Overview
 
-In MCP Script, workflows are the fundamental unit of composition. A workflow is a typed function that can:
+In MCP Script, functions are the fundamental unit of composition. Functions can:
 
 - Perform computations
 - Call MCP tools (async by default)
 - Delegate tasks to agents
-- Call other workflows (async by default)
+- Call other functions (async by default)
 
-Workflows have explicit type signatures at their boundaries and use type inference within their bodies. There is no distinction between "simple functions" and "complex workflows" - everything is a workflow.
+Functions have explicit type signatures at their boundaries and use type inference within their bodies.
 
-**Important:** All tool and workflow calls in MCP Script are asynchronous by default, enabling natural parallel execution. The `?` operator or data dependencies create sequential execution when needed.
-
-### Basic Workflow Syntax
+### Basic Function Syntax
 
 ```mcps
-// Simple workflow (like a function)
-workflow calculateScore(points: number, multiplier: number): number {
+// Simple function (like a function)
+function calculateScore(points: number, multiplier: number): number {
     return points * multiplier
 }
 
 // Workflow with logic
-workflow processFile(path: string): Result<any, Error> {
-    content = filesystem.readFile(path)?
-    parsed = JSON.parse(content)?
-    return Ok(parsed)
+function processFile(path: string): any {
+    content = filesystem.readFile(path)
+    parsed = JSON.parse(content)
+    return parsed
 }
 
-// Workflow calling other workflows
-workflow analyzeData(inputPath: string): Result<number, Error> {
-    data = processFile(inputPath)?
+// Function calling other workflows
+function analyzeData(inputPath: string): number {
+    data = processFile(inputPath)
     score = calculateScore(data["points"], data["multiplier"])
-    return Ok(score)
+    return score
 }
 ```
 
-### Workflow Type Signatures
+### Function Type Signatures
 
 Workflows must declare:
 
@@ -469,64 +427,23 @@ Workflows must declare:
 - Return type
 
 ```mcps
-workflow myWorkflow(param1: Type1, param2: Type2): ReturnType {
-    // workflow body
+function myWorkflow(param1: Type1, param2: Type2): ReturnType {
+    // function body
 }
 ```
 
 ### Async Execution Model
 
-In MCP Script, all tool calls and workflow calls are asynchronous by default. This enables natural parallel execution without special syntax:
+In MCP Script, all tool calls and function calls are asynchronous by default. This enables natural parallel execution without special syntax:
 
 **Key principles:**
 
 1. **Async operations start immediately** when called
-2. **The `?` operator implicitly awaits** the result before checking for errors
-3. **Data dependencies create sequential execution** naturally
-4. **Return statements implicitly await** all pending operations in scope
-
-```mcps
-// Parallel execution - happens naturally!
-workflow processAllFiles(files: string[]): Result<any[], Error> {
-    // Process files in parallel
-    results = []
-    for file in files {
-        result = processFile(file)  // Each call starts immediately
-        results.push(result)
-    }
-    // Return waits for all to complete
-    return Ok(results)
-}
-
-// Sequential execution - use ? to wait for each operation
-workflow processSequential(files: string[]): Result<any[], Error> {
-    results = []
-    for file in files {
-        data = processFile(file)?  // ? waits for completion before continuing
-        results.push(data)
-    }
-    return Ok(results)
-}
-
-// Mixed parallel and sequential
-workflow complexPipeline(data: any): Result<any, Error> {
-    // These run in parallel (no dependencies)
-    analysis = analyzeData(data)      // starts immediately
-    summary = generateSummary(data)   // starts immediately
-    metrics = calculateMetrics(data)  // starts immediately
-
-    // Return waits for all three to complete
-    return Ok({
-        analysis: analysis,
-        summary: summary,
-        metrics: metrics
-    })
-}
-```
+2. Values are **implicitly awaited**
 
 ---
 
-## 7. Agent Configuration Syntax
+## 6. Agent Configuration Syntax
 
 ### Agent Declaration
 
@@ -605,22 +522,22 @@ conv = conv -> ReportWriter
 #### Workflow Integration
 
 ```mcps
-workflow analyzeWithAgent(inputPath: string): Result<Conversation, Error> {
+function analyzeWithAgent(inputPath: string): Conversation {
     conv = "Analyze the file at ${inputPath} and create a summary report" -> DataAnalyst
     conv += "Save the report to report.md"
     conv = conv -> DataAnalyst
 
-    return Ok(conv)
+    return conv
 }
 ```
 
 #### Conditional Agent Usage
 
 ```mcps
-workflow intelligentProcessing(data: any, useAgent: boolean): Result<any, Error> {
-    if useAgent {
+function intelligentProcessing(data: any, useAgent: boolean): any {
+    if (useAgent) {
         result = "Process this data: ${data}" -> DataAnalyst
-        return Ok(result.getLastMessage())
+        return result.getLastMessage()
     } else {
         return standardProcess(data)
     }
@@ -629,93 +546,89 @@ workflow intelligentProcessing(data: any, useAgent: boolean): Result<any, Error>
 
 ---
 
-## 8. Error Handling & State Management
+## 7. Error Handling & State Management
 
-### Result Type
+### Error Handling
 
-MCP Script uses a Result type for error handling (inspired by Rust):
+MCP Script uses standard try-catch for error handling:
 
 ```mcps
-workflow riskyOperation(): Result<string, Error> {
-    // Returns Ok(value) or Err(error)
+function riskyOperation(): string {
+    if (somethingWrong) {
+        throw new Error("Operation failed")
+    }
+    return "success"
 }
 
-// Usage with ? operator
-value = riskyOperation()?
-
-// Usage with match
-value = match riskyOperation() {
-    Ok(v) => v,
-    Err(e) => {
-        log.error("Operation failed: ${e}")
-        return Err(e)
-    }
+// Usage with try-catch
+try {
+    value = riskyOperation()
+    print(value)
+} catch (error) {
+    print("Error:", error)
 }
 ```
 
-### Workflow Error Handling
+Errors thrown from async operations (like MCP tool calls) are caught just like synchronous errors.
 
-```mcps
-workflow robustFileRead(path: string): Result<any, Error> {
-    result = match filesystem.readFile(path) {
-        Ok(data) => JSON.parse(data),
-        Err(e) => {
-            log.error("Failed to read file: ${e}")
-            return Err(e)
-        }
+### Function Error Handling
+
+````mcps
+function robustFileRead(path: string): any {
+    try {
+        data = filesystem.readFile(path)
+        return JSON.parse(data)
+    } catch (e) {
+        log.error(`Failed to read file: ${e}`)
+        return null
     }
-
-    return result
 }
-```
 
 ### State Persistence
 
-For long-running workflows that need checkpointing and recovery, MCP Script provides state management primitives:
+For long-running functions that need checkpointing and recovery, MCP Script provides state management primitives:
 
 ```mcps
-workflow processLargeDataset(items: string[]): Result<void, Error> {
+function processLargeDataset(items: string[]): void {
     state = {
         checkpoint: "",
         progress: 0
     }
 
-    for item in items {
-        processItem(item)?
+    for (item of items) {
+        processItem(item)
         state.progress += 1
         state.checkpoint = item
         persist(state)  // Save state for recovery
     }
-
-    return Ok(void)
 }
-```
+````
 
-Note: The detailed semantics of state persistence and workflow recovery will be defined in a future proposal on runtime architecture.
+Note: The detailed semantics of state persistence and function recovery will be defined in a future proposal on runtime architecture.
 
 ---
 
-## 9. Logging & Observability
+## 8. Logging & Observability
 
-### Built-in Logging Primitives
+### Logging and Output
 
-MCP Script provides native logging primitives for debugging and observability:
+MCP Script provides globally available logging and output functions:
 
 ```mcps
-workflow processData(input: string): Result<any, Error> {
-    // Simple print for basic output
+function processData(input: string): any {
+    // Simple console output (globally available)
     print("Starting processing...")
 
-    // Structured logging with levels
+    // Structured logging (globally available)
     log.debug("Input received", { length: input.length })
-    log.info("Processing ${input.length} bytes")
+    log.info(`Processing ${input.length} bytes`)
     log.warn("Large input detected")
     log.error("Failed to process", { error: "..." })
 
-    data = parseData(input)?
+    data = parseData(input)
     log.info("Successfully parsed", { records: data.length })
 
-    return Ok(data)
+    return data
 }
 ```
 
@@ -746,20 +659,20 @@ All logs follow a structured format for machine readability:
 The runtime automatically generates system logs for observability:
 
 ```mcps
-workflow example(path: string): Result<any, Error> {
+function example(path: string): any {
     // System log: {"source": "system", "event": "workflow.start", "workflow": "example"}
 
     log.info("Reading file")  // User log: {"source": "user", "message": "Reading file"}
 
     // System log: {"source": "system", "event": "tool.call", "tool": "filesystem.readFile"}
-    content = filesystem.readFile(path)?
+    content = filesystem.readFile(path)
     // System log: {"source": "system", "event": "tool.complete", "duration": 45}
 
     // System log: {"source": "system", "event": "agent.start", "agent": "DataAnalyst"}
     result = "Analyze this content: ${content}" -> DataAnalyst
     // System log: {"source": "system", "event": "agent.complete", "tokens": 1234, "duration": 2300}
 
-    return Ok(result)
+    return result
     // System log: {"source": "system", "event": "workflow.complete", "workflow": "example"}
 }
 ```
@@ -832,30 +745,30 @@ This design ensures that:
 
 ---
 
-## 10. Execution Model
+## 9. Execution Model
 
 ### Script-Based Execution
 
-MCP Script is an interpreted scripting language. When you run a MCP Script file, the interpreter executes all top-level code from top to bottom, similar to Python or JavaScript:
+MCP Script transpiles to JavaScript and follows **ES module semantics**. When you run a `.mcps` file, it's transpiled to `.js` and executed, with all top-level code running from top to bottom:
 
 ```mcps
-// Declarations
+// Declarations (transpiled to runtime initialization)
 mcp filesystem {
     command: "npx",
     args: ["-y", "@modelcontextprotocol/server-filesystem"]
 }
 
-// Workflow definitions (like functions)
-workflow loadData(path: string): Result<any, Error> {
-    content = filesystem.readFile(path)?
-    return Ok(JSON.parse(content)?)
+// Function definitions (transpiled to async functions)
+function loadData(path: string): any {
+    content = filesystem.readFile(path)
+    return JSON.parse(content)
 }
 
 // Top-level code - executes when running the file
 log.info("Starting data processing")
 
-data = loadData("input.json")?
-log.info("Loaded ${data.length} records")
+data = loadData("input.json")
+log.info(`Loaded ${data.length} records`)
 
 // Process the data...
 print("Processing complete!")
@@ -870,21 +783,21 @@ MCP Script files can serve different purposes:
 ```mcps
 // script.mcps
 log.info("Running backup job")
-files = filesystem.listFiles("/data")?
-for file in files {
-    filesystem.copyFile(file, "/backup/${file}")?
+files = filesystem.listFiles("/data")
+for (file of files) {
+    filesystem.copyFile(file, "/backup/${file}")
 }
 ```
 
-**2. Libraries** - Only workflow definitions, no top-level execution:
+**2. Libraries** - Only function definitions, no top-level execution:
 
 ```mcps
 // utils.mcps
-workflow validateEmail(email: string): boolean {
+function validateEmail(email: string): boolean {
     return email.contains("@")
 }
 
-workflow formatDate(date: string): string {
+function formatDate(date: string): string {
     // formatting logic
 }
 ```
@@ -893,40 +806,42 @@ workflow formatDate(date: string): string {
 
 ```mcps
 // process.mcps
-workflow transform(data: any): Result<any, Error> {
+function transform(data: any): any {
     // reusable transformation
 }
 
-// Can be run directly or imported
-if RUN_STANDALONE {
-    data = loadData("input.json")?
-    result = transform(data)?
-    print(result)
-}
+// Top-level code runs when executed directly, but not when imported
+data = loadData("input.json")
+result = transform(data)
+print(result)
 ```
 
 ### Running MCP Script Files
 
 ```bash
-# Execute a MCP Script script
+# Transpile and execute a MCP Script file
 mcps run script.mcps
 
-# Pass arguments (accessible via ARGS variable)
+# Or transpile first, then run with Node.js
+mcps build script.mcps  # Outputs script.js
+node script.js
+
+# Pass arguments (accessible via standard process.argv)
 mcps run script.mcps --input=data.json --verbose
 
-# All top-level code executes from top to bottom
+# All top-level code executes from top to bottom (ES module semantics)
 ```
 
 ---
 
-## 11. Module System & Imports
+## 10. Module System & Imports
 
 ### Import Syntax
 
-MCP Script uses TypeScript-style imports to share code between files. You can import workflows, agents, models, and MCP servers from other MCP Script files:
+MCP Script uses ES module-style imports to share code between `.mcps` files:
 
 ```mcps
-// Named imports
+// Named imports from other .mcps files
 import { processData, validateEmail } from "./utils.mcps"
 import { claude, gpt4 } from "./models.mcps"
 import { filesystem, github } from "./connections.mcps"
@@ -936,22 +851,55 @@ import { DataAnalyst, CodeReviewer } from "./agents.mcps"
 import * as utils from "./utils.mcps"
 
 // Use imported items
-data = processData(input)?
+data = processData(input)
 isValid = utils.validateEmail(email)
 ```
+
+**⚠️ Import Limitations:**
+
+- ✅ Importing from other `.mcps` files works
+- ✅ Importing from MCP Script standard library (`mcps`) works
+- ❌ Importing from `.js` or `.ts` files is **NOT supported** in the initial version
+- ❌ Importing from npm packages is **NOT supported** in the initial version
+
+The focus is on MCP-native scripting. For external functionality, use MCP tools rather than npm packages.
+
+### Runtime Library
+
+The MCP Script runtime provides globally available functions and objects:
+
+**Globally Available (no import required):**
+
+**Logging:**
+
+- `log.debug(message, data?)` - Debug level logging
+- `log.info(message, data?)` - Info level logging
+- `log.warn(message, data?)` - Warning level logging
+- `log.error(message, data?)` - Error level logging
+
+**Environment:**
+
+- `env` - Object providing access to environment variables (e.g., `env.API_KEY`)
+
+**Output:**
+
+- `print(value)` - Print a value to stdout (convenience function)
+
+**Import Behavior:**
+Top-level execution code in imported files does not run, eliminating the need for main module detection. When a file is imported, only its declarations (functions, agents, models, etc.) are made available.
 
 ### What Can Be Imported
 
 **Importable declarations:**
 
-- **Workflows** - Reusable functions
+- **Functions** - Reusable functions
 - **Agents** - Agent configurations
 - **Models** - Model configurations
 - **MCP servers** - Server connections
+- Variables or constants
 
 **Not importable:**
 
-- Variables or constants
 - Top-level executable code
 
 ### Import Behavior
@@ -965,17 +913,17 @@ mcp filesystem {
     args: ["-y", "@modelcontextprotocol/server-filesystem"]
 }
 
-workflow processFile(path: string): Result<any, Error> {
-    content = filesystem.readFile(path)?
-    return Ok(JSON.parse(content)?)
+function processFile(path: string): any {
+    content = filesystem.readFile(path)
+    return JSON.parse(content)
 }
 
 // This top-level code only runs when `mcps run lib.mcps` is called directly
 // It does NOT run when lib.mcps is imported
 print("Processing files...")
-files = filesystem.listFiles("*.json")?
-for file in files {
-    processFile(file)?
+files = filesystem.listFiles("*.json")
+for (file of files) {
+    processFile(file)
 }
 ```
 
@@ -985,113 +933,7 @@ import { processFile, filesystem } from "./lib.mcps"
 
 // The print() and file processing loop from lib.mcps did NOT execute
 // We can use the imported declarations
-result = processFile("data.json")?
-```
-
-### Organizing Code
-
-This import system enables clean code organization:
-
-```mcps
-// models.mcps - Shared model configurations
-model claude {
-    provider: "anthropic"
-    url: "https://api.anthropic.com/v1/messages"
-    model: "claude-3-opus-20240229"
-    apiKey: ANTHROPIC_API_KEY
-}
-
-model gpt4 {
-    provider: "openai"
-    url: "https://api.openai.com/v1/chat/completions"
-    model: "gpt-4-turbo-preview"
-    apiKey: OPENAI_API_KEY
-}
-```
-
-```mcps
-// connections.mcps - Shared MCP servers
-mcp github {
-    command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-github"],
-    env: { GITHUB_TOKEN }
-}
-
-mcp slack {
-    command: "npx",
-    args: ["-y", "@modelcontextprotocol/server-slack"],
-    env: { SLACK_TOKEN }
-}
-```
-
-```mcps
-// agents.mcps - Shared agent configurations
-import { claude, gpt4 } from "./models.mcps"
-import { github, slack } from "./connections.mcps"
-
-agent Researcher {
-    model: claude
-    systemPrompt: "You research technical topics thoroughly."
-    tools: [github.searchCode, github.getRepository]
-}
-
-agent Notifier {
-    model: gpt4
-    systemPrompt: "You craft clear notification messages."
-    tools: [slack.sendMessage]
-}
-```
-
-```mcps
-// main.mcps - Main script using shared components
-import { Researcher, Notifier } from "./agents.mcps"
-import { github } from "./connections.mcps"
-
-// Script execution
-topic = "authentication"
-research = "Research ${topic} in the codebase" -> Researcher
-
-notification = "Notify the team about: ${research}" -> Notifier
-
-print("Research completed and team notified!")
-```
-
-### File Organization Pattern
-
-Since top-level code only runs when a file is executed directly (not when imported), you can add test code to any file:
-
-```mcps
-// utils.mcps
-workflow validateEmail(email: string): boolean {
-    return email.contains("@") && email.contains(".")
-}
-
-workflow formatCurrency(amount: number): string {
-    return "${amount.toFixed(2)}"
-}
-
-// Test code - only runs with `mcps run utils.mcps`
-// Never runs when utils.mcps is imported
-print("Testing utilities...")
-assert(validateEmail("test@example.com") == true)
-assert(validateEmail("invalid") == false)
-assert(formatCurrency(42.5) == "$42.50")
-print("All tests passed!")
+result = processFile("data.json")
 ```
 
 ---
-
-## 12. Next Steps
-
-This syntax specification provides the foundation for the MCP Script. Future technical proposals will cover:
-
-- Type system and type inference details
-- Memory management
-- Interpreter implementation strategy
-- Runtime architecture and async execution
-- Standard library design
-- Tooling and developer experience
-- Error handling patterns
-- Package management and distribution
-
-We welcome feedback from the engineering team on this syntax design before proceeding to implementation planning.
