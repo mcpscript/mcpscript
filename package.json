@@ -10,11 +10,12 @@
     "packages/*"
   ],
   "scripts": {
+    "clean": "npm run clean --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "dev": "npm run dev --workspaces --if-present"
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
