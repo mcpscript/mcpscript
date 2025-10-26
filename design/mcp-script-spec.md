@@ -368,7 +368,6 @@ model customModel {
 Models support various configuration parameters depending on the provider:
 
 - **Common parameters:**
-
   - `provider`: The model provider type ("anthropic", "openai", "ollama", "custom")
   - `url`: API endpoint URL
   - `model`: Model identifier

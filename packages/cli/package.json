@@ -1,0 +1,23 @@
+{
+  "name": "@mcps/cli",
+  "version": "1.0.0",
+  "description": "MCP Script command line interface",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "mcps": "bin/mcps.mjs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@mcps/runtime": "file:../runtime",
+    "@mcps/transpiler": "file:../transpiler",
+    "commander": "^14.0.2"
+  },
+  "author": "Kun Chen",
+  "license": "ISC"
+}

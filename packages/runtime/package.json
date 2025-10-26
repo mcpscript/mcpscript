@@ -1,0 +1,19 @@
+{
+  "name": "@mcps/runtime",
+  "version": "1.0.0",
+  "description": "MCP Script runtime library",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.2"
+  },
+  "author": "Kun Chen",
+  "license": "ISC"
+}

@@ -1,0 +1,4 @@
+// @mcps/transpiler - Parser & code generator
+export * from './parser.js';
+export * from './codegen.js';
+export * from './ast.js';

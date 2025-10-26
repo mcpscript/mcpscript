@@ -1,0 +1,20 @@
+{
+  "name": "@mcps/transpiler",
+  "version": "1.0.0",
+  "description": "MCP Script transpiler and parser",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:grammar && tsc",
+    "build:grammar": "cd grammar && tree-sitter generate",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist && rm -rf grammar/src"
+  },
+  "dependencies": {
+    "@mcps/runtime": "file:../runtime",
+    "tree-sitter": "^0.25.0"
+  },
+  "author": "Kun Chen",
+  "license": "ISC"
+}

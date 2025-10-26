@@ -21,13 +21,17 @@ lib/
 *.tgz
 .yarn-integrity
 
+# Tree-sitter generated files
+packages/transpiler/grammar/src/
+packages/transpiler/grammar/bindings/node/*.node
+
 # Runtime data
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
+# Test coverage
 coverage/
 *.lcov
 .nyc_output

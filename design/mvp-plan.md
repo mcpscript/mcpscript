@@ -7,6 +7,7 @@ This plan outlines the development of an Ultra-Simple Minimal Viable Product (MV
 ## MVP Scope
 
 ### What's Included (Absolute Minimum)
+
 1. **MCP Server Declaration** - `mcp servername { command: "...", args: [...] }`
 2. **Tool Call** - `result = servername.toolname(arg1, arg2)`
 3. **Variable Assignment** - `variable = value`
@@ -14,6 +15,7 @@ This plan outlines the development of an Ultra-Simple Minimal Viable Product (MV
 5. **String Literals** - `"hello world"`
 
 ### What's Deferred (Everything Else)
+
 - Types (everything is treated as `any`)
 - Control flow (`if`, `for`, `while`)
 - Error handling (`try/catch`)
@@ -29,6 +31,7 @@ This plan outlines the development of an Ultra-Simple Minimal Viable Product (MV
 ## Repository Setup
 
 ### 1. Monorepo Structure
+
 ```
 mcp-script/
 ├── package.json             # Workspace root (npm workspaces)
@@ -68,6 +71,7 @@ mcp-script/
 ```
 
 ### 2. Technology Stack
+
 - **Language**: TypeScript
 - **Parser**: Tree-sitter
 - **Grammar**: Tree-sitter grammar DSL
@@ -79,6 +83,7 @@ mcp-script/
 ### 3. Package Dependencies
 
 **Root workspace (`package.json`):**
+
 ```json
 {
   "name": "mcp-script",
@@ -92,15 +97,18 @@ mcp-script/
 ```
 
 **@mcps/runtime dependencies:**
+
 - `@modelcontextprotocol/sdk` - MCP client
 - No external runtime dependencies (keep it minimal)
 
 **@mcps/transpiler dependencies:**
+
 - `tree-sitter` - Parser runtime
 - `tree-sitter-mcpscript` - Generated grammar (internal)
 - `@mcps/runtime` - Runtime types
 
 **@mcps/cli dependencies:**
+
 - `@mcps/transpiler` - For transpilation
 - `@mcps/runtime` - For execution
 - `commander` - CLI framework (optional, can use basic process.argv)
@@ -117,66 +125,42 @@ module.exports = grammar({
   rules: {
     source_file: $ => repeat($.statement),
 
-    statement: $ => choice(
-      $.mcp_declaration,
-      $.assignment,
-      $.print_statement
-    ),
+    statement: $ => choice($.mcp_declaration, $.assignment, $.print_statement),
 
-    mcp_declaration: $ => seq(
-      'mcp',
-      $.identifier,
-      '{',
-      'command:',
-      $.string,
-      ',',
-      'args:',
-      '[',
-      optional($.string_list),
-      ']',
-      '}'
-    ),
-
-    assignment: $ => seq(
-      $.identifier,
-      '=',
-      choice(
+    mcp_declaration: $ =>
+      seq(
+        'mcp',
+        $.identifier,
+        '{',
+        'command:',
         $.string,
-        $.tool_call
-      )
-    ),
+        ',',
+        'args:',
+        '[',
+        optional($.string_list),
+        ']',
+        '}'
+      ),
 
-    tool_call: $ => seq(
-      $.identifier,
-      '.',
-      $.identifier,
-      '(',
-      optional($.string_list),
-      ')'
-    ),
+    assignment: $ => seq($.identifier, '=', choice($.string, $.tool_call)),
 
-    print_statement: $ => seq(
-      'print',
-      '(',
-      $.identifier,
-      ')'
-    ),
+    tool_call: $ => seq($.identifier, '.', $.identifier, '(', optional($.string_list), ')'),
 
-    string_list: $ => seq(
-      $.string,
-      repeat(seq(',', $.string))
-    ),
+    print_statement: $ => seq('print', '(', $.identifier, ')'),
+
+    string_list: $ => seq($.string, repeat(seq(',', $.string))),
 
     string: $ => /"[^"]*"/,
-    
-    identifier: $ => /[a-zA-Z][a-zA-Z0-9]*/
-  }
+
+    identifier: $ => /[a-zA-Z][a-zA-Z0-9]*/,
+  },
 });
 ```
 
 ## Implementation Plan
 
 ### Step 1: Monorepo Setup (1 day)
+
 1. **Initialize workspace**
    - Create root `package.json` with npm workspaces
    - Setup shared `tsconfig.json`
@@ -188,6 +172,7 @@ module.exports = grammar({
    - Basic `src/` and `dist/` structure
 
 ### Step 2: Runtime Package (@mcps/runtime) (1 day)
+
 1. **Core runtime library** (`packages/runtime/`)
    - MCP server connection management (`src/mcp.ts`)
    - Global functions (`src/globals.ts`) - `print()` for MVP
@@ -199,6 +184,7 @@ module.exports = grammar({
    - Build setup with TypeScript
 
 ### Step 3: Grammar & Parser (@mcps/transpiler) (2 days)
+
 1. **Tree-sitter grammar** (`packages/transpiler/grammar/`)
    - Define the 4 MVP constructs in `grammar.js`
    - Create grammar `package.json`
@@ -210,6 +196,7 @@ module.exports = grammar({
    - Parse .mcps files into semantic AST
 
 ### Step 4: Code Generator (@mcps/transpiler) (1 day)
+
 1. **JavaScript generation** (`packages/transpiler/src/codegen.ts`)
    - Transform AST to JavaScript modules
    - Import from `@mcps/runtime`
@@ -220,6 +207,7 @@ module.exports = grammar({
    - Export AST types
 
 ### Step 5: CLI Package (@mcps/cli) (1 day)
+
 1. **Command implementation** (`packages/cli/src/`)
    - CLI entry point (`index.ts`)
    - `mcps run` command (`run.ts`)
@@ -231,6 +219,7 @@ module.exports = grammar({
    - Process command line arguments
 
 ### Step 6: Integration & Testing (1 day)
+
 1. **Build pipeline**
    - Root build scripts that build all packages
    - Proper dependency order: runtime → transpiler → cli
@@ -259,16 +248,17 @@ print(content)
 ```
 
 Expected JavaScript output:
+
 ```javascript
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 // Connect to filesystem MCP server
 const transport = new StdioClientTransport({
-  command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-filesystem"]
+  command: 'npx',
+  args: ['-y', '@modelcontextprotocol/server-filesystem'],
 });
-const client = new Client({ name: "mcps", version: "1.0.0" }, { capabilities: {} });
+const client = new Client({ name: 'mcps', version: '1.0.0' }, { capabilities: {} });
 await client.connect(transport);
 
 // Get available tools
@@ -282,9 +272,9 @@ for (const tool of tools.tools) {
 }
 
 // Generated code
-let message = "Hello from MCP Script!";
-await filesystem.writeFile("greeting.txt", message);
-let content = await filesystem.readFile("greeting.txt");
+let message = 'Hello from MCP Script!';
+await filesystem.writeFile('greeting.txt', message);
+let content = await filesystem.readFile('greeting.txt');
 console.log(content);
 ```
 
@@ -293,7 +283,7 @@ console.log(content);
 The MVP is complete when:
 
 1. ✅ Can parse the simple example above
-2. ✅ Generates working JavaScript 
+2. ✅ Generates working JavaScript
 3. ✅ Connects to MCP servers
 4. ✅ Calls tools successfully
 5. ✅ `mcps run hello.mcps` works
