@@ -1,6 +1,6 @@
 {
   "name": "@mcps/transpiler",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "MCP Script transpiler and parser",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
