@@ -12,7 +12,8 @@ message = "Hello World"
       (identifier)
       (expression
         (literal
-          (string))))))
+          (string
+                  (double_quoted_string)))))))
 
 =====================================
 Function call assignment
@@ -33,7 +34,8 @@ content = readFile("test.txt")
           (argument_list
             (expression
               (literal
-                (string)))))))))
+                (string
+                  (double_quoted_string))))))))))
 
 =====================================
 Member expression assignment
@@ -57,7 +59,8 @@ result = server.method("arg", variable)
           (argument_list
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (identifier))))))))
 

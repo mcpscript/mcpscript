@@ -47,7 +47,42 @@ module.exports = grammar({
 
     property: $ => seq($.identifier, ':', $.expression),
 
-    string: _$ => /"[^"]*"/,
+    string: $ => choice($.double_quoted_string, $.single_quoted_string),
+
+    double_quoted_string: $ =>
+      seq(
+        '"',
+        repeat(
+          choice(
+            /[^"\\]/, // Any character except " or \
+            $.escape_sequence
+          )
+        ),
+        '"'
+      ),
+
+    single_quoted_string: $ =>
+      seq(
+        "'",
+        repeat(
+          choice(
+            /[^'\\]/, // Any character except ' or \
+            $.escape_sequence
+          )
+        ),
+        "'"
+      ),
+
+    escape_sequence: _ =>
+      seq(
+        '\\',
+        choice(
+          /["'\\nrtbf]/, // Common escape sequences: " ' \ n r t b f
+          /u[0-9a-fA-F]{4}/, // Unicode: \u1234
+          /x[0-9a-fA-F]{2}/, // Hex: \x41
+          /[0-7]{1,3}/ // Octal: \123
+        )
+      ),
     number: _$ => /\d+(\.\d+)?/,
     boolean: _$ => choice('true', 'false'),
     identifier: _$ => /[a-zA-Z][a-zA-Z0-9]*/,

@@ -25,7 +25,8 @@ print(content)
             (identifier)
             (expression
               (literal
-                (string))))
+                (string
+                  (double_quoted_string)))))
           (property
             (identifier)
             (expression
@@ -33,10 +34,12 @@ print(content)
                 (array_literal
                   (expression
                     (literal
-                      (string)))
+                      (string
+                  (double_quoted_string))))
                   (expression
                     (literal
-                      (string)))))))
+                      (string
+                  (double_quoted_string))))))))
           (property
             (identifier)
             (expression
@@ -47,7 +50,8 @@ print(content)
       (identifier)
       (expression
         (literal
-          (string)))))
+          (string
+                  (double_quoted_string))))))
   (statement
     (expression_statement
       (expression
@@ -60,7 +64,8 @@ print(content)
           (argument_list
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (identifier)))))))
   (statement
@@ -76,7 +81,8 @@ print(content)
           (argument_list
             (expression
               (literal
-                (string))))))))
+                (string
+                  (double_quoted_string)))))))))
   (statement
     (expression_statement
       (expression
@@ -118,7 +124,8 @@ print("Result:", result)
                   (identifier))))
             (expression
               (literal
-                (string))))))))
+                (string
+                  (double_quoted_string)))))))))
   (statement
     (expression_statement
       (expression
@@ -128,6 +135,7 @@ print("Result:", result)
           (argument_list
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (identifier))))))))

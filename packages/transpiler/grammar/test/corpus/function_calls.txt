@@ -35,7 +35,8 @@ print("Hello World")
           (argument_list
             (expression
               (literal
-                (string)))))))))
+                (string
+                  (double_quoted_string))))))))))
 
 =====================================
 Function call with multiple arguments
@@ -57,7 +58,8 @@ func(arg1, "string", true)
               (identifier))
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (literal
                 (boolean)))))))))

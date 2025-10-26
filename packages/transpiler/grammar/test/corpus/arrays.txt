@@ -15,10 +15,12 @@ data = ["hello", "world"]
           (array_literal
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (literal
-                (string)))))))))
+                (string
+                  (double_quoted_string))))))))))
 
 =====================================
 Mixed array
@@ -37,7 +39,8 @@ config = ["string", 42, true]
           (array_literal
             (expression
               (literal
-                (string)))
+                (string
+                  (double_quoted_string))))
             (expression
               (literal
                 (number)))

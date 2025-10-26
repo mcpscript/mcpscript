@@ -1,0 +1,130 @@
+=====================================
+Single quoted string
+=====================================
+
+message = 'Hello World'
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (single_quoted_string)))))))
+
+=====================================
+Double quoted string with escapes
+=====================================
+
+text = "Hello \"World\" with \\n newline"
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (double_quoted_string
+              (escape_sequence)
+              (escape_sequence)
+              (escape_sequence))))))))
+
+=====================================
+Single quoted with escapes
+=====================================
+
+message = 'Can\'t escape \\backslash'
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (single_quoted_string
+              (escape_sequence)
+              (escape_sequence))))))))
+
+=====================================
+Mixed quote styles in arguments
+=====================================
+
+func("double", 'single', "with \"escapes\"")
+
+---
+
+(source_file
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (string
+                  (double_quoted_string))))
+            (expression
+              (literal
+                (string
+                  (single_quoted_string))))
+            (expression
+              (literal
+                (string
+                  (double_quoted_string
+                    (escape_sequence)
+                    (escape_sequence)))))))))))
+
+=====================================
+Unicode and hex escapes
+=====================================
+
+unicode = "Unicode: \\u0041 Hex: \\x42"
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (double_quoted_string
+              (escape_sequence)
+              (escape_sequence))))))))
+
+=====================================
+Empty strings
+=====================================
+
+empty1 = ""
+empty2 = ''
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (double_quoted_string))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (string
+            (single_quoted_string)))))))
