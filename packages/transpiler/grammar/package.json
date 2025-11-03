@@ -2,5 +2,8 @@
   "name": "tree-sitter-mcpscript",
   "version": "0.1.0",
   "description": "Tree-sitter grammar for MCP Script",
-  "main": "bindings/node"
+  "main": "bindings/node",
+  "dependencies": {
+    "nan": "^2.23.0"
+  }
 }
