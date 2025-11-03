@@ -30,7 +30,7 @@ module.exports = grammar({
 
     argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
 
-    literal: $ => choice($.string, $.number, $.boolean, $.array_literal),
+    literal: $ => choice($.string, $.number, $.boolean, $.array_literal, $.object_literal),
 
     array_literal: $ =>
       seq(

@@ -94,30 +94,31 @@ mcp-script/
    - TypeScript configs extending root config
    - Basic `src/` and `dist/` structure
 
-### Step 2: Runtime Package (@mcps/runtime) ✅ COMPLETED
+### Step 2: Runtime Package (@mcps/runtime) ⚠️ PARTIALLY COMPLETED
 
-1. **Core runtime library** ✅ (`packages/runtime/`)
-   - MCP server connection management (`src/mcp.ts`)
-   - Global functions (`src/globals.ts`) - `print()` for MVP
-   - Runtime types (`src/types.ts`)
-   - Main exports (`src/index.ts`)
+1. **Core runtime library** ⚠️ (`packages/runtime/`)
+   - MCP server connection management (`src/mcp.ts`) - Stub only, needs actual Client/Transport implementation
+   - Global functions (`src/globals.ts`) - ✅ `print()` implemented
+   - Runtime types (`src/types.ts`) - ✅ Basic types defined
+   - Main exports (`src/index.ts`) - ✅ Created
 
 2. **Dependencies** ✅
    - Install `@modelcontextprotocol/sdk`
    - Build setup with TypeScript
 
-### Step 3: Grammar & Parser (@mcps/transpiler) ⚠️ PARTIALLY COMPLETED
+### Step 3: Grammar & Parser (@mcps/transpiler) ✅ COMPLETED
 
 1. **Tree-sitter grammar** ✅ (`packages/transpiler/grammar/`)
    - Define the 4 MVP constructs in `grammar.js`
    - Create grammar `package.json`
    - Test with `tree-sitter generate` and `tree-sitter parse`
    - All 23 grammar tests passing
+   - Updated to use N-API binding compatible with tree-sitter 0.25.x
 
-2. **Parser integration** ⚠️ (`packages/transpiler/src/`)
-   - TypeScript wrapper around Tree-sitter (`parser.ts`) - Stub created, needs implementation
-   - AST type definitions (`ast.ts`) - Created
-   - Parse .mcps files into semantic AST - TODO
+2. **Parser integration** ✅ (`packages/transpiler/src/`)
+   - TypeScript wrapper around Tree-sitter (`parser.ts`) - ✅ Implemented with full expression parsing
+   - AST type definitions (`ast.ts`) - ✅ Complete type definitions for all node types
+   - Parse .mcps files into semantic AST - ✅ All 29 parser unit tests passing
 
 ### Step 4: Code Generator (@mcps/transpiler) ⚠️ PARTIALLY COMPLETED
 

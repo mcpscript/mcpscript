@@ -8,8 +8,9 @@
   "scripts": {
     "build": "npm run build:grammar && tsc",
     "build:grammar": "cd grammar && tree-sitter generate && node-gyp rebuild",
-    "test": "npm run test:grammar",
+    "test": "npm run test:grammar && npm run test:unit",
     "test:grammar": "cd grammar && tree-sitter test",
+    "test:unit": "vitest run",
     "dev": "tsc --watch",
     "clean": "rm -rf dist && rm -rf grammar/src && rm -rf grammar/build"
   },

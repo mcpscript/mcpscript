@@ -4,6 +4,8 @@
   "description": "Tree-sitter grammar for MCP Script",
   "main": "bindings/node",
   "dependencies": {
-    "nan": "^2.23.0"
+    "nan": "^2.23.0",
+    "node-addon-api": "^8.5.0",
+    "node-gyp-build": "^4.8.4"
   }
 }

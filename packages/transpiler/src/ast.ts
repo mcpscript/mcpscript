@@ -4,29 +4,81 @@ export interface ASTNode {
   type: string;
 }
 
+// Expression types
+export interface Identifier extends ASTNode {
+  type: 'identifier';
+  name: string;
+}
+
+export interface StringLiteral extends ASTNode {
+  type: 'string';
+  value: string;
+}
+
+export interface NumberLiteral extends ASTNode {
+  type: 'number';
+  value: number;
+}
+
+export interface BooleanLiteral extends ASTNode {
+  type: 'boolean';
+  value: boolean;
+}
+
+export interface ArrayLiteral extends ASTNode {
+  type: 'array';
+  elements: Expression[];
+}
+
+export interface ObjectLiteral extends ASTNode {
+  type: 'object';
+  properties: Property[];
+}
+
+export interface Property extends ASTNode {
+  type: 'property';
+  key: string;
+  value: Expression;
+}
+
+export interface CallExpression extends ASTNode {
+  type: 'call';
+  callee: Expression;
+  arguments: Expression[];
+}
+
+export interface MemberExpression extends ASTNode {
+  type: 'member';
+  object: Expression;
+  property: string;
+}
+
+export type Expression =
+  | Identifier
+  | StringLiteral
+  | NumberLiteral
+  | BooleanLiteral
+  | ArrayLiteral
+  | ObjectLiteral
+  | CallExpression
+  | MemberExpression;
+
+// Statement types
 export interface MCPDeclaration extends ASTNode {
   type: 'mcp_declaration';
   name: string;
-  command: string;
-  args: string[];
+  config: ObjectLiteral;
 }
 
 export interface Assignment extends ASTNode {
   type: 'assignment';
   variable: string;
-  value: string | ToolCall;
+  value: Expression;
 }
 
-export interface ToolCall extends ASTNode {
-  type: 'tool_call';
-  server: string;
-  tool: string;
-  args: string[];
+export interface ExpressionStatement extends ASTNode {
+  type: 'expression_statement';
+  expression: Expression;
 }
 
-export interface PrintStatement extends ASTNode {
-  type: 'print_statement';
-  variable: string;
-}
-
-export type Statement = MCPDeclaration | Assignment | PrintStatement;
+export type Statement = MCPDeclaration | Assignment | ExpressionStatement;
