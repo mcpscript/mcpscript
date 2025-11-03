@@ -80,152 +80,77 @@ mcp-script/
 - **Build**: tree-sitter CLI for grammar compilation
 - **Workspace**: npm workspaces for monorepo management
 
-### 3. Package Dependencies
-
-**Root workspace (`package.json`):**
-
-```json
-{
-  "name": "mcp-script",
-  "workspaces": ["packages/*"],
-  "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/node": "^20.0.0",
-    "tree-sitter-cli": "^0.20.0"
-  }
-}
-```
-
-**@mcps/runtime dependencies:**
-
-- `@modelcontextprotocol/sdk` - MCP client
-- No external runtime dependencies (keep it minimal)
-
-**@mcps/transpiler dependencies:**
-
-- `tree-sitter` - Parser runtime
-- `tree-sitter-mcpscript` - Generated grammar (internal)
-- `@mcps/runtime` - Runtime types
-
-**@mcps/cli dependencies:**
-
-- `@mcps/transpiler` - For transpilation
-- `@mcps/runtime` - For execution
-- `commander` - CLI framework (optional, can use basic process.argv)
-
-### 3. Tree-sitter Grammar
-
-The MVP supports only these 4 constructs:
-
-```javascript
-// grammar/grammar.js
-module.exports = grammar({
-  name: 'mcpscript',
-
-  rules: {
-    source_file: $ => repeat($.statement),
-
-    statement: $ => choice($.mcp_declaration, $.assignment, $.print_statement),
-
-    mcp_declaration: $ =>
-      seq(
-        'mcp',
-        $.identifier,
-        '{',
-        'command:',
-        $.string,
-        ',',
-        'args:',
-        '[',
-        optional($.string_list),
-        ']',
-        '}'
-      ),
-
-    assignment: $ => seq($.identifier, '=', choice($.string, $.tool_call)),
-
-    tool_call: $ => seq($.identifier, '.', $.identifier, '(', optional($.string_list), ')'),
-
-    print_statement: $ => seq('print', '(', $.identifier, ')'),
-
-    string_list: $ => seq($.string, repeat(seq(',', $.string))),
-
-    string: $ => /"[^"]*"/,
-
-    identifier: $ => /[a-zA-Z][a-zA-Z0-9]*/,
-  },
-});
-```
-
 ## Implementation Plan
 
-### Step 1: Monorepo Setup (1 day)
+### Step 1: Monorepo Setup ✅ COMPLETED
 
-1. **Initialize workspace**
+1. **Initialize workspace** ✅
    - Create root `package.json` with npm workspaces
    - Setup shared `tsconfig.json`
    - Create package directories: `packages/runtime/`, `packages/transpiler/`, `packages/cli/`
 
-2. **Package scaffolding**
+2. **Package scaffolding** ✅
    - Individual `package.json` files for each package
    - TypeScript configs extending root config
    - Basic `src/` and `dist/` structure
 
-### Step 2: Runtime Package (@mcps/runtime) (1 day)
+### Step 2: Runtime Package (@mcps/runtime) ✅ COMPLETED
 
-1. **Core runtime library** (`packages/runtime/`)
+1. **Core runtime library** ✅ (`packages/runtime/`)
    - MCP server connection management (`src/mcp.ts`)
    - Global functions (`src/globals.ts`) - `print()` for MVP
    - Runtime types (`src/types.ts`)
    - Main exports (`src/index.ts`)
 
-2. **Dependencies**
+2. **Dependencies** ✅
    - Install `@modelcontextprotocol/sdk`
    - Build setup with TypeScript
 
-### Step 3: Grammar & Parser (@mcps/transpiler) (2 days)
+### Step 3: Grammar & Parser (@mcps/transpiler) ⚠️ PARTIALLY COMPLETED
 
-1. **Tree-sitter grammar** (`packages/transpiler/grammar/`)
+1. **Tree-sitter grammar** ✅ (`packages/transpiler/grammar/`)
    - Define the 4 MVP constructs in `grammar.js`
    - Create grammar `package.json`
    - Test with `tree-sitter generate` and `tree-sitter parse`
+   - All 23 grammar tests passing
 
-2. **Parser integration** (`packages/transpiler/src/`)
-   - TypeScript wrapper around Tree-sitter (`parser.ts`)
-   - AST type definitions (`ast.ts`)
-   - Parse .mcps files into semantic AST
+2. **Parser integration** ⚠️ (`packages/transpiler/src/`)
+   - TypeScript wrapper around Tree-sitter (`parser.ts`) - Stub created, needs implementation
+   - AST type definitions (`ast.ts`) - Created
+   - Parse .mcps files into semantic AST - TODO
 
-### Step 4: Code Generator (@mcps/transpiler) (1 day)
+### Step 4: Code Generator (@mcps/transpiler) ⚠️ PARTIALLY COMPLETED
 
-1. **JavaScript generation** (`packages/transpiler/src/codegen.ts`)
-   - Transform AST to JavaScript modules
-   - Import from `@mcps/runtime`
-   - Generate async/await for MCP operations
+1. **JavaScript generation** ⚠️ (`packages/transpiler/src/codegen.ts`)
+   - Transform AST to JavaScript modules - TODO
+   - Import from `@mcps/runtime` - TODO
+   - Generate async/await for MCP operations - TODO
 
-2. **Transpiler exports** (`packages/transpiler/src/index.ts`)
+2. **Transpiler exports** ✅ (`packages/transpiler/src/index.ts`)
    - Export `parseFile()` and `generateCode()` functions
    - Export AST types
 
-### Step 5: CLI Package (@mcps/cli) (1 day)
+### Step 5: CLI Package (@mcps/cli) ⚠️ PARTIALLY COMPLETED
 
-1. **Command implementation** (`packages/cli/src/`)
-   - CLI entry point (`index.ts`)
-   - `mcps run` command (`run.ts`)
-   - Import from `@mcps/transpiler` and `@mcps/runtime`
+1. **Command implementation** ⚠️ (`packages/cli/src/`)
+   - CLI entry point (`index.ts`) - ✅ Created with commander
+   - `mcps run` command (`run.ts`) - Stub created, needs implementation
+   - `mcps build` command (`build.ts`) - Stub created, needs implementation
+   - Import from `@mcps/transpiler` and `@mcps/runtime` - TODO
 
-2. **CLI setup**
-   - Executable script (`bin/mcps`)
+2. **CLI setup** ✅
+   - Executable script (`bin/mcps.mjs`)
    - Proper shebang and module loading
-   - Process command line arguments
+   - Process command line arguments with commander
 
-### Step 6: Integration & Testing (1 day)
+### Step 6: Integration & Testing ❌ NOT STARTED
 
-1. **Build pipeline**
+1. **Build pipeline** ✅ (infrastructure ready)
    - Root build scripts that build all packages
    - Proper dependency order: runtime → transpiler → cli
-   - Link packages with `npm link` for development
+   - Packages linked via `file:` protocol
 
-2. **End-to-end testing**
+2. **End-to-end testing** ❌
    - Create example `hello.mcps`
    - Test `mcps run hello.mcps`
    - Verify MCP server connection and tool calls work
@@ -258,7 +183,10 @@ const transport = new StdioClientTransport({
   command: 'npx',
   args: ['-y', '@modelcontextprotocol/server-filesystem'],
 });
-const client = new Client({ name: 'mcps', version: '1.0.0' }, { capabilities: {} });
+const client = new Client(
+  { name: 'mcps', version: '1.0.0' },
+  { capabilities: {} }
+);
 await client.connect(transport);
 
 // Get available tools
@@ -266,7 +194,10 @@ const tools = await client.listTools();
 const filesystem = {};
 for (const tool of tools.tools) {
   filesystem[tool.name] = async (...args) => {
-    const result = await client.callTool({ name: tool.name, arguments: { ...args } });
+    const result = await client.callTool({
+      name: tool.name,
+      arguments: { ...args },
+    });
     return result.content;
   };
 }
