@@ -30,7 +30,8 @@ module.exports = grammar({
 
     argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
 
-    literal: $ => choice($.string, $.number, $.boolean, $.array_literal, $.object_literal),
+    literal: $ =>
+      choice($.string, $.number, $.boolean, $.array_literal, $.object_literal),
 
     array_literal: $ =>
       seq(
@@ -83,7 +84,17 @@ module.exports = grammar({
           /[0-7]{1,3}/ // Octal: \123
         )
       ),
-    number: _$ => /\d+(\.\d+)?/,
+    number: _$ =>
+      token(
+        choice(
+          // Scientific notation: 1e5, 2.5e-3, 1.2E+10
+          /\d+(\.\d+)?[eE][+-]?\d+/,
+          // Decimal numbers: 3.14, 0.5, .25
+          /\d*\.\d+/,
+          // Integers: 42, 0, 123
+          /\d+/
+        )
+      ),
     boolean: _$ => choice('true', 'false'),
     identifier: _$ => /[a-zA-Z_][a-zA-Z0-9_]*/,
   },

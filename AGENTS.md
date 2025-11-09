@@ -13,14 +13,6 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - **Testing**: Vitest for unit testing
 - **Build System**: TypeScript compiler with tree-sitter for grammar generation
 
-## Project Structure
-
-### Key Directories and Files
-
-- `packages/transpiler/grammar/` - Tree-sitter grammar definition
-
-## Development Guidelines
-
 ### Code Style and Formatting
 
 - Use Prettier with single quotes, 2-space indentation, trailing commas
@@ -59,3 +51,7 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - In `packages/transpiler`
   - `npm run build:grammar` - Generate tree-sitter grammar
 
+## Development Guidelines
+
+- After finishing implementing a feature, ALWAYS run tests and linting, and make sure they pass.
+- Do NOT write a big file explaining everything you did. Instead, just respond with a concise summary.

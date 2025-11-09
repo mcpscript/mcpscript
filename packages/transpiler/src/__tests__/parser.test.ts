@@ -55,6 +55,74 @@ describe('Parser', () => {
       expect((stmt.value as NumberLiteral).value).toBe(3.14);
     });
 
+    it('should parse decimal literals starting with dot', () => {
+      const statements = parseSource('x = .5');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      expect((stmt.value as NumberLiteral).value).toBe(0.5);
+    });
+
+    it('should parse scientific notation with lowercase e', () => {
+      const statements = parseSource(
+        'large = 1e5\nsmall = 2.5e-3\nprecise = 6.022e23'
+      );
+      expect(statements).toHaveLength(3);
+      expect((statements[0] as Assignment).value).toEqual({
+        type: 'number',
+        value: 1e5,
+      });
+      expect((statements[1] as Assignment).value).toEqual({
+        type: 'number',
+        value: 2.5e-3,
+      });
+      expect((statements[2] as Assignment).value).toEqual({
+        type: 'number',
+        value: 6.022e23,
+      });
+    });
+
+    it('should parse scientific notation with uppercase E', () => {
+      const statements = parseSource(
+        'large = 1E5\npositive = 1.23E+10\nnegative = 4.56E-7'
+      );
+      expect(statements).toHaveLength(3);
+      expect((statements[0] as Assignment).value).toEqual({
+        type: 'number',
+        value: 1e5,
+      });
+      expect((statements[1] as Assignment).value).toEqual({
+        type: 'number',
+        value: 1.23e10,
+      });
+      expect((statements[2] as Assignment).value).toEqual({
+        type: 'number',
+        value: 4.56e-7,
+      });
+    });
+
+    it('should parse zero in different formats', () => {
+      const statements = parseSource(
+        'zero1 = 0\nzero2 = 0.0\nzero3 = .0\nzero4 = 0e0'
+      );
+      expect(statements).toHaveLength(4);
+      expect((statements[0] as Assignment).value).toEqual({
+        type: 'number',
+        value: 0,
+      });
+      expect((statements[1] as Assignment).value).toEqual({
+        type: 'number',
+        value: 0.0,
+      });
+      expect((statements[2] as Assignment).value).toEqual({
+        type: 'number',
+        value: 0.0,
+      });
+      expect((statements[3] as Assignment).value).toEqual({
+        type: 'number',
+        value: 0,
+      });
+    });
+
     it('should parse boolean literals', () => {
       const statements = parseSource('x = true\ny = false');
       expect(statements).toHaveLength(2);

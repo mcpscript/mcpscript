@@ -1,0 +1,174 @@
+=====================================
+Integer literals
+=====================================
+
+value = 42
+zero = 0
+large = 123456
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number))))))
+
+=====================================
+Decimal literals
+=====================================
+
+pi = 3.14159
+half = 0.5
+fraction = .25
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number))))))
+
+=====================================
+Scientific notation with lowercase e
+=====================================
+
+large = 1e5
+small = 2.5e-3
+precise = 6.022e23
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number))))))
+
+=====================================
+Scientific notation with uppercase E
+=====================================
+
+large = 1E5
+positive = 1.23E+10
+negative = 4.56E-7
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (number))))))
+
+=====================================
+Numbers in arrays
+=====================================
+
+numbers = [42, 3.14, 1e5, 2.5e-3]
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (array_literal
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (number)))))))))
+
+=====================================
+Numbers in function calls
+=====================================
+
+result = calculate(42, 3.14, 1e-5)
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (number)))
+            (expression
+              (literal
+                (number)))))))))

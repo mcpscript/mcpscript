@@ -9,7 +9,9 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 export default defineConfig(
   globalIgnores([
     'dist/',
+    '**/dist/',
     'node_modules/',
+    '**/node_modules/',
     'packages/transpiler/grammar/src/',
     'packages/transpiler/grammar/bindings/',
   ]),

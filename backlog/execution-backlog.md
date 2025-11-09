@@ -18,7 +18,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Expand basic value types beyond strings**
 
-1. 🔲 **TODO** - Number literal parsing in grammar (integers, floats, scientific notation)
+1. ✅ **DONE** - Number literal parsing in grammar (integers, floats, scientific notation)
 2. 🔲 **TODO** - Boolean literal parsing in grammar (`true`, `false`)
 3. 🔲 **TODO** - Number literal generation in codegen
 4. 🔲 **TODO** - Boolean literal generation in codegen

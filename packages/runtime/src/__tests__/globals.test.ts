@@ -114,7 +114,15 @@ describe('globals', () => {
       const arr = [1, 2, 3];
       print('string', 42, true, null, undefined, obj, arr);
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('string', 42, true, null, undefined, obj, arr);
+      expect(consoleLogSpy).toHaveBeenCalledWith(
+        'string',
+        42,
+        true,
+        null,
+        undefined,
+        obj,
+        arr
+      );
     });
 
     it('should handle no arguments', () => {
