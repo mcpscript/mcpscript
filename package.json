@@ -15,7 +15,8 @@
     "dev": "npm run dev --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "mcps": "node packages/cli/bin/mcps.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",

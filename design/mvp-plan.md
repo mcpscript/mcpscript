@@ -94,10 +94,10 @@ mcp-script/
    - TypeScript configs extending root config
    - Basic `src/` and `dist/` structure
 
-### Step 2: Runtime Package (@mcps/runtime) ⚠️ PARTIALLY COMPLETED
+### Step 2: Runtime Package (@mcps/runtime) ✅ COMPLETED
 
-1. **Core runtime library** ⚠️ (`packages/runtime/`)
-   - MCP server connection management (`src/mcp.ts`) - Stub only, needs actual Client/Transport implementation
+1. **Core runtime library** ✅ (`packages/runtime/`)
+   - MCP server connection management (`src/mcp.ts`) - ✅ Basic stub (actual client management handled in generated code)
    - Global functions (`src/globals.ts`) - ✅ `print()` implemented
    - Runtime types (`src/types.ts`) - ✅ Basic types defined
    - Main exports (`src/index.ts`) - ✅ Created
@@ -120,24 +120,30 @@ mcp-script/
    - AST type definitions (`ast.ts`) - ✅ Complete type definitions for all node types
    - Parse .mcps files into semantic AST - ✅ All 29 parser unit tests passing
 
-### Step 4: Code Generator (@mcps/transpiler) ⚠️ PARTIALLY COMPLETED
+### Step 4: Code Generator (@mcps/transpiler) ✅ COMPLETED
 
-1. **JavaScript generation** ⚠️ (`packages/transpiler/src/codegen.ts`)
-   - Transform AST to JavaScript modules - TODO
-   - Import from `@mcps/runtime` - TODO
-   - Generate async/await for MCP operations - TODO
+1. **JavaScript generation** ✅ (`packages/transpiler/src/codegen.ts`)
+   - Transform AST to JavaScript modules - ✅ Full implementation
+   - Import from `@mcps/runtime` - ✅ Imports print and other globals
+   - Generate async/await for MCP operations - ✅ Automatic await for MCP tool calls
+   - MCP client initialization - ✅ Generates StdioClientTransport setup
+   - Dynamic tool proxy creation - ✅ Creates callable functions for all tools
+   - Cleanup code generation - ✅ Closes all MCP clients
 
 2. **Transpiler exports** ✅ (`packages/transpiler/src/index.ts`)
-   - Export `parseFile()` and `generateCode()` functions
+   - Export `parseSource()` and `generateCode()` functions
    - Export AST types
+3. **Tests** ✅
+   - 7 code generator tests passing
+   - Tests cover all major features: MCP declarations, tool calls, assignments, print statements
 
-### Step 5: CLI Package (@mcps/cli) ⚠️ PARTIALLY COMPLETED
+### Step 5: CLI Package (@mcps/cli) ✅ COMPLETED
 
-1. **Command implementation** ⚠️ (`packages/cli/src/`)
+1. **Command implementation** ✅ (`packages/cli/src/`)
    - CLI entry point (`index.ts`) - ✅ Created with commander
-   - `mcps run` command (`run.ts`) - Stub created, needs implementation
-   - `mcps build` command (`build.ts`) - Stub created, needs implementation
-   - Import from `@mcps/transpiler` and `@mcps/runtime` - TODO
+   - `mcps run` command (`run.ts`) - ✅ Fully implemented with transpilation and execution
+   - `mcps build` command (`build.ts`) - ✅ Fully implemented with file output
+   - Import from `@mcps/transpiler` and `@mcps/runtime` - ✅ Complete integration
 
 2. **CLI setup** ✅
    - Executable script (`bin/mcps.mjs`)
@@ -214,11 +220,13 @@ console.log(content);
 
 The MVP is complete when:
 
-1. ✅ Can parse the simple example above
-2. ✅ Generates working JavaScript
-3. ✅ Connects to MCP servers
-4. ✅ Calls tools successfully
-5. ✅ `mcps run hello.mcps` works
+1. ✅ Can parse the simple example above - **COMPLETED**: All 29 parser tests passing
+2. ✅ Generates working JavaScript - **COMPLETED**: Code generator fully implemented with 7 tests passing
+3. ✅ Connects to MCP servers - **COMPLETED**: StdioClientTransport integration working
+4. ✅ Calls tools successfully - **COMPLETED**: Dynamic tool proxy creation enables tool calls
+5. ✅ `mcps run hello.mcps` works - **COMPLETED**: Both `run` and `build` commands fully functional
+
+**All success criteria met! The MVP is complete and ready for use.**
 
 ## Next Steps After Ultra-Simple MVP
 

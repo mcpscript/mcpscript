@@ -1,0 +1,8 @@
+mcp filesystem {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+}
+
+message = "Hello from MCP Script!"
+print(message)
+print("MCP filesystem server is ready!")
