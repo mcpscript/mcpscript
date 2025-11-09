@@ -1,0 +1,123 @@
+=====================================
+Boolean true literal
+=====================================
+
+result = true
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (boolean))))))
+
+=====================================
+Boolean false literal
+=====================================
+
+result = false
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (boolean))))))
+
+=====================================
+Boolean literals in expressions
+=====================================
+
+flag1 = true
+flag2 = false
+callFunc(true, false)
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (boolean)))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (boolean)))))
+  (statement
+    (expression_statement
+      (expression
+        (call_expression
+          (expression
+            (identifier))
+          (argument_list
+            (expression
+              (literal
+                (boolean)))
+            (expression
+              (literal
+                (boolean)))))))))
+
+=====================================
+Boolean literals in object properties
+=====================================
+
+config = {
+  enabled: true,
+  debug: false
+}
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (object_literal
+            (property_list
+              (property
+                (identifier)
+                (expression
+                  (literal
+                    (boolean))))
+              (property
+                (identifier)
+                (expression
+                  (literal
+                    (boolean)))))))))))
+
+=====================================
+Boolean literals in arrays
+=====================================
+
+flags = [true, false, true]
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (literal
+          (array_literal
+            (expression
+              (literal
+                (boolean)))
+            (expression
+              (literal
+                (boolean)))
+            (expression
+              (literal
+                (boolean)))))))))
