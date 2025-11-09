@@ -42,13 +42,14 @@ MCP Script syntax is **inspired by TypeScript** but is **NOT a TypeScript supers
 
 ### Implementation Strategy
 
-MCP Script is implemented as a **transpiler to JavaScript**:
+MCP Script is implemented as a **VM-based interpreter**:
 
 - **Source language**: `.mcps` files with MCP-specific extensions
-- **Target language**: Standard JavaScript (ES modules)
+- **Execution model**: In-memory transpilation to JavaScript executed in Node.js VM sandbox
 - **Transpiler**: Written in TypeScript
-- **Runtime**: TypeScript-based runtime library (`mcps` package)
-- **Execution**: Transpiled code runs in JavaScript environments (Node.js, Bun, Deno)
+- **Runtime**: TypeScript-based runtime library with dependency injection
+- **Distribution**: Single CLI interpreter (`mcps run`) - no build step required
+- **Security**: Sandboxed execution with controlled access to system resources
 
 ### Quick Example
 
@@ -746,9 +747,49 @@ This design ensures that:
 
 ## 9. Execution Model
 
-### Script-Based Execution
+### VM-Based Interpreter
 
-MCP Script transpiles to JavaScript and follows **ES module semantics**. When you run a `.mcps` file, it's transpiled to `.js` and executed, with all top-level code running from top to bottom:
+MCP Script uses a **VM-based interpreter** with in-memory transpilation. When you run a `.mcps` file with `mcps run`, the following happens:
+
+1. **Parse**: Source code is parsed into an Abstract Syntax Tree (AST)
+2. **Transpile**: AST is transpiled to JavaScript in-memory (no files written)
+3. **Inject**: Runtime dependencies are injected into a Node.js VM context
+4. **Execute**: Generated JavaScript runs in a sandboxed VM environment
+
+### Dependency Injection
+
+The VM context is pre-populated with all required dependencies:
+
+```javascript
+// VM Context (automatically available, no imports needed)
+const context = {
+  // MCP SDK components
+  MCPClient: Client,                    // @modelcontextprotocol/sdk
+  StdioClientTransport: StdioClientTransport,
+  
+  // Runtime functions  
+  print: runtimeModule.print,           // @mcps/runtime
+  log: runtimeModule.log,
+  env: runtimeModule.env,
+  
+  // Selective Node.js APIs
+  console: console,
+  process: safeProcess,                 // Limited process object
+};
+```
+
+### Security & Sandboxing
+
+The VM execution provides controlled access to system resources:
+
+- **File system**: No direct access (must use MCP tools)
+- **Network**: No direct access (must use MCP tools) 
+- **Process**: Limited access (no arbitrary command execution)
+- **Modules**: No dynamic `require()` or `import()`
+
+### Generated Code Structure
+
+The transpiler generates JavaScript that assumes dependencies are globally available:
 
 ```mcps
 // Declarations (transpiled to runtime initialization)

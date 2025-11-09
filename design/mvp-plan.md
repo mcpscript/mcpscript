@@ -76,7 +76,8 @@ mcp-script/
 - **Parser**: Tree-sitter
 - **Grammar**: Tree-sitter grammar DSL
 - **MCP Client**: @modelcontextprotocol/sdk
-- **CLI**: Basic Node.js script
+- **CLI**: Node.js VM-based interpreter (no build step)
+- **Execution**: In-memory transpilation with sandboxed VM execution
 - **Build**: tree-sitter CLI for grammar compilation
 - **Workspace**: npm workspaces for monorepo management
 
@@ -137,18 +138,24 @@ mcp-script/
    - 7 code generator tests passing
    - Tests cover all major features: MCP declarations, tool calls, assignments, print statements
 
-### Step 5: CLI Package (@mcps/cli) ✅ COMPLETED
+### Step 5: CLI Package (@mcps/cli) 🔄 UPDATED TO VM-BASED APPROACH
 
 1. **Command implementation** ✅ (`packages/cli/src/`)
    - CLI entry point (`index.ts`) - ✅ Created with commander
-   - `mcps run` command (`run.ts`) - ✅ Fully implemented with transpilation and execution
-   - `mcps build` command (`build.ts`) - ✅ Fully implemented with file output
+   - `mcps run` command (`run.ts`) - 🔄 **UPDATED**: VM-based execution with dependency injection
+   - ~~`mcps build` command~~ - **REMOVED**: No longer needed (interpreter-only approach)
    - Import from `@mcps/transpiler` and `@mcps/runtime` - ✅ Complete integration
 
 2. **CLI setup** ✅
    - Executable script (`bin/mcps.mjs`)
    - Proper shebang and module loading
    - Process command line arguments with commander
+
+3. **VM Execution Model** 🆕 **NEW**
+   - In-memory transpilation to JavaScript
+   - Node.js VM sandbox with injected dependencies
+   - No temporary files or build artifacts
+   - Runtime and MCP SDK available as globals in VM context
 
 ### Step 6: Integration & Testing ❌ NOT STARTED
 
@@ -179,24 +186,28 @@ content = filesystem.readFile("greeting.txt")
 print(content)
 ```
 
-Expected JavaScript output:
+Expected JavaScript execution (in VM sandbox):
 
 ```javascript
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+// VM Context has pre-injected dependencies:
+// - MCPClient (from @modelcontextprotocol/sdk)
+// - StdioClientTransport (from @modelcontextprotocol/sdk)
+// - print (from @mcps/runtime)
+// - console, process (selective Node.js APIs)
 
+// Generated code (no imports needed):
 // Connect to filesystem MCP server
 const transport = new StdioClientTransport({
   command: 'npx',
   args: ['-y', '@modelcontextprotocol/server-filesystem'],
 });
-const client = new Client(
+const client = new MCPClient(
   { name: 'mcps', version: '1.0.0' },
   { capabilities: {} }
 );
 await client.connect(transport);
 
-// Get available tools
+// Get available tools and create proxy
 const tools = await client.listTools();
 const filesystem = {};
 for (const tool of tools.tools) {
@@ -209,11 +220,11 @@ for (const tool of tools.tools) {
   };
 }
 
-// Generated code
+// Generated user code
 let message = 'Hello from MCP Script!';
 await filesystem.writeFile('greeting.txt', message);
 let content = await filesystem.readFile('greeting.txt');
-console.log(content);
+print(content); // Uses injected print function
 ```
 
 ## Success Criteria
