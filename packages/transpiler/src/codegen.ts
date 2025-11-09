@@ -63,14 +63,14 @@ ${serverInits.join('\n\n')}`;
  * Generate initialization code for a single MCP server
  */
 function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
-  const config = extractObjectProperties(decl.config);
+  const config = extractObjectValues(decl.config);
 
   // Smart transport detection with SSE fallback
   let transportCode: string;
   let fallbackCode = '';
 
   if (config.url) {
-    const url = config.url;
+    const url = JSON.stringify(config.url);
 
     if (url.includes('ws://') || url.includes('wss://')) {
       // WebSocket transport
@@ -87,13 +87,8 @@ function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
     __mcpClients.${name} = __${name}_client;`;
     }
   } else if (config.command) {
-    // Stdio transport
-    const command = config.command || '""';
-    const args = config.args || '[]';
-    transportCode = `new StdioClientTransport({
-  command: ${command},
-  args: ${args}
-})`;
+    // Stdio transport - pass entire config object
+    transportCode = `new StdioClientTransport(${serializeConfigObject(config)})`;
   } else {
     throw new Error(
       `Invalid MCP configuration for ${name}: must specify either 'url' or 'command'`
@@ -196,14 +191,65 @@ for (const client of Object.values(__mcpClients)) {
 }
 
 /**
- * Extract object properties as a map of key to generated expression code
+ * Serialize a config object as JavaScript code (not JSON)
  */
-function extractObjectProperties(obj: ObjectLiteral): Record<string, string> {
-  const props: Record<string, string> = {};
+function serializeConfigObject(obj: unknown): string {
+  if (obj === null) return 'null';
+  if (obj === undefined) return 'undefined';
+  if (typeof obj === 'string') return JSON.stringify(obj);
+  if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+  if (Array.isArray(obj)) {
+    return '[' + obj.map(item => serializeConfigObject(item)).join(', ') + ']';
+  }
+  if (typeof obj === 'object') {
+    const pairs = Object.entries(obj).map(([key, value]) => {
+      // Use quoted key if it's not a valid identifier or contains special chars
+      const quotedKey = /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(key)
+        ? key
+        : JSON.stringify(key);
+      return `${quotedKey}: ${serializeConfigObject(value)}`;
+    });
+    return '{' + pairs.join(', ') + '}';
+  }
+  return 'undefined';
+}
+
+/**
+ * Extract object properties as a map of key to actual JavaScript values
+ */
+function extractObjectValues(obj: ObjectLiteral): Record<string, unknown> {
+  const props: Record<string, unknown> = {};
   for (const prop of obj.properties) {
-    props[prop.key] = generateExpression(prop.value);
+    props[prop.key] = extractValue(prop.value);
   }
   return props;
+}
+
+/**
+ * Extract actual JavaScript value from an AST expression
+ */
+function extractValue(expr: Expression): unknown {
+  switch (expr.type) {
+    case 'string':
+      return (expr as StringLiteral).value;
+    case 'number':
+      return (expr as NumberLiteral).value;
+    case 'boolean':
+      return (expr as BooleanLiteral).value;
+    case 'array':
+      return (expr as ArrayLiteral).elements.map(extractValue);
+    case 'object': {
+      const obj: Record<string, unknown> = {};
+      for (const prop of (expr as ObjectLiteral).properties) {
+        obj[prop.key] = extractValue(prop.value);
+      }
+      return obj;
+    }
+    case 'identifier':
+      return (expr as Identifier).name; // Return identifier name as string
+    default:
+      return undefined;
+  }
 }
 
 /**

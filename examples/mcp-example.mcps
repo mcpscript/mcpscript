@@ -1,6 +1,7 @@
 mcp filesystem {
   command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+  args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+  stderr: "ignore"
 }
 
 message = "Hello from MCP Script!"
