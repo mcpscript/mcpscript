@@ -85,6 +85,6 @@ module.exports = grammar({
       ),
     number: _$ => /\d+(\.\d+)?/,
     boolean: _$ => choice('true', 'false'),
-    identifier: _$ => /[a-zA-Z][a-zA-Z0-9]*/,
+    identifier: _$ => /[a-zA-Z_][a-zA-Z0-9_]*/,
   },
 });

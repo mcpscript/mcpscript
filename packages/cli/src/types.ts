@@ -2,9 +2,5 @@
 
 export interface RunOptions {
   file: string;
-}
-
-export interface BuildOptions {
-  file: string;
-  output: string;
+  timeout?: number;
 }

@@ -13,8 +13,6 @@ print(message)
     const ast = parseSource(source);
     const code = generateCode(ast);
 
-    expect(code).toContain('import { Client }');
-    expect(code).toContain('import { print }');
     expect(code).toContain('let message = "Hello World";');
     expect(code).toContain('print(message);');
   });
@@ -82,10 +80,9 @@ print(content)
     const ast = parseSource(source);
     const code = generateCode(ast);
 
-    // Check imports
-    expect(code).toContain('import { Client }');
-    expect(code).toContain('import { StdioClientTransport }');
-    expect(code).toContain('import { print }');
+    // Check MCP initialization
+    expect(code).toContain('// Initialize MCP clients');
+    expect(code).toContain('const __mcpClients = {}');
 
     // Check MCP setup
     expect(code).toContain('const filesystem = {}');

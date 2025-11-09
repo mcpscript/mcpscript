@@ -29,9 +29,6 @@ export function generateCode(statements: Statement[]): string {
     }
   }
 
-  // Generate imports
-  const imports = generateImports();
-
   // Generate MCP client initialization
   const mcpInit =
     mcpServers.size > 0 ? generateMCPInitialization(mcpServers) : '';
@@ -43,16 +40,7 @@ export function generateCode(statements: Statement[]): string {
   const cleanup = mcpServers.size > 0 ? generateCleanup() : '';
 
   // Combine all parts
-  return [imports, mcpInit, mainCode, cleanup].filter(Boolean).join('\n\n');
-}
-
-/**
- * Generate import statements
- */
-function generateImports(): string {
-  return `import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { print } from '@mcps/runtime';`;
+  return [mcpInit, mainCode, cleanup].filter(Boolean).join('\n\n');
 }
 
 /**
@@ -76,31 +64,97 @@ ${serverInits.join('\n\n')}`;
  */
 function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
   const config = extractObjectProperties(decl.config);
-  const command = config.command || '""';
-  const args = config.args || '[]';
 
-  return `// Connect to ${name} MCP server
-const __${name}_transport = new StdioClientTransport({
+  // Smart transport detection with SSE fallback
+  let transportCode: string;
+  let fallbackCode = '';
+
+  if (config.url) {
+    const url = config.url;
+
+    if (url.includes('ws://') || url.includes('wss://')) {
+      // WebSocket transport
+      transportCode = `new WebSocketClientTransport(new URL(${url}))`;
+    } else {
+      // HTTP transport with SSE fallback
+      transportCode = `new StreamableHTTPClientTransport(new URL(${url}))`;
+      fallbackCode = `
+  } catch (httpError) {
+    // Fallback to SSE transport for backwards compatibility
+    console.log('StreamableHTTP connection failed, falling back to SSE transport');
+    const __${name}_sseTransport = new SSEClientTransport(new URL(${url}));
+    await __${name}_client.connect(__${name}_sseTransport);
+    __mcpClients.${name} = __${name}_client;`;
+    }
+  } else if (config.command) {
+    // Stdio transport
+    const command = config.command || '""';
+    const args = config.args || '[]';
+    transportCode = `new StdioClientTransport({
   command: ${command},
   args: ${args}
-});
+})`;
+  } else {
+    throw new Error(
+      `Invalid MCP configuration for ${name}: must specify either 'url' or 'command'`
+    );
+  }
 
-const __${name}_client = new Client({
+  const clientSetup = fallbackCode
+    ? `try {
+    const __${name}_transport = ${transportCode};
+    await __${name}_client.connect(__${name}_transport);
+    __mcpClients.${name} = __${name}_client;${fallbackCode}
+  }`
+    : `const __${name}_transport = ${transportCode};
+await __${name}_client.connect(__${name}_transport);
+__mcpClients.${name} = __${name}_client;`;
+
+  return `// Connect to ${name} MCP server
+const __${name}_client = new MCPClient({
   name: 'mcps',
   version: '1.0.0'
+}, {
+  capabilities: {}
 });
 
-await __${name}_client.connect(__${name}_transport);
-__mcpClients.${name} = __${name}_client;
+${clientSetup}
 
 // Create tool proxy for ${name}
 const ${name} = {};
 const __${name}_tools = await __${name}_client.listTools();
 for (const tool of __${name}_tools.tools) {
   ${name}[tool.name] = async (...args) => {
+    let toolArgs;
+
+    // If single object argument, use as-is (explicit parameter object)
+    if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])) {
+      toolArgs = args[0];
+    } else {
+      // Get tool schema to map positional args to named parameters
+      const toolInfo = __${name}_tools.tools.find(t => t.name === tool.name);
+      const inputSchema = toolInfo?.inputSchema;
+
+      if (inputSchema && inputSchema.properties) {
+        // Map positional arguments to schema parameter names
+        const paramNames = Object.keys(inputSchema.properties);
+        toolArgs = {};
+        paramNames.forEach((paramName, index) => {
+          if (index < args.length) {
+            toolArgs[paramName] = args[index];
+          }
+        });
+      } else {
+        // Fallback: use generic numbered parameters if no schema
+        toolArgs = Object.fromEntries(
+          args.map((arg, index) => [\`arg\${index}\`, arg])
+        );
+      }
+    }
+
     const result = await __${name}_client.callTool({
       name: tool.name,
-      arguments: args.length === 1 && typeof args[0] === 'object' ? args[0] : { args }
+      arguments: toolArgs
     });
     return result.content[0]?.type === 'text' ? result.content[0].text : result.content;
   };

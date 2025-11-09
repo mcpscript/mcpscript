@@ -1,7 +1,7 @@
 // @mcps/cli - Command line interface
 import { Command } from 'commander';
-import { runCommand, buildCommand } from './commands/index.js';
-import type { RunOptions, BuildOptions } from './types.js';
+import { runCommand } from './commands/index.js';
+import type { RunOptions } from './types.js';
 import packageJson from '../package.json' with { type: 'json' };
 
 export async function main(args: string[]): Promise<void> {
@@ -15,18 +15,23 @@ export async function main(args: string[]): Promise<void> {
   program
     .command('run <file>')
     .description('Run a MCP Script file')
-    .action(async (file: string) => {
-      const options: RunOptions = { file };
-      await runCommand(options);
-    });
+    .option(
+      '-t, --timeout <ms>',
+      'execution timeout in milliseconds (0 = no timeout)',
+      '30000'
+    )
+    .action(async (file: string, cmdOptions: { timeout: string }) => {
+      const timeout = parseInt(cmdOptions.timeout, 10);
+      if (isNaN(timeout) || timeout < 0) {
+        console.error('Error: timeout must be a non-negative number');
+        process.exit(1);
+      }
 
-  program
-    .command('build <file>')
-    .description('Build a MCP Script file to JavaScript')
-    .option('-o, --output <path>', 'output directory', './dist')
-    .action(async (file: string, options: { output: string }) => {
-      const buildOptions: BuildOptions = { file, output: options.output };
-      await buildCommand(buildOptions);
+      const options: RunOptions = {
+        file,
+        timeout: timeout === 0 ? 0 : timeout,
+      };
+      await runCommand(options);
     });
 
   await program.parseAsync(args, { from: 'user' });
