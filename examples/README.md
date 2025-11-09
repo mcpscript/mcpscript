@@ -36,12 +36,16 @@ node dist/hello.mjs
 ## Available Examples
 
 ### hello.mcps
+
 A simple "Hello World" example that demonstrates:
+
 - Variable assignment
 - The `print()` function
 
 ### mcp-example.mcps
+
 An example that demonstrates:
+
 - MCP server declaration and connection
 - Using the MCP filesystem server
 - Basic MCP integration
@@ -51,6 +55,7 @@ An example that demonstrates:
 MCP Script files use the `.mcps` extension and support:
 
 1. **Variable Assignment**
+
    ```mcps
    message = "Hello"
    number = 42
@@ -58,6 +63,7 @@ MCP Script files use the `.mcps` extension and support:
    ```
 
 2. **MCP Server Declaration**
+
    ```mcps
    mcp servername {
      command: "npx",
@@ -66,11 +72,13 @@ MCP Script files use the `.mcps` extension and support:
    ```
 
 3. **MCP Tool Calls**
+
    ```mcps
    result = servername.toolname(arg1, arg2)
    ```
 
 4. **Print Statements**
+
    ```mcps
    print("Hello", "World")
    print(variable)

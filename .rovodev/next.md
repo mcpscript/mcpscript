@@ -1,1 +1,4 @@
-Look at backlog/execution-backlog.md. Implement only the immediate next pending work item, cover it with test cases, make sure all tests pass, and then update execution backlog to mark it done.
+- Look at the full content of backlog/execution-backlog.md
+- Implement only the immediate next pending work item, cover it with test cases, make sure all tests pass
+- Run "npm run format" and "npm run lint" and ensure no issues
+- Update execution backlog to mark it done

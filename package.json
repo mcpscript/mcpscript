@@ -16,6 +16,7 @@
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
     "mcps": "node packages/cli/bin/mcps.mjs"
   },
   "devDependencies": {

@@ -764,17 +764,17 @@ The VM context is pre-populated with all required dependencies:
 // VM Context (automatically available, no imports needed)
 const context = {
   // MCP SDK components
-  MCPClient: Client,                    // @modelcontextprotocol/sdk
+  MCPClient: Client, // @modelcontextprotocol/sdk
   StdioClientTransport: StdioClientTransport,
-  
-  // Runtime functions  
-  print: runtimeModule.print,           // @mcps/runtime
+
+  // Runtime functions
+  print: runtimeModule.print, // @mcps/runtime
   log: runtimeModule.log,
   env: runtimeModule.env,
-  
+
   // Selective Node.js APIs
   console: console,
-  process: safeProcess,                 // Limited process object
+  process: safeProcess, // Limited process object
 };
 ```
 
@@ -783,7 +783,7 @@ const context = {
 The VM execution provides controlled access to system resources:
 
 - **File system**: No direct access (must use MCP tools)
-- **Network**: No direct access (must use MCP tools) 
+- **Network**: No direct access (must use MCP tools)
 - **Process**: Limited access (no arbitrary command execution)
 - **Modules**: No dynamic `require()` or `import()`
 

@@ -20,8 +20,8 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 1. ✅ **DONE** - Number literal parsing in grammar (integers, floats, scientific notation)
 2. ✅ **DONE** - Boolean literal parsing in grammar (`true`, `false`)
-3. 🔲 **TODO** - Number literal generation in codegen
-4. 🔲 **TODO** - Boolean literal generation in codegen
+3. ✅ **DONE** - Number literal generation in codegen
+4. ✅ **DONE** - Boolean literal generation in codegen
 5. 🔲 **TODO** - Number and boolean runtime tests
 
 **→ Complete Phase 1 before Phase 2**
@@ -290,4 +290,3 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Docker containers for isolated execution
 - 🔲 **TODO** - Web-based playground for learning
 - 🔲 **TODO** - Integration with popular workflow engines
-

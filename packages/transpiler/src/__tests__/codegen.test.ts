@@ -208,4 +208,47 @@ mcp server { command: "test", timeout: 5000, retries: 3 }
     expect(code).toContain('let result = calculate(42, 3.14, 0.00001);');
     expect(code).toContain('timeout: 5000, retries: 3');
   });
+
+  it('should generate code for boolean literals', () => {
+    const source = `
+isEnabled = true
+isDisabled = false
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let isEnabled = true;');
+    expect(code).toContain('let isDisabled = false;');
+  });
+
+  it('should generate code for booleans in arrays and objects', () => {
+    const source = `
+flags = [true, false, true]
+config = { enabled: true, debug: false, verbose: true }
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let flags = [true, false, true];');
+    expect(code).toContain(
+      'let config = { enabled: true, debug: false, verbose: true };'
+    );
+  });
+
+  it('should generate code for booleans in function calls', () => {
+    const source = `
+result = processData("input", 42, true, false)
+mcp server { command: "test", enabled: true, debug: false }
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain(
+      'let result = processData("input", 42, true, false);'
+    );
+    expect(code).toContain('enabled: true, debug: false');
+  });
 });
