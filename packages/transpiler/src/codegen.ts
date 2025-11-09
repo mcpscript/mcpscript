@@ -60,50 +60,92 @@ ${serverInits.join('\n\n')}`;
 }
 
 /**
- * Generate initialization code for a single MCP server
+ * Generate transport connection code for an MCP server
  */
-function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
-  const config = extractObjectValues(decl.config);
-
-  // Smart transport detection with SSE fallback
-  let transportCode: string;
-  let fallbackCode = '';
-
+function generateTransportConnection(
+  name: string,
+  config: Record<string, unknown>
+): string {
   if (config.url) {
-    const url = JSON.stringify(config.url);
-
-    if (url.includes('ws://') || url.includes('wss://')) {
-      // WebSocket transport
-      transportCode = `new WebSocketClientTransport(new URL(${url}))`;
-    } else {
-      // HTTP transport with SSE fallback
-      transportCode = `new StreamableHTTPClientTransport(new URL(${url}))`;
-      fallbackCode = `
-  } catch (httpError) {
-    // Fallback to SSE transport for backwards compatibility
-    console.log('StreamableHTTP connection failed, falling back to SSE transport');
-    const __${name}_sseTransport = new SSEClientTransport(new URL(${url}));
-    await __${name}_client.connect(__${name}_sseTransport);
-    __mcpClients.${name} = __${name}_client;`;
-    }
+    return generateWebTransportConnection(name, config);
   } else if (config.command) {
-    // Stdio transport - pass entire config object
-    transportCode = `new StdioClientTransport(${serializeConfigObject(config)})`;
+    return generateStdioTransportConnection(name, config);
   } else {
     throw new Error(
       `Invalid MCP configuration for ${name}: must specify either 'url' or 'command'`
     );
   }
+}
 
-  const clientSetup = fallbackCode
-    ? `try {
-    const __${name}_transport = ${transportCode};
-    await __${name}_client.connect(__${name}_transport);
-    __mcpClients.${name} = __${name}_client;${fallbackCode}
-  }`
-    : `const __${name}_transport = ${transportCode};
+/**
+ * Generate transport options (excluding URL) for web transports
+ */
+function generateTransportOptions(
+  config: Record<string, unknown>
+): string | null {
+  // Extract all options except 'url'
+  const { url, ...options } = config;
+
+  // If no additional options, return null
+  if (Object.keys(options).length === 0) {
+    return null;
+  }
+
+  // Serialize the options object
+  return serializeConfigObject(options);
+}
+
+/**
+ * Generate web-based transport connection (HTTP/WebSocket) with SSE fallback
+ */
+function generateWebTransportConnection(
+  name: string,
+  config: Record<string, unknown>
+): string {
+  const url = JSON.stringify(config.url);
+  const transportOptions = generateTransportOptions(config);
+
+  if (url.includes('ws://') || url.includes('wss://')) {
+    // WebSocket transport (no fallback needed)
+    const wsOptions = transportOptions ? `, ${transportOptions}` : '';
+    return `const __${name}_transport = new WebSocketClientTransport(new URL(${url})${wsOptions});
 await __${name}_client.connect(__${name}_transport);
 __mcpClients.${name} = __${name}_client;`;
+  } else {
+    // HTTP transport with SSE fallback
+    const httpOptions = transportOptions ? `, ${transportOptions}` : '';
+    return `try {
+  const __${name}_transport = new StreamableHTTPClientTransport(new URL(${url})${httpOptions});
+  await __${name}_client.connect(__${name}_transport);
+  __mcpClients.${name} = __${name}_client;
+} catch (httpError) {
+  // Fallback to SSE transport for backwards compatibility
+  console.log('StreamableHTTP connection failed, falling back to SSE transport');
+  const __${name}_sseTransport = new SSEClientTransport(new URL(${url})${httpOptions});
+  await __${name}_client.connect(__${name}_sseTransport);
+  __mcpClients.${name} = __${name}_client;
+}`;
+  }
+}
+
+/**
+ * Generate stdio transport connection
+ */
+function generateStdioTransportConnection(
+  name: string,
+  config: Record<string, unknown>
+): string {
+  return `const __${name}_transport = new StdioClientTransport(${serializeConfigObject(config)});
+await __${name}_client.connect(__${name}_transport);
+__mcpClients.${name} = __${name}_client;`;
+}
+
+/**
+ * Generate initialization code for a single MCP server
+ */
+function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
+  const config = extractObjectValues(decl.config);
+  const connectionCode = generateTransportConnection(name, config);
 
   return `// Connect to ${name} MCP server
 const __${name}_client = new MCPClient({
@@ -113,7 +155,7 @@ const __${name}_client = new MCPClient({
   capabilities: {}
 });
 
-${clientSetup}
+${connectionCode}
 
 // Create tool proxy for ${name}
 const ${name} = {};
