@@ -80,12 +80,12 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add observability and configuration**
 
-- 🔲 **TODO** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
-- 🔲 **TODO** - Environment variable access (`env.API_KEY`)
-- 🔲 **TODO** - Log message formatting with data objects
-- 🔲 **TODO** - Logging system injection in codegen
-- 🔲 **TODO** - Environment variable injection in codegen
-- 🔲 **TODO** - Runtime enhancement tests
+- ✅ **DONE** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
+- ✅ **DONE** - Environment variable access (`env.API_KEY`)
+- ✅ **DONE** - Log message formatting with data objects
+- ✅ **DONE** - Logging system injection in codegen
+- ✅ **DONE** - Environment variable injection in codegen
+- ✅ **DONE** - Runtime enhancement tests
 
 **→ Complete Phase 5 before Phase 6**
 

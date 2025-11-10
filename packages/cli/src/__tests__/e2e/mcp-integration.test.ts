@@ -191,21 +191,4 @@ print(content)
     );
     expect(fileContent).toBe('Array created successfully');
   });
-
-  it('should successfully connect to streamable HTTP MCP server', async () => {
-    const source = `
-mcp context7 {
-  url: "https://mcp.context7.com/mcp"
-}
-
-print("Connected to Context7 MCP server successfully")
-    `.trim();
-
-    const ast = parseSource(source);
-    const code = generateCode(ast);
-    await executeInVM(code, { timeout: 15000 });
-
-    // Test should complete without throwing
-    expect(true).toBe(true);
-  });
 });

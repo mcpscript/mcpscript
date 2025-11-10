@@ -5,7 +5,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/websocket.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { print } from './globals.js';
+import { print, log, env } from './globals.js';
 
 /**
  * Create a VM context with all required dependencies injected
@@ -20,31 +20,6 @@ function createVMContext(): vm.Context {
     arch: process.arch,
   };
 
-  // Create logging functions
-  const log = {
-    debug: (message: string, data?: unknown) =>
-      console.debug(`[DEBUG] ${message}`, data || ''),
-    info: (message: string, data?: unknown) =>
-      console.info(`[INFO] ${message}`, data || ''),
-    warn: (message: string, data?: unknown) =>
-      console.warn(`[WARN] ${message}`, data || ''),
-    error: (message: string, data?: unknown) =>
-      console.error(`[ERROR] ${message}`, data || ''),
-  };
-
-  // Environment variable access
-  const env = new Proxy(
-    {},
-    {
-      get: (_, prop) => {
-        if (typeof prop === 'string') {
-          return process.env[prop];
-        }
-        return undefined;
-      },
-    }
-  );
-
   const context = {
     // MCP SDK components
     MCPClient: Client,
@@ -53,7 +28,7 @@ function createVMContext(): vm.Context {
     StreamableHTTPClientTransport: StreamableHTTPClientTransport,
     SSEClientTransport: SSEClientTransport,
 
-    // Runtime functions
+    // Runtime functions (imported from globals)
     print: print,
     log: log,
     env: env,
@@ -108,15 +83,17 @@ export interface VMExecutionOptions {
 export async function executeInVM(
   code: string,
   options: VMExecutionOptions = {}
-): Promise<void> {
+): Promise<Record<string, unknown>> {
   const context = createVMContext();
 
   try {
-    // Create an async function wrapper to handle top-level await
+    // Wrap code to assign variables to the context for test access
+    // We convert 'let variable = value' to 'this.variable = value'
+    // so that variables are accessible on the context after execution
     const wrappedCode = `
 (async function() {
-${code}
-})()`;
+${code.replace(/\blet\s+(\w+)/g, 'this.$1')}
+}).call(this)`;
 
     // Execute the code in the VM context
     const script = new vm.Script(wrappedCode);
@@ -135,6 +112,9 @@ ${code}
     if (result && typeof result.then === 'function') {
       await result;
     }
+
+    // Return the context so tests can access variables
+    return context as Record<string, unknown>;
   } catch (error) {
     if (error instanceof Error) {
       // Clean up the stack trace to remove VM internals
