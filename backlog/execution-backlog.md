@@ -48,8 +48,8 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Object literal syntax parsing (`{ key: "value", num: 42 }`)
 - ✅ **DONE** - Array/object literal generation in codegen
 - ✅ **DONE** - Array indexing parsing (`array[0]`)
-- 🔲 **TODO** - Object property access parsing (`obj.property`, `obj["key"]`)
-- 🔲 **TODO** - Member access generation in codegen
+- ✅ **DONE** - Object property access parsing (`obj.property`, `obj["key"]`)
+- ✅ **DONE** - Member access generation in codegen
 - 🔲 **TODO** - Array assignment (`array[0] = value`)
 - 🔲 **TODO** - Object property assignment (`obj.property = value`)
 - 🔲 **TODO** - Collection runtime tests

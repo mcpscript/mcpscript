@@ -398,14 +398,18 @@ function generateObjectLiteral(expr: ObjectLiteral): string {
  * Generate code for a call expression
  */
 function generateCallExpression(expr: CallExpression): string {
-  const callee = generateExpression(expr.callee);
   const args = expr.arguments.map(generateExpression);
 
   // Check if this is a member call that needs await
   if (expr.callee.type === 'member') {
+    // For member calls, generate the callee without await in the member expression
+    const callee = generateMemberExpressionForCall(
+      expr.callee as MemberExpression
+    );
     return `await ${callee}(${args.join(', ')})`;
   }
 
+  const callee = generateExpression(expr.callee);
   return `${callee}(${args.join(', ')})`;
 }
 
@@ -414,6 +418,31 @@ function generateCallExpression(expr: CallExpression): string {
  */
 function generateMemberExpression(expr: MemberExpression): string {
   const object = generateExpression(expr.object);
+  return `${object}.${expr.property}`;
+}
+
+/**
+ * Generate code for a member expression in a call context
+ * This avoids adding await to intermediate calls in a chain
+ */
+function generateMemberExpressionForCall(expr: MemberExpression): string {
+  let object: string;
+
+  // If the object is a call expression with a member callee, generate it without await
+  if (
+    expr.object.type === 'call' &&
+    (expr.object as CallExpression).callee.type === 'member'
+  ) {
+    const callExpr = expr.object as CallExpression;
+    const callee = generateMemberExpressionForCall(
+      callExpr.callee as MemberExpression
+    );
+    const args = callExpr.arguments.map(generateExpression);
+    object = `${callee}(${args.join(', ')})`;
+  } else {
+    object = generateExpression(expr.object);
+  }
+
   return `${object}.${expr.property}`;
 }
 

@@ -5,6 +5,7 @@ import {
   Assignment,
   CallExpression,
   MemberExpression,
+  BracketExpression,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -95,6 +96,253 @@ describe('Parser - Expressions', () => {
       expect(inner.type).toBe('member');
       expect((inner.object as Identifier).name).toBe('a');
       expect(inner.property).toBe('b');
+    });
+  });
+
+  describe('Bracket Expressions', () => {
+    it('should parse simple bracket access with string key', () => {
+      const statements = parseSource('x = obj["key"]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('obj');
+      expect((bracket.index as StringLiteral).value).toBe('key');
+    });
+
+    it('should parse array indexing with number', () => {
+      const statements = parseSource('item = arr[0]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('arr');
+      expect((bracket.index as NumberLiteral).value).toBe(0);
+    });
+
+    it('should parse dynamic property access with variable', () => {
+      const statements = parseSource('value = obj[key]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('obj');
+      expect((bracket.index as Identifier).name).toBe('key');
+    });
+
+    it('should parse bracket access with expression index', () => {
+      const statements = parseSource('value = arr[index + 1]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('arr');
+      const indexExpr = bracket.index as BinaryExpression;
+      expect(indexExpr.type).toBe('binary');
+      expect(indexExpr.operator).toBe('+');
+      expect((indexExpr.left as Identifier).name).toBe('index');
+      expect((indexExpr.right as NumberLiteral).value).toBe(1);
+    });
+
+    it('should parse nested bracket expressions', () => {
+      const statements = parseSource('value = matrix[row][col]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const outer = stmt.value as BracketExpression;
+      expect(outer.type).toBe('bracket');
+      expect((outer.index as Identifier).name).toBe('col');
+
+      const inner = outer.object as BracketExpression;
+      expect(inner.type).toBe('bracket');
+      expect((inner.object as Identifier).name).toBe('matrix');
+      expect((inner.index as Identifier).name).toBe('row');
+    });
+
+    it('should parse bracket access with boolean expression', () => {
+      const statements = parseSource('value = obj[key == "test"]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('obj');
+      const indexExpr = bracket.index as BinaryExpression;
+      expect(indexExpr.type).toBe('binary');
+      expect(indexExpr.operator).toBe('==');
+      expect((indexExpr.left as Identifier).name).toBe('key');
+      expect((indexExpr.right as StringLiteral).value).toBe('test');
+    });
+
+    it('should parse bracket access with special characters in string key', () => {
+      const statements = parseSource('value = obj["special-key"]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('obj');
+      expect((bracket.index as StringLiteral).value).toBe('special-key');
+    });
+
+    it('should parse bracket method calls', () => {
+      const statements = parseSource('result = obj["method"](arg)');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const call = stmt.value as CallExpression;
+      expect(call.type).toBe('call');
+
+      const bracket = call.callee as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('obj');
+      expect((bracket.index as StringLiteral).value).toBe('method');
+      expect(call.arguments).toHaveLength(1);
+      expect((call.arguments[0] as Identifier).name).toBe('arg');
+    });
+  });
+
+  describe('Mixed Access Patterns', () => {
+    it('should parse member access followed by bracket access', () => {
+      const statements = parseSource('value = obj.items[0]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const bracket = stmt.value as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.index as NumberLiteral).value).toBe(0);
+
+      const member = bracket.object as MemberExpression;
+      expect(member.type).toBe('member');
+      expect((member.object as Identifier).name).toBe('obj');
+      expect(member.property).toBe('items');
+    });
+
+    it('should parse bracket access followed by member access', () => {
+      const statements = parseSource('value = data["config"].settings');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const member = stmt.value as MemberExpression;
+      expect(member.type).toBe('member');
+      expect(member.property).toBe('settings');
+
+      const bracket = member.object as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('data');
+      expect((bracket.index as StringLiteral).value).toBe('config');
+    });
+
+    it('should parse complex chained access patterns', () => {
+      const statements = parseSource(
+        'value = users[0].profile.settings["theme"]'
+      );
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+
+      // Outermost: bracket access for ["theme"]
+      const outerBracket = stmt.value as BracketExpression;
+      expect(outerBracket.type).toBe('bracket');
+      expect((outerBracket.index as StringLiteral).value).toBe('theme');
+
+      // Next: member access for .settings
+      const settingsMember = outerBracket.object as MemberExpression;
+      expect(settingsMember.type).toBe('member');
+      expect(settingsMember.property).toBe('settings');
+
+      // Next: member access for .profile
+      const profileMember = settingsMember.object as MemberExpression;
+      expect(profileMember.type).toBe('member');
+      expect(profileMember.property).toBe('profile');
+
+      // Innermost: bracket access for [0]
+      const usersBracket = profileMember.object as BracketExpression;
+      expect(usersBracket.type).toBe('bracket');
+      expect((usersBracket.object as Identifier).name).toBe('users');
+      expect((usersBracket.index as NumberLiteral).value).toBe(0);
+    });
+
+    it('should parse mixed access in binary expressions', () => {
+      const statements = parseSource('result = obj.a + arr[0]');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('+');
+
+      // Left side: member access
+      const member = binary.left as MemberExpression;
+      expect(member.type).toBe('member');
+      expect((member.object as Identifier).name).toBe('obj');
+      expect(member.property).toBe('a');
+
+      // Right side: bracket access
+      const bracket = binary.right as BracketExpression;
+      expect(bracket.type).toBe('bracket');
+      expect((bracket.object as Identifier).name).toBe('arr');
+      expect((bracket.index as NumberLiteral).value).toBe(0);
+    });
+
+    it('should parse mixed access in function calls', () => {
+      const statements = parseSource(
+        'result = process(obj.name, data["key"], items[index])'
+      );
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const call = stmt.value as CallExpression;
+      expect(call.type).toBe('call');
+      expect(call.arguments).toHaveLength(3);
+
+      // First arg: member access
+      const member = call.arguments[0] as MemberExpression;
+      expect(member.type).toBe('member');
+      expect((member.object as Identifier).name).toBe('obj');
+      expect(member.property).toBe('name');
+
+      // Second arg: bracket access with string
+      const bracket1 = call.arguments[1] as BracketExpression;
+      expect(bracket1.type).toBe('bracket');
+      expect((bracket1.object as Identifier).name).toBe('data');
+      expect((bracket1.index as StringLiteral).value).toBe('key');
+
+      // Third arg: bracket access with variable
+      const bracket2 = call.arguments[2] as BracketExpression;
+      expect(bracket2.type).toBe('bracket');
+      expect((bracket2.object as Identifier).name).toBe('items');
+      expect((bracket2.index as Identifier).name).toBe('index');
+    });
+
+    it('should parse chained method calls with mixed access', () => {
+      const statements = parseSource(
+        'result = obj["getData"]().process().items[0]'
+      );
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+
+      // Outermost: bracket access for items[0]
+      const outerBracket = stmt.value as BracketExpression;
+      expect(outerBracket.type).toBe('bracket');
+      expect((outerBracket.index as NumberLiteral).value).toBe(0);
+
+      // Next: member access for .items
+      const itemsMember = outerBracket.object as MemberExpression;
+      expect(itemsMember.type).toBe('member');
+      expect(itemsMember.property).toBe('items');
+
+      // Next: call expression for .process()
+      const processCall = itemsMember.object as CallExpression;
+      expect(processCall.type).toBe('call');
+      expect(processCall.arguments).toHaveLength(0);
+
+      // Next: member access for .process
+      const processMember = processCall.callee as MemberExpression;
+      expect(processMember.type).toBe('member');
+      expect(processMember.property).toBe('process');
+
+      // Next: call expression for obj["getData"]()
+      const getDataCall = processMember.object as CallExpression;
+      expect(getDataCall.type).toBe('call');
+      expect(getDataCall.arguments).toHaveLength(0);
+
+      // Innermost: bracket access for obj["getData"]
+      const getDataBracket = getDataCall.callee as BracketExpression;
+      expect(getDataBracket.type).toBe('bracket');
+      expect((getDataBracket.object as Identifier).name).toBe('obj');
+      expect((getDataBracket.index as StringLiteral).value).toBe('getData');
     });
   });
 
