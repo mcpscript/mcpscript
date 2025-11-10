@@ -18,11 +18,11 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Expand basic value types beyond strings**
 
-1. ✅ **DONE** - Number literal parsing in grammar (integers, floats, scientific notation)
-2. ✅ **DONE** - Boolean literal parsing in grammar (`true`, `false`)
-3. ✅ **DONE** - Number literal generation in codegen
-4. ✅ **DONE** - Boolean literal generation in codegen
-5. ✅ **DONE** - Number and boolean runtime tests
+- ✅ **DONE** - Number literal parsing in grammar (integers, floats, scientific notation)
+- ✅ **DONE** - Boolean literal parsing in grammar (`true`, `false`)
+- ✅ **DONE** - Number literal generation in codegen
+- ✅ **DONE** - Boolean literal generation in codegen
+- ✅ **DONE** - Number and boolean runtime tests
 
 **→ Complete Phase 1 before Phase 2**
 
@@ -30,13 +30,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enable arithmetic and logical operations**
 
-6. ✅ **DONE** - Binary arithmetic expression parsing (`+`, `-`, `*`, `/`, `%`)
-7. ✅ **DONE** - Comparison operator parsing (`==`, `!=`, `<`, `>`, `<=`, `>=`)
-8. ✅ **DONE** - Logical operator parsing (`&&`, `||`, `!`)
-9. ✅ **DONE** - Unary expression parsing (`-x`, `!condition`)
-10. ✅ **DONE** - Operator precedence handling in grammar
-11. ✅ **DONE** - Expression evaluation in codegen
-12. ✅ **DONE** - Expression runtime tests
+- ✅ **DONE** - Binary arithmetic expression parsing (`+`, `-`, `*`, `/`, `%`)
+- ✅ **DONE** - Comparison operator parsing (`==`, `!=`, `<`, `>`, `<=`, `>=`)
+- ✅ **DONE** - Logical operator parsing (`&&`, `||`, `!`)
+- ✅ **DONE** - Unary expression parsing (`-x`, `!condition`)
+- ✅ **DONE** - Operator precedence handling in grammar
+- ✅ **DONE** - Expression evaluation in codegen
+- ✅ **DONE** - Expression runtime tests
 
 **→ Complete Phase 2 before Phase 3**
 
@@ -44,15 +44,15 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add structured data types**
 
-13. 🔲 **TODO** - Array literal syntax parsing (`[1, 2, 3]`)
-14. 🔲 **TODO** - Object literal syntax parsing (`{ key: "value", num: 42 }`)
-15. 🔲 **TODO** - Array/object literal generation in codegen
-16. 🔲 **TODO** - Array indexing parsing (`array[0]`)
-17. 🔲 **TODO** - Object property access parsing (`obj.property`, `obj["key"]`)
-18. 🔲 **TODO** - Member access generation in codegen
-19. 🔲 **TODO** - Array assignment (`array[0] = value`)
-20. 🔲 **TODO** - Object property assignment (`obj.property = value`)
-21. 🔲 **TODO** - Collection runtime tests
+- 🔲 **TODO** - Array literal syntax parsing (`[1, 2, 3]`)
+- 🔲 **TODO** - Object literal syntax parsing (`{ key: "value", num: 42 }`)
+- 🔲 **TODO** - Array/object literal generation in codegen
+- 🔲 **TODO** - Array indexing parsing (`array[0]`)
+- 🔲 **TODO** - Object property access parsing (`obj.property`, `obj["key"]`)
+- 🔲 **TODO** - Member access generation in codegen
+- 🔲 **TODO** - Array assignment (`array[0] = value`)
+- 🔲 **TODO** - Object property assignment (`obj.property = value`)
+- 🔲 **TODO** - Collection runtime tests
 
 **→ Complete Phase 3 before Phase 4**
 
@@ -60,14 +60,20 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add conditional execution and loops**
 
-22. 🔲 **TODO** - Block statement parsing (`{ ... }`)
-23. 🔲 **TODO** - If statement parsing (`if (condition) { ... }`)
-24. 🔲 **TODO** - If-else statement parsing (`if (condition) { ... } else { ... }`)
-25. 🔲 **TODO** - While loop parsing (`while (condition) { ... }`)
-26. 🔲 **TODO** - For loop parsing (`for (let i = 0; i < 10; i++) { ... }`)
-27. 🔲 **TODO** - Control flow generation in codegen
-28. 🔲 **TODO** - Break and continue statements
-29. 🔲 **TODO** - Control flow runtime tests
+- 🔲 **TODO** - Block statement parsing (`{ ... }`)
+- 🔲 **TODO** - If statement parsing (`if (condition) { ... }`)
+- 🔲 **TODO** - If-else statement parsing (`if (condition) { ... } else { ... }`)
+- 🔲 **TODO** - While loop parsing (`while (condition) { ... }`)
+- 🔲 **TODO** - For loop parsing (`for (let i = 0; i < 10; i++) { ... }`)
+- 🔲 **TODO** - Control flow generation in codegen
+- 🔲 **TODO** - Break and continue statements
+- 🔲 **TODO** - Control flow runtime tests
+- 🔲 **TODO** - **CRITICAL**: Refactor codegen variable tracking for proper scoping
+  - Current approach uses flat `Set<string>` for declared variables
+  - Works for current global-only scope but will break with blocks/nested scopes
+  - Need scope stack/hierarchy to track variables per scope level
+  - Must implement immediately after adding blocks to avoid incorrect codegen
+  - See: Variable reassignment generates `let x = 5; let x = 10;` issue
 
 **→ Complete Phase 4 before Phase 5**
 
@@ -75,13 +81,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enable user-defined reusable logic**
 
-30. 🔲 **TODO** - Function declaration syntax parsing (`function name(params): returnType { ... }`)
-31. 🔲 **TODO** - Function parameter parsing
-32. 🔲 **TODO** - Return statement parsing
-33. 🔲 **TODO** - Function generation in codegen
-34. 🔲 **TODO** - Function calls with arguments (extend existing)
-35. 🔲 **TODO** - Local variable scoping implementation
-36. 🔲 **TODO** - Function runtime tests
+- 🔲 **TODO** - Function declaration syntax parsing (`function name(params): returnType { ... }`)
+- 🔲 **TODO** - Function parameter parsing
+- 🔲 **TODO** - Return statement parsing
+- 🔲 **TODO** - Function generation in codegen
+- 🔲 **TODO** - Function calls with arguments (extend existing)
+- 🔲 **TODO** - Local variable scoping implementation
+- 🔲 **TODO** - Function runtime tests
 
 **→ Complete Phase 5 before Phase 6**
 
@@ -89,12 +95,12 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add observability and configuration**
 
-37. 🔲 **TODO** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
-38. 🔲 **TODO** - Environment variable access (`env.API_KEY`)
-39. 🔲 **TODO** - Log message formatting with data objects
-40. 🔲 **TODO** - Logging system injection in codegen
-41. 🔲 **TODO** - Environment variable injection in codegen
-42. 🔲 **TODO** - Runtime enhancement tests
+- 🔲 **TODO** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
+- 🔲 **TODO** - Environment variable access (`env.API_KEY`)
+- 🔲 **TODO** - Log message formatting with data objects
+- 🔲 **TODO** - Logging system injection in codegen
+- 🔲 **TODO** - Environment variable injection in codegen
+- 🔲 **TODO** - Runtime enhancement tests
 
 **→ Complete Phase 6 before Phase 7**
 
@@ -102,14 +108,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add robust error management**
 
-43. 🔲 **TODO** - Try-catch block parsing (`try { ... } catch (error) { ... }`)
-44. 🔲 **TODO** - Throw statement parsing
-45. 🔲 **TODO** - Finally block parsing
-46. 🔲 **TODO** - Error handling generation in codegen
-47. 🔲 **TODO** - Error object creation and properties
-48. 🔲 **TODO** - Error propagation through async operations
-49. 🔲 **TODO** - MCP tool call error handling
-50. 🔲 **TODO** - Error handling runtime tests
+- 🔲 **TODO** - Try-catch block parsing (`try { ... } catch (error) { ... }`)
+- 🔲 **TODO** - Throw statement parsing
+- 🔲 **TODO** - Finally block parsing
+- 🔲 **TODO** - Error handling generation in codegen
+- 🔲 **TODO** - Error object creation and properties
+- 🔲 **TODO** - Error propagation through async operations
+- 🔲 **TODO** - MCP tool call error handling
+- 🔲 **TODO** - Error handling runtime tests
 
 **→ Complete Phase 7 before Phase 8**
 
@@ -117,13 +123,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add static typing and validation**
 
-51. 🔲 **TODO** - Type annotation parsing for variables (`name: string = "value"`)
-52. 🔲 **TODO** - Type annotation parsing for function parameters
-53. 🔲 **TODO** - Type annotation parsing for function return types
-54. 🔲 **TODO** - Type inference implementation
-55. 🔲 **TODO** - Type checking during transpilation
-56. 🔲 **TODO** - Type-aware code generation
-57. 🔲 **TODO** - Type system tests
+- 🔲 **TODO** - Type annotation parsing for variables (`name: string = "value"`)
+- 🔲 **TODO** - Type annotation parsing for function parameters
+- 🔲 **TODO** - Type annotation parsing for function return types
+- 🔲 **TODO** - Type inference implementation
+- 🔲 **TODO** - Type checking during transpilation
+- 🔲 **TODO** - Type-aware code generation
+- 🔲 **TODO** - Type system tests
 
 **→ Complete Phase 8 before Phase 9**
 
@@ -131,14 +137,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add AI agent integration**
 
-58. 🔲 **TODO** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
-59. 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
-60. 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
-61. 🔲 **TODO** - Agent system generation in codegen
-62. 🔲 **TODO** - Agent runtime integration
-63. 🔲 **TODO** - Agent response handling and parsing
-64. 🔲 **TODO** - Tool access restriction per agent
-65. 🔲 **TODO** - Agent system tests
+- 🔲 **TODO** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
+- 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
+- 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
+- 🔲 **TODO** - Agent system generation in codegen
+- 🔲 **TODO** - Agent runtime integration
+- 🔲 **TODO** - Agent response handling and parsing
+- 🔲 **TODO** - Tool access restriction per agent
+- 🔲 **TODO** - Agent system tests
 
 **→ Complete Phase 9 before Phase 10**
 
@@ -146,14 +152,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enable code organization and reuse**
 
-66. 🔲 **TODO** - Import statement parsing (`import { function, agent } from "./module.mcps"`)
-67. 🔲 **TODO** - Export statement parsing
-68. 🔲 **TODO** - Module resolution implementation
-69. 🔲 **TODO** - Module loading generation in codegen
-70. 🔲 **TODO** - Circular import detection
-71. 🔲 **TODO** - Top-level code execution prevention in imported modules
-72. 🔲 **TODO** - Module caching and reuse
-73. 🔲 **TODO** - Module system tests
+- 🔲 **TODO** - Import statement parsing (`import { function, agent } from "./module.mcps"`)
+- 🔲 **TODO** - Export statement parsing
+- 🔲 **TODO** - Module resolution implementation
+- 🔲 **TODO** - Module loading generation in codegen
+- 🔲 **TODO** - Circular import detection
+- 🔲 **TODO** - Top-level code execution prevention in imported modules
+- 🔲 **TODO** - Module caching and reuse
+- 🔲 **TODO** - Module system tests
 
 **→ Complete Phase 10 before Phase 11**
 
@@ -161,13 +167,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enhance MCP integration**
 
-74. 🔲 **TODO** - Named parameter tool calling (`tool(param: value)`)
-75. 🔲 **TODO** - MCP resource access beyond tools
-76. 🔲 **TODO** - MCP server authentication (HTTP/WebSocket)
-77. 🔲 **TODO** - Connection pooling and persistent connections
-78. 🔲 **TODO** - Tool result caching mechanisms
-79. 🔲 **TODO** - MCP server health checking
-80. 🔲 **TODO** - Advanced MCP tests
+- 🔲 **TODO** - Named parameter tool calling (`tool(param: value)`)
+- 🔲 **TODO** - MCP resource access beyond tools
+- 🔲 **TODO** - MCP server authentication (HTTP/WebSocket)
+- 🔲 **TODO** - Connection pooling and persistent connections
+- 🔲 **TODO** - Tool result caching mechanisms
+- 🔲 **TODO** - MCP server health checking
+- 🔲 **TODO** - Advanced MCP tests
 
 **→ Complete Phase 11 before Phase 12**
 
@@ -175,12 +181,12 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Improve execution performance**
 
-81. 🔲 **TODO** - Parallel execution detection and optimization
-82. 🔲 **TODO** - Lazy loading of MCP servers
-83. 🔲 **TODO** - Promise-like value handling
-84. 🔲 **TODO** - Timeout handling for long operations
-85. 🔲 **TODO** - Memory usage optimization
-86. 🔲 **TODO** - Performance benchmarking tests
+- 🔲 **TODO** - Parallel execution detection and optimization
+- 🔲 **TODO** - Lazy loading of MCP servers
+- 🔲 **TODO** - Promise-like value handling
+- 🔲 **TODO** - Timeout handling for long operations
+- 🔲 **TODO** - Memory usage optimization
+- 🔲 **TODO** - Performance benchmarking tests
 
 **→ Complete Phase 12 before Phase 13**
 
@@ -188,13 +194,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Improve debugging and tooling**
 
-87. 🔲 **TODO** - Syntax error reporting with line/column numbers
-88. 🔲 **TODO** - Type error messages during compilation
-89. 🔲 **TODO** - Runtime error source mapping to .mcps files
-90. 🔲 **TODO** - `mcps check` command for syntax/type checking
-91. 🔲 **TODO** - Automatic system logging (workflow lifecycle, agent delegation, tool calls)
-92. 🔲 **TODO** - Log configuration via environment variables
-93. 🔲 **TODO** - Execution ID tracking across logs
+- 🔲 **TODO** - Syntax error reporting with line/column numbers
+- 🔲 **TODO** - Type error messages during compilation
+- 🔲 **TODO** - Runtime error source mapping to .mcps files
+- 🔲 **TODO** - `mcps check` command for syntax/type checking
+- 🔲 **TODO** - Automatic system logging (workflow lifecycle, agent delegation, tool calls)
+- 🔲 **TODO** - Log configuration via environment variables
+- 🔲 **TODO** - Execution ID tracking across logs
 
 **→ Complete Phase 13 before Phase 14**
 
@@ -202,13 +208,13 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add sophisticated language constructs**
 
-94. 🔲 **TODO** - For-of loops (`for (item of array) { ... }`)
-95. 🔲 **TODO** - Array methods (`push`, `pop`, `length` property)
-96. 🔲 **TODO** - Template string literals with interpolation
-97. 🔲 **TODO** - Comment syntax (`// single-line` and `/* multi-line */`)
-98. 🔲 **TODO** - Object destructuring in assignments
-99. 🔲 **TODO** - Multi-line string support
-100.  🔲 **TODO** - Escape sequence handling in strings
+- 🔲 **TODO** - For-of loops (`for (item of array) { ... }`)
+- 🔲 **TODO** - Array methods (`push`, `pop`, `length` property)
+- 🔲 **TODO** - Template string literals with interpolation
+- 🔲 **TODO** - Comment syntax (`// single-line` and `/* multi-line */`)
+- 🔲 **TODO** - Object destructuring in assignments
+- 🔲 **TODO** - Multi-line string support
+- 🔲 **TODO** - Escape sequence handling in strings
 
 **→ Complete Phase 14 before Phase 15**
 
@@ -216,14 +222,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enhance execution security**
 
-101. 🔲 **TODO** - Configurable resource limits (memory, CPU)
-102. 🔲 **TODO** - File system access restrictions
-103. 🔲 **TODO** - Network access controls
-104. 🔲 **TODO** - Process execution limitations
-105. 🔲 **TODO** - Module import restrictions
-106. 🔲 **TODO** - MCP server capability validation
-107. 🔲 **TODO** - Tool permission system
-108. 🔲 **TODO** - Secure credential management
+- 🔲 **TODO** - Configurable resource limits (memory, CPU)
+- 🔲 **TODO** - File system access restrictions
+- 🔲 **TODO** - Network access controls
+- 🔲 **TODO** - Process execution limitations
+- 🔲 **TODO** - Module import restrictions
+- 🔲 **TODO** - MCP server capability validation
+- 🔲 **TODO** - Tool permission system
+- 🔲 **TODO** - Secure credential management
 
 **→ Complete Phase 15 before Phase 16**
 
@@ -231,12 +237,12 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Complete developer tooling**
 
-109. 🔲 **TODO** - `mcps format` command for code formatting
-110. 🔲 **TODO** - `mcps test` command for running test files
-111. 🔲 **TODO** - Verbose logging options (`--verbose`, `--debug`)
-112. 🔲 **TODO** - Watch mode for file changes (`--watch`)
-113. 🔲 **TODO** - Configuration file support (`.mcpsrc`)
-114. 🔲 **TODO** - Source map generation for debugging
+- 🔲 **TODO** - `mcps format` command for code formatting
+- 🔲 **TODO** - `mcps test` command for running test files
+- 🔲 **TODO** - Verbose logging options (`--verbose`, `--debug`)
+- 🔲 **TODO** - Watch mode for file changes (`--watch`)
+- 🔲 **TODO** - Configuration file support (`.mcpsrc`)
+- 🔲 **TODO** - Source map generation for debugging
 
 **→ Complete Phase 16 before Phase 17**
 
@@ -244,14 +250,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Complete user-facing materials**
 
-115. 🔲 **TODO** - Complete language reference documentation
-116. 🔲 **TODO** - Type system guide and best practices
-117. 🔲 **TODO** - MCP integration patterns and examples
-118. 🔲 **TODO** - Agent workflow examples
-119. 🔲 **TODO** - Complex data processing examples
-120. 🔲 **TODO** - Error handling pattern examples
-121. 🔲 **TODO** - Multi-module project examples
-122. 🔲 **TODO** - Migration guide from MVP to full spec
+- 🔲 **TODO** - Complete language reference documentation
+- 🔲 **TODO** - Type system guide and best practices
+- 🔲 **TODO** - MCP integration patterns and examples
+- 🔲 **TODO** - Agent workflow examples
+- 🔲 **TODO** - Complex data processing examples
+- 🔲 **TODO** - Error handling pattern examples
+- 🔲 **TODO** - Multi-module project examples
+- 🔲 **TODO** - Migration guide from MVP to full spec
 
 ---
 

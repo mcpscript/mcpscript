@@ -35,7 +35,7 @@ export function generateCode(statements: Statement[]): string {
   const mcpInit =
     mcpServers.size > 0 ? generateMCPInitialization(mcpServers) : '';
 
-  // Generate main code
+  // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
 
   // Generate cleanup
@@ -204,11 +204,14 @@ for (const tool of __${name}_tools.tools) {
  * Generate code for all statements (excluding MCP declarations)
  */
 function generateStatements(statements: Statement[]): string {
+  // Track which variables have been declared
+  const declaredVariables = new Set<string>();
+  
   const codeLines = statements
     .filter(stmt => stmt.type !== 'mcp_declaration')
     .map(stmt => {
       if (stmt.type === 'assignment') {
-        return generateAssignment(stmt);
+        return generateAssignment(stmt, declaredVariables);
       } else if (stmt.type === 'expression_statement') {
         return generateExpressionStatement(stmt);
       }
@@ -299,10 +302,18 @@ function extractValue(expr: Expression): unknown {
 /**
  * Generate code for an assignment statement
  */
-function generateAssignment(stmt: Assignment): string {
+function generateAssignment(stmt: Assignment, declaredVariables: Set<string>): string {
   const value = generateExpression(stmt.value);
-  // Assignments capture the result, so await is included in the expression
-  return `let ${stmt.variable} = ${value};`;
+  
+  // Check if this is the first time we're seeing this variable
+  if (declaredVariables.has(stmt.variable)) {
+    // Variable already declared, generate reassignment
+    return `${stmt.variable} = ${value};`;
+  } else {
+    // First time seeing this variable, generate declaration
+    declaredVariables.add(stmt.variable);
+    return `let ${stmt.variable} = ${value};`;
+  }
 }
 
 /**
