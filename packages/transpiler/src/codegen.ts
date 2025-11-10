@@ -465,23 +465,23 @@ function generateUnaryExpression(expr: UnaryExpression): string {
 function getOperatorPrecedence(op: string): number {
   switch (op) {
     case '||':
-      return 0;
-    case '&&':
       return 1;
+    case '&&':
+      return 2;
     case '==':
     case '!=':
     case '<':
     case '>':
     case '<=':
     case '>=':
-      return 2;
+      return 3;
     case '+':
     case '-':
-      return 3;
+      return 4;
     case '*':
     case '/':
     case '%':
-      return 4;
+      return 5;
     default:
       return 0;
   }

@@ -78,7 +78,21 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - Declare mocks as: `let consoleSpy: MockInstance;`
 - Avoid `any` type to maintain type safety
 
+## Grammar and Codegen Consistency
+
+### Critical Synchronization Points
+
+When modifying operator precedence or grammar rules, ensure consistency across components:
+
+- **Tree-sitter grammar** (`packages/transpiler/grammar/grammar.js`): Defines parsing precedence with `prec.left()` values
+- **Codegen precedence function** (`packages/transpiler/src/codegen.ts`): Must match grammar precedence for correct parenthesization
+
+### Build Dependencies
+
+- Grammar changes require: `npm run build` in the transpiler package to regenerate parser
+- Always rebuild grammar before running parser tests after grammar modifications
+
 ## Development Guidelines
 
-- After finishing implementing a feature, ALWAYS run tests and linting, and make sure they pass.
-- Do NOT write a big file explaining everything you did. Instead, just respond with a concise summary.
+- After finishing making code changes to implement a feature, ALWAYS run tests and linting, and make sure they pass
+- Do NOT write a big file explaining everything you did. Instead, just respond with a concise summary

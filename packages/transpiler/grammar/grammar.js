@@ -25,26 +25,26 @@ module.exports = grammar({
 
     binary_expression: $ =>
       choice(
-        prec.left(0, seq($.expression, '||', $.expression)),
-        prec.left(1, seq($.expression, '&&', $.expression)),
+        prec.left(1, seq($.expression, '||', $.expression)),
+        prec.left(2, seq($.expression, '&&', $.expression)),
         prec.left(
-          2,
+          3,
           seq(
             $.expression,
             choice('==', '!=', '<', '>', '<=', '>='),
             $.expression
           )
         ),
-        prec.left(3, seq($.expression, choice('+', '-'), $.expression)),
-        prec.left(4, seq($.expression, choice('*', '/', '%'), $.expression))
+        prec.left(4, seq($.expression, choice('+', '-'), $.expression)),
+        prec.left(5, seq($.expression, choice('*', '/', '%'), $.expression))
       ),
 
-    unary_expression: $ => prec(5, seq(choice('!', '-'), $.expression)),
+    unary_expression: $ => prec(6, seq(choice('!', '-'), $.expression)),
 
     call_expression: $ =>
-      prec.left(1, seq($.expression, '(', optional($.argument_list), ')')),
+      prec.left(7, seq($.expression, '(', optional($.argument_list), ')')),
 
-    member_expression: $ => prec.left(2, seq($.expression, '.', $.identifier)),
+    member_expression: $ => prec.left(7, seq($.expression, '.', $.identifier)),
 
     parenthesized_expression: $ => seq('(', $.expression, ')'),
 

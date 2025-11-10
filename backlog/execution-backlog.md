@@ -34,7 +34,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 7. ✅ **DONE** - Comparison operator parsing (`==`, `!=`, `<`, `>`, `<=`, `>=`)
 8. ✅ **DONE** - Logical operator parsing (`&&`, `||`, `!`)
 9. ✅ **DONE** - Unary expression parsing (`-x`, `!condition`)
-10. 🔲 **TODO** - Operator precedence handling in grammar
+10. ✅ **DONE** - Operator precedence handling in grammar
 11. 🔲 **TODO** - Expression evaluation in codegen
 12. 🔲 **TODO** - Expression runtime tests
 
