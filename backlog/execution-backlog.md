@@ -60,7 +60,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add conditional execution and loops**
 
-- 🔲 **TODO** - Block statement parsing (`{ ... }`)
+- ✅ **DONE** - Block statement parsing (`{ ... }`)
 - 🔲 **TODO** - If statement parsing (`if (condition) { ... }`)
 - 🔲 **TODO** - If-else statement parsing (`if (condition) { ... } else { ... }`)
 - 🔲 **TODO** - While loop parsing (`while (condition) { ... }`)

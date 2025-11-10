@@ -121,4 +121,13 @@ export interface ExpressionStatement extends ASTNode {
   expression: Expression;
 }
 
-export type Statement = MCPDeclaration | Assignment | ExpressionStatement;
+export interface BlockStatement extends ASTNode {
+  type: 'block_statement';
+  statements: Statement[];
+}
+
+export type Statement =
+  | MCPDeclaration
+  | Assignment
+  | ExpressionStatement
+  | BlockStatement;

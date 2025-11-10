@@ -6,6 +6,7 @@ import {
   Assignment,
   AssignmentTarget,
   ExpressionStatement,
+  BlockStatement,
   CallExpression,
   MemberExpression,
   BracketExpression,
@@ -216,6 +217,8 @@ function generateStatements(statements: Statement[]): string {
         return generateAssignment(stmt, declaredVariables);
       } else if (stmt.type === 'expression_statement') {
         return generateExpressionStatement(stmt);
+      } else if (stmt.type === 'block_statement') {
+        return generateBlockStatement(stmt, declaredVariables);
       }
       return '';
     })
@@ -356,6 +359,46 @@ function generateExpressionStatement(stmt: ExpressionStatement): string {
   const expr = generateExpression(stmt.expression);
   // Expression already includes await if needed
   return `${expr};`;
+}
+
+/**
+ * Generate code for a block statement
+ */
+function generateBlockStatement(
+  stmt: BlockStatement,
+  declaredVariables: Set<string>
+): string {
+  const blockLines = stmt.statements
+    .filter(s => s.type !== 'mcp_declaration')
+    .map(s => {
+      if (s.type === 'assignment') {
+        return generateAssignment(s, declaredVariables);
+      } else if (s.type === 'expression_statement') {
+        return generateExpressionStatement(s);
+      } else if (s.type === 'block_statement') {
+        return generateBlockStatement(s, declaredVariables);
+      }
+      return '';
+    })
+    .filter(Boolean);
+
+  if (blockLines.length === 0) {
+    return '{}';
+  }
+
+  const indentedLines = blockLines
+    .map(line =>
+      // If line is already a block, indent each of its lines
+      line.includes('\n')
+        ? line
+            .split('\n')
+            .map(subLine => `  ${subLine}`)
+            .join('\n')
+        : `  ${line}`
+    )
+    .join('\n');
+
+  return `{\n${indentedLines}\n}`;
 }
 
 /**

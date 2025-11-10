@@ -13,7 +13,14 @@ module.exports = grammar({
     comment: _$ => token(seq('//', /.*/)),
 
     statement: $ =>
-      choice($.mcp_declaration, $.assignment, $.expression_statement),
+      choice(
+        $.mcp_declaration,
+        $.assignment,
+        $.expression_statement,
+        $.block_statement
+      ),
+
+    block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
 
     expression_statement: $ => $.expression,
 

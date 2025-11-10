@@ -7,6 +7,7 @@ import {
   MCPDeclaration,
   Assignment,
   ExpressionStatement,
+  BlockStatement,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -71,6 +72,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseAssignment(firstChild);
     case 'expression_statement':
       return parseExpressionStatement(firstChild);
+    case 'block_statement':
+      return parseBlockStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -149,6 +152,24 @@ function parseExpressionStatement(
   return {
     type: 'expression_statement',
     expression,
+  };
+}
+
+function parseBlockStatement(node: Parser.SyntaxNode): BlockStatement {
+  const statements: Statement[] = [];
+
+  for (const child of node.children) {
+    if (child.type === 'statement') {
+      const statement = parseStatement(child);
+      if (statement) {
+        statements.push(statement);
+      }
+    }
+  }
+
+  return {
+    type: 'block_statement',
+    statements,
   };
 }
 
