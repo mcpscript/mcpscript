@@ -180,7 +180,7 @@ describe('If Statement Codegen', () => {
     expect(code).toContain('if (x > 0) {');
     expect(code).toContain('  let result = "positive";');
     expect(code).toContain('} else {');
-    expect(code).toContain('  result = "negative";'); // Should not redeclare since first declaration is in then block
+    expect(code).toContain('  let result = "negative";'); // Sibling scopes can each declare their own variables
     expect(code).toContain('}');
   });
 
@@ -194,9 +194,9 @@ describe('If Statement Codegen', () => {
     expect(code).toContain('  let result = "positive";');
     expect(code).toContain('} else {');
     expect(code).toContain('  if (x < 0) {'); // Nested if inside else block
-    expect(code).toContain('    result = "negative";'); // Should not redeclare, but indented more
+    expect(code).toContain('    result = "negative";'); // Inherits result from parent scope
     expect(code).toContain('  } else {');
-    expect(code).toContain('    result = "zero";'); // Should not redeclare, but indented more
+    expect(code).toContain('    result = "zero";'); // Inherits result from parent scope
     expect(code).toContain('  }');
     expect(code).toContain('}');
   });
@@ -210,7 +210,7 @@ describe('If Statement Codegen', () => {
     expect(code).toContain('  if (inner) {');
     expect(code).toContain('    let a = 1;');
     expect(code).toContain('  } else {');
-    expect(code).toContain('    a = 2;'); // Should not redeclare
+    expect(code).toContain('    a = 2;'); // Inherits a from the if scope
     expect(code).toContain('  }');
     expect(code).toContain('} else {');
     expect(code).toContain('  let b = 3;');
@@ -226,7 +226,7 @@ describe('If Statement Codegen', () => {
     expect(code).toContain('if (x >= 0 && y < 100) {');
     expect(code).toContain('  let status = "valid";');
     expect(code).toContain('} else {');
-    expect(code).toContain('  status = "invalid";'); // Should not redeclare
+    expect(code).toContain('  status = "invalid";'); // Inherits status from parent scope
     expect(code).toContain('}');
   });
 

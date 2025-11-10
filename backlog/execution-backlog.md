@@ -65,13 +65,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - If-else statement parsing (`if (condition) { ... } else { ... }`)
 - ✅ **DONE** - While loop parsing (`while (condition) { ... }`)
 - ✅ **DONE** - For loop parsing (`for (let i = 0; i < 10; i++) { ... }`)
-- 🔲 **TODO** - Break and continue statements
-- 🔲 **TODO** - **CRITICAL**: Refactor codegen variable tracking for proper scoping
-  - Current approach uses flat `Set<string>` for declared variables
-  - Works for current global-only scope but will break with blocks/nested scopes
-  - Need scope stack/hierarchy to track variables per scope level
-  - Must implement immediately after adding blocks to avoid incorrect codegen
-  - See: Variable reassignment generates `let x = 5; let x = 10;` issue
+- ✅ **DONE** - Break and continue statements
+- ✅ **DONE** - **CRITICAL**: Refactor codegen variable tracking for proper scoping
+  - ✅ Replaced flat `Set<string>` with proper `ScopeStack` class implementing inheritance-based scoping
+  - ✅ **Inheritance rule**: Each new scope inherits variables from its parent scope
+  - ✅ **No redeclaration within scope lineage**: Variables declared in ancestor scopes are never redeclared
+  - ✅ **Separate branches can redeclare**: Sibling scopes (like separate `{}` blocks) can each declare their own variables
+  - ✅ **Synthetic vs explicit blocks**: Only explicit `{}` create new scopes; synthetic blocks share parent scope
+  - ✅ Much simpler and more intuitive than JavaScript's variable shadowing
 
 **→ Complete Phase 4 before Phase 5**
 

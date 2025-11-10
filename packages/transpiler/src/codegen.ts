@@ -10,6 +10,8 @@ import {
   IfStatement,
   WhileStatement,
   ForStatement,
+  BreakStatement,
+  ContinueStatement,
   CallExpression,
   MemberExpression,
   BracketExpression,
@@ -207,25 +209,78 @@ for (const tool of __${name}_tools.tools) {
 }
 
 /**
+ * Scope stack for tracking variable declarations across nested scopes
+ * Uses inheritance-based scoping: each new scope inherits variables from its parent
+ */
+class ScopeStack {
+  private scopes: Set<string>[] = [new Set()]; // Start with global scope
+
+  /**
+   * Push a new scope (for blocks, functions, etc.)
+   * New scope inherits all variables from its parent scope
+   */
+  pushScope(): void {
+    const parentScope = this.scopes[this.scopes.length - 1];
+    const newScope = new Set(parentScope); // Inherit all parent variables
+    this.scopes.push(newScope);
+  }
+
+  /**
+   * Pop the current scope
+   */
+  popScope(): void {
+    if (this.scopes.length <= 1) {
+      throw new Error('Cannot pop global scope');
+    }
+    this.scopes.pop();
+  }
+
+  /**
+   * Check if a variable has been declared in the current scope (including inherited)
+   * This implements inheritance-based scoping: variables declared in ancestor scopes are available
+   */
+  isDeclared(variable: string): boolean {
+    const currentScope = this.scopes[this.scopes.length - 1];
+    return currentScope.has(variable);
+  }
+
+  /**
+   * Declare a variable in the current scope
+   */
+  declare(variable: string): void {
+    const currentScope = this.scopes[this.scopes.length - 1];
+    currentScope.add(variable);
+  }
+
+  /**
+   * Get current scope depth (for debugging)
+   */
+  get depth(): number {
+    return this.scopes.length;
+  }
+}
+
+/**
  * Central statement dispatcher - handles all statement types in one place
  */
-function dispatchStatement(
-  stmt: Statement,
-  declaredVariables: Set<string>
-): string {
+function dispatchStatement(stmt: Statement, scopeStack: ScopeStack): string {
   switch (stmt.type) {
     case 'assignment':
-      return generateAssignment(stmt, declaredVariables);
+      return generateAssignment(stmt, scopeStack);
     case 'expression_statement':
       return generateExpressionStatement(stmt);
     case 'block_statement':
-      return generateBlockStatement(stmt, declaredVariables);
+      return generateBlockStatement(stmt, scopeStack);
     case 'if_statement':
-      return generateIfStatement(stmt, declaredVariables);
+      return generateIfStatement(stmt, scopeStack);
     case 'while_statement':
-      return generateWhileStatement(stmt, declaredVariables);
+      return generateWhileStatement(stmt, scopeStack);
     case 'for_statement':
-      return generateForStatement(stmt, declaredVariables);
+      return generateForStatement(stmt, scopeStack);
+    case 'break_statement':
+      return generateBreakStatement(stmt);
+    case 'continue_statement':
+      return generateContinueStatement(stmt);
     default:
       return '';
   }
@@ -235,12 +290,12 @@ function dispatchStatement(
  * Generate code for all statements (excluding MCP declarations)
  */
 function generateStatements(statements: Statement[]): string {
-  // Track which variables have been declared
-  const declaredVariables = new Set<string>();
+  // Initialize scope stack with global scope
+  const scopeStack = new ScopeStack();
 
   const codeLines = statements
     .filter(stmt => stmt.type !== 'mcp_declaration')
-    .map(stmt => dispatchStatement(stmt, declaredVariables))
+    .map(stmt => dispatchStatement(stmt, scopeStack))
     .filter(Boolean);
 
   if (codeLines.length === 0) {
@@ -326,10 +381,7 @@ function extractValue(expr: Expression): unknown {
 /**
  * Generate code for an assignment statement
  */
-function generateAssignment(
-  stmt: Assignment,
-  declaredVariables: Set<string>
-): string {
+function generateAssignment(stmt: Assignment, scopeStack: ScopeStack): string {
   const value = generateExpression(stmt.value);
 
   // Handle different assignment target types
@@ -338,12 +390,12 @@ function generateAssignment(
     const variable = identifier.name;
 
     // Check if this is the first time we're seeing this variable
-    if (declaredVariables.has(variable)) {
+    if (scopeStack.isDeclared(variable)) {
       // Variable already declared, generate reassignment
       return `${variable} = ${value};`;
     } else {
       // First time seeing this variable, generate declaration
-      declaredVariables.add(variable);
+      scopeStack.declare(variable);
       return `let ${variable} = ${value};`;
     }
   } else {
@@ -385,30 +437,43 @@ function generateExpressionStatement(stmt: ExpressionStatement): string {
  */
 function generateBlockStatement(
   stmt: BlockStatement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack,
+  createNewScope: boolean = true
 ): string {
-  const blockLines = stmt.statements
-    .filter(s => s.type !== 'mcp_declaration')
-    .map(s => dispatchStatement(s, declaredVariables))
-    .filter(Boolean);
-
-  if (blockLines.length === 0) {
-    return '{}';
+  // Only push a new scope if requested (control flow blocks don't create new scopes)
+  if (createNewScope) {
+    scopeStack.pushScope();
   }
 
-  const indentedLines = blockLines
-    .map(line =>
-      // If line is already a block, indent each of its lines
-      line.includes('\n')
-        ? line
-            .split('\n')
-            .map(subLine => `  ${subLine}`)
-            .join('\n')
-        : `  ${line}`
-    )
-    .join('\n');
+  try {
+    const blockLines = stmt.statements
+      .filter(s => s.type !== 'mcp_declaration')
+      .map(s => dispatchStatement(s, scopeStack))
+      .filter(Boolean);
 
-  return `{\n${indentedLines}\n}`;
+    if (blockLines.length === 0) {
+      return '{}';
+    }
+
+    const indentedLines = blockLines
+      .map(line =>
+        // If line is already a block, indent each of its lines
+        line.includes('\n')
+          ? line
+              .split('\n')
+              .map(subLine => `  ${subLine}`)
+              .join('\n')
+          : `  ${line}`
+      )
+      .join('\n');
+
+    return `{\n${indentedLines}\n}`;
+  } finally {
+    // Only pop the scope if we created one
+    if (createNewScope) {
+      scopeStack.popScope();
+    }
+  }
 }
 
 /**
@@ -416,15 +481,15 @@ function generateBlockStatement(
  */
 function generateIfStatement(
   stmt: IfStatement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack
 ): string {
   const condition = generateExpression(stmt.condition);
 
   // Always normalize statements to block format for consistency
-  const thenCode = generateStatementAsBlock(stmt.then, declaredVariables);
+  const thenCode = generateStatementAsBlock(stmt.then, scopeStack);
 
   if (stmt.else) {
-    const elseCode = generateStatementAsBlock(stmt.else, declaredVariables);
+    const elseCode = generateStatementAsBlock(stmt.else, scopeStack);
     return `if (${condition}) ${thenCode} else ${elseCode}`;
   } else {
     return `if (${condition}) ${thenCode}`;
@@ -436,12 +501,12 @@ function generateIfStatement(
  */
 function generateWhileStatement(
   stmt: WhileStatement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack
 ): string {
   const condition = generateExpression(stmt.condition);
 
   // Always normalize statements to block format for consistency
-  const bodyCode = generateStatementAsBlock(stmt.body, declaredVariables);
+  const bodyCode = generateStatementAsBlock(stmt.body, scopeStack);
 
   return `while (${condition}) ${bodyCode}`;
 }
@@ -451,18 +516,18 @@ function generateWhileStatement(
  */
 function generateForStatement(
   stmt: ForStatement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack
 ): string {
   const init = stmt.init
-    ? generateAssignment(stmt.init, declaredVariables).replace(/;$/, '')
+    ? generateAssignment(stmt.init, scopeStack).replace(/;$/, '')
     : '';
   const condition = stmt.condition ? generateExpression(stmt.condition) : '';
   const update = stmt.update
-    ? generateAssignmentForUpdate(stmt.update, declaredVariables)
+    ? generateAssignmentForUpdate(stmt.update, scopeStack)
     : '';
 
   // Always normalize statements to block format for consistency
-  const bodyCode = generateStatementAsBlock(stmt.body, declaredVariables);
+  const bodyCode = generateStatementAsBlock(stmt.body, scopeStack);
 
   // Handle special case where all parts are empty to match expected format
   if (!init && !condition && !update) {
@@ -473,11 +538,25 @@ function generateForStatement(
 }
 
 /**
+ * Generate code for a break statement
+ */
+function generateBreakStatement(_stmt: BreakStatement): string {
+  return 'break;';
+}
+
+/**
+ * Generate code for a continue statement
+ */
+function generateContinueStatement(_stmt: ContinueStatement): string {
+  return 'continue;';
+}
+
+/**
  * Generate assignment code for for loop update (without semicolon and let/const)
  */
 function generateAssignmentForUpdate(
   stmt: Assignment,
-  _declaredVariables: Set<string>
+  _scopeStack: ScopeStack
 ): string {
   const value = generateExpression(stmt.value);
 
@@ -500,13 +579,15 @@ function generateAssignmentForUpdate(
  */
 function generateStatementAsBlock(
   stmt: Statement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack
 ): string {
   if (stmt.type === 'block_statement') {
-    return generateBlockStatement(stmt, declaredVariables);
+    // All explicit block statements create new scopes (JavaScript behavior)
+    return generateBlockStatement(stmt, scopeStack, true);
   } else {
-    // Wrap non-block statements in a block with proper indentation
-    const statementCode = generateSingleStatement(stmt, declaredVariables);
+    // Wrap non-block statements in synthetic blocks with proper indentation
+    // These synthetic blocks DON'T create new scopes - only explicit {} blocks do
+    const statementCode = generateSingleStatement(stmt, scopeStack);
     const indentedCode = indentCode(statementCode, '  ');
     return `{\n${indentedCode}\n}`;
   }
@@ -527,9 +608,9 @@ function indentCode(code: string, indent: string): string {
  */
 function generateSingleStatement(
   stmt: Statement,
-  declaredVariables: Set<string>
+  scopeStack: ScopeStack
 ): string {
-  return dispatchStatement(stmt, declaredVariables);
+  return dispatchStatement(stmt, scopeStack);
 }
 
 /**

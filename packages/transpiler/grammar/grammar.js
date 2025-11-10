@@ -20,7 +20,9 @@ module.exports = grammar({
         $.block_statement,
         $.if_statement,
         $.while_statement,
-        $.for_statement
+        $.for_statement,
+        $.break_statement,
+        $.continue_statement
       ),
 
     block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
@@ -51,6 +53,10 @@ module.exports = grammar({
         ')',
         $.statement
       ),
+
+    break_statement: _$ => 'break',
+
+    continue_statement: _$ => 'continue',
 
     expression_statement: $ => $.expression,
 

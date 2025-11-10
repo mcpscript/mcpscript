@@ -11,6 +11,8 @@ import {
   IfStatement,
   WhileStatement,
   ForStatement,
+  BreakStatement,
+  ContinueStatement,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -83,6 +85,10 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseWhileStatement(firstChild);
     case 'for_statement':
       return parseForStatement(firstChild);
+    case 'break_statement':
+      return parseBreakStatement(firstChild);
+    case 'continue_statement':
+      return parseContinueStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -312,6 +318,18 @@ function parseForStatement(node: Parser.SyntaxNode): ForStatement {
   }
 
   return result;
+}
+
+function parseBreakStatement(_node: Parser.SyntaxNode): BreakStatement {
+  return {
+    type: 'break_statement',
+  };
+}
+
+function parseContinueStatement(_node: Parser.SyntaxNode): ContinueStatement {
+  return {
+    type: 'continue_statement',
+  };
 }
 
 function parseExpression(node: Parser.SyntaxNode): Expression {

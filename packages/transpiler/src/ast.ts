@@ -147,6 +147,14 @@ export interface ForStatement extends ASTNode {
   body: Statement;
 }
 
+export interface BreakStatement extends ASTNode {
+  type: 'break_statement';
+}
+
+export interface ContinueStatement extends ASTNode {
+  type: 'continue_statement';
+}
+
 export type Statement =
   | MCPDeclaration
   | Assignment
@@ -154,4 +162,6 @@ export type Statement =
   | BlockStatement
   | IfStatement
   | WhileStatement
-  | ForStatement;
+  | ForStatement
+  | BreakStatement
+  | ContinueStatement;
