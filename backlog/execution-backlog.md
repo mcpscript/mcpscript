@@ -44,10 +44,10 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add structured data types**
 
-- 🔲 **TODO** - Array literal syntax parsing (`[1, 2, 3]`)
-- 🔲 **TODO** - Object literal syntax parsing (`{ key: "value", num: 42 }`)
-- 🔲 **TODO** - Array/object literal generation in codegen
-- 🔲 **TODO** - Array indexing parsing (`array[0]`)
+- ✅ **DONE** - Array literal syntax parsing (`[1, 2, 3]`)
+- ✅ **DONE** - Object literal syntax parsing (`{ key: "value", num: 42 }`)
+- ✅ **DONE** - Array/object literal generation in codegen
+- ✅ **DONE** - Array indexing parsing (`array[0]`)
 - 🔲 **TODO** - Object property access parsing (`obj.property`, `obj["key"]`)
 - 🔲 **TODO** - Member access generation in codegen
 - 🔲 **TODO** - Array assignment (`array[0] = value`)

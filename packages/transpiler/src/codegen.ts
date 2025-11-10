@@ -7,6 +7,7 @@ import {
   ExpressionStatement,
   CallExpression,
   MemberExpression,
+  BracketExpression,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -206,7 +207,7 @@ for (const tool of __${name}_tools.tools) {
 function generateStatements(statements: Statement[]): string {
   // Track which variables have been declared
   const declaredVariables = new Set<string>();
-  
+
   const codeLines = statements
     .filter(stmt => stmt.type !== 'mcp_declaration')
     .map(stmt => {
@@ -302,9 +303,12 @@ function extractValue(expr: Expression): unknown {
 /**
  * Generate code for an assignment statement
  */
-function generateAssignment(stmt: Assignment, declaredVariables: Set<string>): string {
+function generateAssignment(
+  stmt: Assignment,
+  declaredVariables: Set<string>
+): string {
   const value = generateExpression(stmt.value);
-  
+
   // Check if this is the first time we're seeing this variable
   if (declaredVariables.has(stmt.variable)) {
     // Variable already declared, generate reassignment
@@ -353,6 +357,9 @@ function generateExpression(expr: Expression): string {
 
     case 'member':
       return generateMemberExpression(expr as MemberExpression);
+
+    case 'bracket':
+      return generateBracketExpression(expr as BracketExpression);
 
     case 'binary':
       return generateBinaryExpression(expr as BinaryExpression);
@@ -408,6 +415,15 @@ function generateCallExpression(expr: CallExpression): string {
 function generateMemberExpression(expr: MemberExpression): string {
   const object = generateExpression(expr.object);
   return `${object}.${expr.property}`;
+}
+
+/**
+ * Generate code for a bracket expression (array/object indexing)
+ */
+function generateBracketExpression(expr: BracketExpression): string {
+  const object = generateExpression(expr.object);
+  const index = generateExpression(expr.index);
+  return `${object}[${index}]`;
 }
 
 /**

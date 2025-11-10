@@ -53,6 +53,12 @@ export interface MemberExpression extends ASTNode {
   property: string;
 }
 
+export interface BracketExpression extends ASTNode {
+  type: 'bracket';
+  object: Expression;
+  index: Expression;
+}
+
 export interface BinaryExpression extends ASTNode {
   type: 'binary';
   left: Expression;
@@ -88,6 +94,7 @@ export type Expression =
   | ObjectLiteral
   | CallExpression
   | MemberExpression
+  | BracketExpression
   | BinaryExpression
   | UnaryExpression;
 

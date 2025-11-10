@@ -16,6 +16,7 @@ import {
   Property,
   CallExpression,
   MemberExpression,
+  BracketExpression,
   BinaryExpression,
   UnaryExpression,
 } from './ast.js';
@@ -149,6 +150,8 @@ function parseExpression(node: Parser.SyntaxNode): Expression {
       return parseCallExpression(node);
     case 'member_expression':
       return parseMemberExpression(node);
+    case 'bracket_expression':
+      return parseBracketExpression(node);
     case 'binary_expression':
       return parseBinaryExpression(node);
     case 'unary_expression':
@@ -320,6 +323,24 @@ function parseMemberExpression(node: Parser.SyntaxNode): MemberExpression {
     type: 'member',
     object,
     property,
+  };
+}
+
+function parseBracketExpression(node: Parser.SyntaxNode): BracketExpression {
+  // <expression> [ <expression> ]
+  const expressionNodes = node.children.filter(c => c.type === 'expression');
+
+  if (expressionNodes.length !== 2) {
+    throw new Error('Invalid bracket_expression: missing object or index');
+  }
+
+  const object = parseExpression(expressionNodes[0]);
+  const index = parseExpression(expressionNodes[1]);
+
+  return {
+    type: 'bracket',
+    object,
+    index,
   };
 }
 

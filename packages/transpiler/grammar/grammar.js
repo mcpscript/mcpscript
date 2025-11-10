@@ -4,13 +4,13 @@ module.exports = grammar({
 
   extras: $ => [
     /\s/, // whitespace
-    $.comment
+    $.comment,
   ],
 
   rules: {
     source_file: $ => repeat($.statement),
 
-    comment: $ => token(seq('//', /.*/)),
+    comment: _$ => token(seq('//', /.*/)),
 
     statement: $ =>
       choice($.mcp_declaration, $.assignment, $.expression_statement),
@@ -27,6 +27,7 @@ module.exports = grammar({
         $.identifier,
         $.call_expression,
         $.member_expression,
+        $.bracket_expression,
         $.parenthesized_expression
       ),
 
@@ -52,6 +53,9 @@ module.exports = grammar({
       prec.left(7, seq($.expression, '(', optional($.argument_list), ')')),
 
     member_expression: $ => prec.left(7, seq($.expression, '.', $.identifier)),
+
+    bracket_expression: _$ =>
+      prec.left(7, seq(_$.expression, '[', _$.expression, ']')),
 
     parenthesized_expression: $ => seq('(', $.expression, ')'),
 
