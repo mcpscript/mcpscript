@@ -14,6 +14,7 @@ import {
   ArrayLiteral,
   ObjectLiteral,
   BinaryExpression,
+  UnaryExpression,
 } from './ast.js';
 
 /**
@@ -345,6 +346,9 @@ function generateExpression(expr: Expression): string {
     case 'binary':
       return generateBinaryExpression(expr as BinaryExpression);
 
+    case 'unary':
+      return generateUnaryExpression(expr as UnaryExpression);
+
     default:
       throw new Error(`Unknown expression type: ${(expr as Expression).type}`);
   }
@@ -443,24 +447,41 @@ function needsParentheses(
 }
 
 /**
+ * Generate code for a unary expression
+ */
+function generateUnaryExpression(expr: UnaryExpression): string {
+  const operand = generateExpression(expr.operand);
+
+  // Check if operand needs parentheses (for binary expressions with lower precedence than unary)
+  const needsParen = expr.operand.type === 'binary';
+  const operandCode = needsParen ? `(${operand})` : operand;
+
+  return `${expr.operator}${operandCode}`;
+}
+
+/**
  * Get operator precedence (higher number = higher precedence)
  */
 function getOperatorPrecedence(op: string): number {
   switch (op) {
+    case '||':
+      return 0;
+    case '&&':
+      return 1;
     case '==':
     case '!=':
     case '<':
     case '>':
     case '<=':
     case '>=':
-      return 0;
+      return 2;
     case '+':
     case '-':
-      return 1;
+      return 3;
     case '*':
     case '/':
     case '%':
-      return 2;
+      return 4;
     default:
       return 0;
   }

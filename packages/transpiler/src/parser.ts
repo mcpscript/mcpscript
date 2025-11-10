@@ -17,6 +17,7 @@ import {
   CallExpression,
   MemberExpression,
   BinaryExpression,
+  UnaryExpression,
 } from './ast.js';
 
 // Import the generated parser
@@ -150,6 +151,8 @@ function parseExpression(node: Parser.SyntaxNode): Expression {
       return parseMemberExpression(node);
     case 'binary_expression':
       return parseBinaryExpression(node);
+    case 'unary_expression':
+      return parseUnaryExpression(node);
     case 'parenthesized_expression':
       return parseParenthesizedExpression(node);
     case 'string':
@@ -343,7 +346,9 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
       c.type === '<' ||
       c.type === '>' ||
       c.type === '<=' ||
-      c.type === '>='
+      c.type === '>=' ||
+      c.type === '&&' ||
+      c.type === '||'
   );
 
   if (expressionNodes.length !== 2 || !operatorNode) {
@@ -363,12 +368,33 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
     | '<'
     | '>'
     | '<='
-    | '>=';
+    | '>='
+    | '&&'
+    | '||';
 
   return {
     type: 'binary',
     left,
     operator,
     right,
+  };
+}
+
+function parseUnaryExpression(node: Parser.SyntaxNode): UnaryExpression {
+  const children = node.children;
+  const operatorNode = children.find(c => c.type === '!' || c.type === '-');
+  const expressionNode = children.find(c => c.type === 'expression');
+
+  if (!operatorNode || !expressionNode) {
+    throw new Error('Invalid unary_expression: missing operator or operand');
+  }
+
+  const operator = operatorNode.type as '!' | '-';
+  const operand = parseExpression(expressionNode);
+
+  return {
+    type: 'unary',
+    operator,
+    operand,
   };
 }

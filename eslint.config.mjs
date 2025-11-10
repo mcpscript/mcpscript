@@ -10,6 +10,8 @@ export default defineConfig(
   globalIgnores([
     'dist/',
     '**/dist/',
+    'coverage/',
+    '**/coverage/',
     'node_modules/',
     '**/node_modules/',
     'packages/transpiler/grammar/src/',

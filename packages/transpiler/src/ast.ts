@@ -56,8 +56,27 @@ export interface MemberExpression extends ASTNode {
 export interface BinaryExpression extends ASTNode {
   type: 'binary';
   left: Expression;
-  operator: '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '<' | '>' | '<=' | '>=';
+  operator:
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '=='
+    | '!='
+    | '<'
+    | '>'
+    | '<='
+    | '>='
+    | '&&'
+    | '||';
   right: Expression;
+}
+
+export interface UnaryExpression extends ASTNode {
+  type: 'unary';
+  operator: '!' | '-';
+  operand: Expression;
 }
 
 export type Expression =
@@ -69,7 +88,8 @@ export type Expression =
   | ObjectLiteral
   | CallExpression
   | MemberExpression
-  | BinaryExpression;
+  | BinaryExpression
+  | UnaryExpression;
 
 // Statement types
 export interface MCPDeclaration extends ASTNode {

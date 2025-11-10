@@ -32,8 +32,8 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 6. ✅ **DONE** - Binary arithmetic expression parsing (`+`, `-`, `*`, `/`, `%`)
 7. ✅ **DONE** - Comparison operator parsing (`==`, `!=`, `<`, `>`, `<=`, `>=`)
-8. 🔲 **TODO** - Logical operator parsing (`&&`, `||`, `!`)
-9. 🔲 **TODO** - Unary expression parsing (`-x`, `!condition`)
+8. ✅ **DONE** - Logical operator parsing (`&&`, `||`, `!`)
+9. ✅ **DONE** - Unary expression parsing (`-x`, `!condition`)
 10. 🔲 **TODO** - Operator precedence handling in grammar
 11. 🔲 **TODO** - Expression evaluation in codegen
 12. 🔲 **TODO** - Expression runtime tests

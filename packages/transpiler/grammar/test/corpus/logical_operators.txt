@@ -1,0 +1,203 @@
+=====================================
+Logical AND operator
+=====================================
+
+result = a && b
+result = true && false
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (literal
+              (boolean)))
+          (expression
+            (literal
+              (boolean))))))))
+
+=====================================
+Logical OR operator
+=====================================
+
+result = a || b
+result = false || true
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (literal
+              (boolean)))
+          (expression
+            (literal
+              (boolean))))))))
+
+=====================================
+Logical NOT operator (unary)
+=====================================
+
+result = !condition
+result = !true
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (unary_expression
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (unary_expression
+          (expression
+            (literal
+              (boolean))))))))
+
+=====================================
+Unary minus operator
+=====================================
+
+result = -value
+result = -42
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (unary_expression
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (unary_expression
+          (expression
+            (literal
+              (number))))))))
+
+=====================================
+Logical operator precedence
+=====================================
+
+result = a || b && c
+result = !condition || value
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (identifier))))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (unary_expression
+              (expression
+                (identifier))))
+          (expression
+            (identifier)))))))
+
+=====================================
+Mixed logical and arithmetic operators
+=====================================
+
+result = x + y > 0 && z < 10
+result = !(a == b) || c != d
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (binary_expression
+              (expression
+                (binary_expression
+                  (expression
+                    (identifier))
+                  (expression
+                    (identifier))))
+              (expression
+                (literal
+                  (number)))))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (unary_expression
+              (expression
+                (parenthesized_expression
+                  (expression
+                    (binary_expression
+                      (expression
+                        (identifier))
+                      (expression
+                        (identifier))))))))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (identifier)))))))))

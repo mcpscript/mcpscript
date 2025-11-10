@@ -15,6 +15,7 @@ module.exports = grammar({
     expression: $ =>
       choice(
         $.binary_expression,
+        $.unary_expression,
         $.literal,
         $.identifier,
         $.call_expression,
@@ -24,17 +25,21 @@ module.exports = grammar({
 
     binary_expression: $ =>
       choice(
+        prec.left(0, seq($.expression, '||', $.expression)),
+        prec.left(1, seq($.expression, '&&', $.expression)),
         prec.left(
-          0,
+          2,
           seq(
             $.expression,
             choice('==', '!=', '<', '>', '<=', '>='),
             $.expression
           )
         ),
-        prec.left(1, seq($.expression, choice('+', '-'), $.expression)),
-        prec.left(2, seq($.expression, choice('*', '/', '%'), $.expression))
+        prec.left(3, seq($.expression, choice('+', '-'), $.expression)),
+        prec.left(4, seq($.expression, choice('*', '/', '%'), $.expression))
       ),
+
+    unary_expression: $ => prec(5, seq(choice('!', '-'), $.expression)),
 
     call_expression: $ =>
       prec.left(1, seq($.expression, '(', optional($.argument_list), ')')),
