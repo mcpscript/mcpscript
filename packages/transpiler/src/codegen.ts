@@ -434,7 +434,7 @@ function needsParentheses(
     return true;
   }
 
-  // Same precedence: right-associative operators need parentheses on the left
+  // Same precedence: left-associative operators need parentheses on the right
   if (childPrec === parentPrec && side === 'right') {
     return true;
   }
@@ -447,6 +447,13 @@ function needsParentheses(
  */
 function getOperatorPrecedence(op: string): number {
   switch (op) {
+    case '==':
+    case '!=':
+    case '<':
+    case '>':
+    case '<=':
+    case '>=':
+      return 0;
     case '+':
     case '-':
       return 1;

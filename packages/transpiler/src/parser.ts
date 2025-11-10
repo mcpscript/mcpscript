@@ -337,7 +337,13 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
       c.type === '-' ||
       c.type === '*' ||
       c.type === '/' ||
-      c.type === '%'
+      c.type === '%' ||
+      c.type === '==' ||
+      c.type === '!=' ||
+      c.type === '<' ||
+      c.type === '>' ||
+      c.type === '<=' ||
+      c.type === '>='
   );
 
   if (expressionNodes.length !== 2 || !operatorNode) {
@@ -346,7 +352,18 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
 
   const left = parseExpression(expressionNodes[0]);
   const right = parseExpression(expressionNodes[1]);
-  const operator = operatorNode.type as '+' | '-' | '*' | '/' | '%';
+  const operator = operatorNode.type as
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '=='
+    | '!='
+    | '<'
+    | '>'
+    | '<='
+    | '>=';
 
   return {
     type: 'binary',

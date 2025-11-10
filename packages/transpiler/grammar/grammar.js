@@ -24,6 +24,14 @@ module.exports = grammar({
 
     binary_expression: $ =>
       choice(
+        prec.left(
+          0,
+          seq(
+            $.expression,
+            choice('==', '!=', '<', '>', '<=', '>='),
+            $.expression
+          )
+        ),
         prec.left(1, seq($.expression, choice('+', '-'), $.expression)),
         prec.left(2, seq($.expression, choice('*', '/', '%'), $.expression))
       ),

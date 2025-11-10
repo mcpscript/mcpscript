@@ -56,7 +56,7 @@ export interface MemberExpression extends ASTNode {
 export interface BinaryExpression extends ASTNode {
   type: 'binary';
   left: Expression;
-  operator: '+' | '-' | '*' | '/' | '%';
+  operator: '+' | '-' | '*' | '/' | '%' | '==' | '!=' | '<' | '>' | '<=' | '>=';
   right: Expression;
 }
 

@@ -552,6 +552,156 @@ describe('Parser', () => {
       expect(secondArg.type).toBe('binary');
       expect(secondArg.operator).toBe('*');
     });
+
+    // Comparison operators tests
+    it('should parse equality comparison expressions', () => {
+      const statements = parseSource('result = a == b');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('==');
+      expect((binary.left as Identifier).name).toBe('a');
+      expect((binary.right as Identifier).name).toBe('b');
+    });
+
+    it('should parse inequality comparison expressions', () => {
+      const statements = parseSource('result = x != y');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('!=');
+      expect((binary.left as Identifier).name).toBe('x');
+      expect((binary.right as Identifier).name).toBe('y');
+    });
+
+    it('should parse less than comparison expressions', () => {
+      const statements = parseSource('result = 5 < 10');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('<');
+      expect((binary.left as NumberLiteral).value).toBe(5);
+      expect((binary.right as NumberLiteral).value).toBe(10);
+    });
+
+    it('should parse greater than comparison expressions', () => {
+      const statements = parseSource('result = m > n');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('>');
+      expect((binary.left as Identifier).name).toBe('m');
+      expect((binary.right as Identifier).name).toBe('n');
+    });
+
+    it('should parse less than or equal comparison expressions', () => {
+      const statements = parseSource('result = age <= 18');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('<=');
+      expect((binary.left as Identifier).name).toBe('age');
+      expect((binary.right as NumberLiteral).value).toBe(18);
+    });
+
+    it('should parse greater than or equal comparison expressions', () => {
+      const statements = parseSource('result = score >= 90');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const binary = stmt.value as BinaryExpression;
+      expect(binary.type).toBe('binary');
+      expect(binary.operator).toBe('>=');
+      expect((binary.left as Identifier).name).toBe('score');
+      expect((binary.right as NumberLiteral).value).toBe(90);
+    });
+
+    it('should handle comparison operator precedence (comparisons before arithmetic)', () => {
+      const statements = parseSource('result = a + b == c * d');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const outerBinary = stmt.value as BinaryExpression;
+      expect(outerBinary.operator).toBe('==');
+
+      const leftBinary = outerBinary.left as BinaryExpression;
+      expect(leftBinary.type).toBe('binary');
+      expect(leftBinary.operator).toBe('+');
+      expect((leftBinary.left as Identifier).name).toBe('a');
+      expect((leftBinary.right as Identifier).name).toBe('b');
+
+      const rightBinary = outerBinary.right as BinaryExpression;
+      expect(rightBinary.type).toBe('binary');
+      expect(rightBinary.operator).toBe('*');
+      expect((rightBinary.left as Identifier).name).toBe('c');
+      expect((rightBinary.right as Identifier).name).toBe('d');
+    });
+
+    it('should handle chained comparisons with left associativity', () => {
+      const statements = parseSource('result = a < b == c > d');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const outerBinary = stmt.value as BinaryExpression;
+      expect(outerBinary.operator).toBe('>');
+      expect((outerBinary.right as Identifier).name).toBe('d');
+
+      const middleBinary = outerBinary.left as BinaryExpression;
+      expect(middleBinary.type).toBe('binary');
+      expect(middleBinary.operator).toBe('==');
+      expect((middleBinary.right as Identifier).name).toBe('c');
+
+      const innerBinary = middleBinary.left as BinaryExpression;
+      expect(innerBinary.type).toBe('binary');
+      expect(innerBinary.operator).toBe('<');
+      expect((innerBinary.left as Identifier).name).toBe('a');
+      expect((innerBinary.right as Identifier).name).toBe('b');
+    });
+
+    it('should handle comparisons with different data types', () => {
+      const statements = parseSource(
+        'result1 = name == "John"\nresult2 = count > 0\nresult3 = flag != true'
+      );
+      expect(statements).toHaveLength(3);
+
+      const stmt1 = statements[0] as Assignment;
+      const binary1 = stmt1.value as BinaryExpression;
+      expect(binary1.operator).toBe('==');
+      expect((binary1.left as Identifier).name).toBe('name');
+      expect((binary1.right as StringLiteral).value).toBe('John');
+
+      const stmt2 = statements[1] as Assignment;
+      const binary2 = stmt2.value as BinaryExpression;
+      expect(binary2.operator).toBe('>');
+      expect((binary2.left as Identifier).name).toBe('count');
+      expect((binary2.right as NumberLiteral).value).toBe(0);
+
+      const stmt3 = statements[2] as Assignment;
+      const binary3 = stmt3.value as BinaryExpression;
+      expect(binary3.operator).toBe('!=');
+      expect((binary3.left as Identifier).name).toBe('flag');
+      expect((binary3.right as BooleanLiteral).value).toBe(true);
+    });
+
+    it('should handle comparisons in parentheses', () => {
+      const statements = parseSource('result = (a == b) != (c < d)');
+      expect(statements).toHaveLength(1);
+      const stmt = statements[0] as Assignment;
+      const outerBinary = stmt.value as BinaryExpression;
+      expect(outerBinary.operator).toBe('!=');
+
+      const leftBinary = outerBinary.left as BinaryExpression;
+      expect(leftBinary.operator).toBe('==');
+      expect((leftBinary.left as Identifier).name).toBe('a');
+      expect((leftBinary.right as Identifier).name).toBe('b');
+
+      const rightBinary = outerBinary.right as BinaryExpression;
+      expect(rightBinary.operator).toBe('<');
+      expect((rightBinary.left as Identifier).name).toBe('c');
+      expect((rightBinary.right as Identifier).name).toBe('d');
+    });
   });
 
   describe('Complete Programs', () => {

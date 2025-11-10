@@ -388,5 +388,125 @@ config = { sum: a + b, product: x * y, diff: m - n }
         'let config = { sum: a + b, product: x * y, diff: m - n };'
       );
     });
+
+    // Comparison operators tests
+    it('should generate code for equality comparisons', () => {
+      const source = `
+result1 = a == b
+result2 = x != y
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result1 = a == b;');
+      expect(code).toContain('let result2 = x != y;');
+    });
+
+    it('should generate code for relational comparisons', () => {
+      const source = `
+result1 = a < b
+result2 = x > y
+result3 = m <= n
+result4 = p >= q
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result1 = a < b;');
+      expect(code).toContain('let result2 = x > y;');
+      expect(code).toContain('let result3 = m <= n;');
+      expect(code).toContain('let result4 = p >= q;');
+    });
+
+    it('should handle comparison operator precedence correctly', () => {
+      const source = `
+result1 = a + b == c * d
+result2 = x - y != p / q
+result3 = m * 2 < n + 1
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result1 = a + b == c * d;');
+      expect(code).toContain('let result2 = x - y != p / q;');
+      expect(code).toContain('let result3 = m * 2 < n + 1;');
+    });
+
+    it('should generate code for comparisons with literals', () => {
+      const source = `
+result1 = age >= 18
+result2 = score < 100
+result3 = name == "John"
+result4 = flag != true
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result1 = age >= 18;');
+      expect(code).toContain('let result2 = score < 100;');
+      expect(code).toContain('let result3 = name == "John";');
+      expect(code).toContain('let result4 = flag != true;');
+    });
+
+    it('should handle parentheses with comparisons', () => {
+      const source = `
+result1 = (a == b) != (c < d)
+result2 = (x + y) > (m - n)
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      // For same-precedence comparison operators, left operand doesn't need parentheses
+      // but right operand with same precedence does need them in some cases
+      expect(code).toContain('let result1 = a == b != (c < d);');
+      // Arithmetic has higher precedence than comparison, so no parentheses needed
+      expect(code).toContain('let result2 = x + y > m - n;');
+    });
+
+    it('should work with comparisons in function calls', () => {
+      const source = `
+result = process(a == b, x < y)
+check(age >= 18, score > 90)
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = process(a == b, x < y);');
+      expect(code).toContain('check(age >= 18, score > 90);');
+    });
+
+    it('should work with comparisons in arrays and objects', () => {
+      const source = `
+checks = [a == b, x < y, m >= n]
+results = { equal: a == b, less: x < y, greater: m > n }
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let checks = [a == b, x < y, m >= n];');
+      expect(code).toContain(
+        'let results = { equal: a == b, less: x < y, greater: m > n };'
+      );
+    });
+
+    it('should handle chained comparisons', () => {
+      const source = `
+result1 = a < b == c
+result2 = x != y <= z
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result1 = a < b == c;');
+      expect(code).toContain('let result2 = x != y <= z;');
+    });
   });
 });
