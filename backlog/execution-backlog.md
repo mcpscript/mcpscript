@@ -30,7 +30,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enable arithmetic and logical operations**
 
-6. 🔲 **TODO** - Binary arithmetic expression parsing (`+`, `-`, `*`, `/`, `%`)
+6. ✅ **DONE** - Binary arithmetic expression parsing (`+`, `-`, `*`, `/`, `%`)
 7. 🔲 **TODO** - Comparison operator parsing (`==`, `!=`, `<`, `>`, `<=`, `>=`)
 8. 🔲 **TODO** - Logical operator parsing (`&&`, `||`, `!`)
 9. 🔲 **TODO** - Unary expression parsing (`-x`, `!condition`)

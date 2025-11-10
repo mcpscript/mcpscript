@@ -13,6 +13,7 @@ import {
   BooleanLiteral,
   ArrayLiteral,
   ObjectLiteral,
+  BinaryExpression,
 } from './ast.js';
 
 /**
@@ -340,6 +341,12 @@ function generateExpression(expr: Expression): string {
 
     case 'member':
       return generateMemberExpression(expr as MemberExpression);
+
+    case 'binary':
+      return generateBinaryExpression(expr as BinaryExpression);
+
+    default:
+      throw new Error(`Unknown expression type: ${(expr as Expression).type}`);
   }
 }
 
@@ -386,4 +393,68 @@ function generateCallExpression(expr: CallExpression): string {
 function generateMemberExpression(expr: MemberExpression): string {
   const object = generateExpression(expr.object);
   return `${object}.${expr.property}`;
+}
+
+/**
+ * Generate code for a binary expression
+ */
+function generateBinaryExpression(expr: BinaryExpression): string {
+  const left = generateExpression(expr.left);
+  const right = generateExpression(expr.right);
+
+  // Handle operator precedence by wrapping operands in parentheses if they are binary expressions
+  // with lower precedence than the current operator
+  const leftParen = needsParentheses(expr.left, expr.operator, 'left');
+  const rightParen = needsParentheses(expr.right, expr.operator, 'right');
+
+  const leftCode = leftParen ? `(${left})` : left;
+  const rightCode = rightParen ? `(${right})` : right;
+
+  return `${leftCode} ${expr.operator} ${rightCode}`;
+}
+
+/**
+ * Check if an expression needs parentheses when used as an operand
+ */
+function needsParentheses(
+  expr: Expression,
+  parentOp: string,
+  side: 'left' | 'right'
+): boolean {
+  if (expr.type !== 'binary') {
+    return false;
+  }
+
+  const childOp = (expr as BinaryExpression).operator;
+  const parentPrec = getOperatorPrecedence(parentOp);
+  const childPrec = getOperatorPrecedence(childOp);
+
+  // Lower precedence needs parentheses
+  if (childPrec < parentPrec) {
+    return true;
+  }
+
+  // Same precedence: right-associative operators need parentheses on the left
+  if (childPrec === parentPrec && side === 'right') {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Get operator precedence (higher number = higher precedence)
+ */
+function getOperatorPrecedence(op: string): number {
+  switch (op) {
+    case '+':
+    case '-':
+      return 1;
+    case '*':
+    case '/':
+    case '%':
+      return 2;
+    default:
+      return 0;
+  }
 }

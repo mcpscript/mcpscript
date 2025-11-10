@@ -14,11 +14,18 @@ module.exports = grammar({
 
     expression: $ =>
       choice(
+        $.binary_expression,
         $.literal,
         $.identifier,
         $.call_expression,
         $.member_expression,
         $.parenthesized_expression
+      ),
+
+    binary_expression: $ =>
+      choice(
+        prec.left(1, seq($.expression, choice('+', '-'), $.expression)),
+        prec.left(2, seq($.expression, choice('*', '/', '%'), $.expression))
       ),
 
     call_expression: $ =>

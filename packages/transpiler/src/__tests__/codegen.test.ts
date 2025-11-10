@@ -251,4 +251,142 @@ mcp server { command: "test", enabled: true, debug: false }
     );
     expect(code).toContain('enabled: true, debug: false');
   });
+
+  describe('Binary Expressions', () => {
+    it('should generate basic arithmetic operations', () => {
+      const source = `
+result = a + b
+x = 10 - 5
+y = m * n
+z = p / q
+w = r % s
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = a + b;');
+      expect(code).toContain('let x = 10 - 5;');
+      expect(code).toContain('let y = m * n;');
+      expect(code).toContain('let z = p / q;');
+      expect(code).toContain('let w = r % s;');
+    });
+
+    it('should handle operator precedence correctly', () => {
+      const source = `
+result = a + b * c
+x = m - n / p
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = a + b * c;');
+      expect(code).toContain('let x = m - n / p;');
+    });
+
+    it('should add parentheses when needed for precedence', () => {
+      const source = `
+result = (a + b) * c
+x = (m - n) / p
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = (a + b) * c;');
+      expect(code).toContain('let x = (m - n) / p;');
+    });
+
+    it('should handle left associativity correctly', () => {
+      const source = `
+result = a - b + c
+x = m / n * p
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = a - b + c;');
+      expect(code).toContain('let x = m / n * p;');
+    });
+
+    it('should handle complex nested expressions', () => {
+      const source = `
+result = (a + b) * (c - d)
+complex = (x + y * 2) / (z - 1)
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = (a + b) * (c - d);');
+      expect(code).toContain('let complex = (x + y * 2) / (z - 1);');
+    });
+
+    it('should work with mixed literals and variables', () => {
+      const source = `
+result = 10 + x * 2.5
+calc = y / 3 - 1.5
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = 10 + x * 2.5;');
+      expect(code).toContain('let calc = y / 3 - 1.5;');
+    });
+
+    it('should work in function call arguments', () => {
+      const source = `
+result = calculate(a + b, x * y)
+process(10 - 5, m / n)
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = calculate(a + b, x * y);');
+      expect(code).toContain('process(10 - 5, m / n);');
+    });
+
+    it('should work with boolean expressions and mixed types', () => {
+      const source = `
+result = count + 1
+flag = enabled + false
+mixed = 3.14 * radius
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let result = count + 1;');
+      expect(code).toContain('let flag = enabled + false;');
+      expect(code).toContain('let mixed = 3.14 * radius;');
+    });
+
+    it('should work with arrays containing binary expressions', () => {
+      const source = `
+results = [a + b, x * y, m - n]
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain('let results = [a + b, x * y, m - n];');
+    });
+
+    it('should work with objects containing binary expressions', () => {
+      const source = `
+config = { sum: a + b, product: x * y, diff: m - n }
+      `.trim();
+
+      const ast = parseSource(source);
+      const code = generateCode(ast);
+
+      expect(code).toContain(
+        'let config = { sum: a + b, product: x * y, diff: m - n };'
+      );
+    });
+  });
 });

@@ -16,6 +16,7 @@ import {
   Property,
   CallExpression,
   MemberExpression,
+  BinaryExpression,
 } from './ast.js';
 
 // Import the generated parser
@@ -147,6 +148,8 @@ function parseExpression(node: Parser.SyntaxNode): Expression {
       return parseCallExpression(node);
     case 'member_expression':
       return parseMemberExpression(node);
+    case 'binary_expression':
+      return parseBinaryExpression(node);
     case 'parenthesized_expression':
       return parseParenthesizedExpression(node);
     case 'string':
@@ -323,4 +326,32 @@ function parseParenthesizedExpression(node: Parser.SyntaxNode): Expression {
     throw new Error('Invalid parenthesized_expression: missing expression');
   }
   return parseExpression(expressionNode);
+}
+
+function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
+  const children = node.children;
+  const expressionNodes = children.filter(c => c.type === 'expression');
+  const operatorNode = children.find(
+    c =>
+      c.type === '+' ||
+      c.type === '-' ||
+      c.type === '*' ||
+      c.type === '/' ||
+      c.type === '%'
+  );
+
+  if (expressionNodes.length !== 2 || !operatorNode) {
+    throw new Error('Invalid binary_expression: missing operands or operator');
+  }
+
+  const left = parseExpression(expressionNodes[0]);
+  const right = parseExpression(expressionNodes[1]);
+  const operator = operatorNode.type as '+' | '-' | '*' | '/' | '%';
+
+  return {
+    type: 'binary',
+    left,
+    operator,
+    right,
+  };
 }

@@ -53,6 +53,13 @@ export interface MemberExpression extends ASTNode {
   property: string;
 }
 
+export interface BinaryExpression extends ASTNode {
+  type: 'binary';
+  left: Expression;
+  operator: '+' | '-' | '*' | '/' | '%';
+  right: Expression;
+}
+
 export type Expression =
   | Identifier
   | StringLiteral
@@ -61,7 +68,8 @@ export type Expression =
   | ArrayLiteral
   | ObjectLiteral
   | CallExpression
-  | MemberExpression;
+  | MemberExpression
+  | BinaryExpression;
 
 // Statement types
 export interface MCPDeclaration extends ASTNode {

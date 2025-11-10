@@ -1,0 +1,151 @@
+=====================================
+Basic arithmetic operations
+=====================================
+
+result = a + b
+result = x - y
+result = m * n
+result = p / q
+result = r % s
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (identifier)))))))
+
+=====================================
+Operator precedence
+=====================================
+
+result = a + b * c
+result = x - y / z
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (identifier))))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (identifier)))))))))
+
+=====================================
+Parentheses override precedence
+=====================================
+
+result = (a + b) * c
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (parenthesized_expression
+              (expression
+                (binary_expression
+                  (expression
+                    (identifier))
+                  (expression
+                    (identifier))))))
+          (expression
+            (identifier)))))))
+
+=====================================
+Mixed literals and variables
+=====================================
+
+result = 10 + x
+result = y * 2.5
+
+---
+
+(source_file
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (literal
+              (number)))
+          (expression
+            (identifier))))))
+  (statement
+    (assignment
+      (identifier)
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (literal
+              (number))))))))
