@@ -10,6 +10,7 @@ import {
   BlockStatement,
   IfStatement,
   WhileStatement,
+  ForStatement,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -80,6 +81,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseIfStatement(firstChild);
     case 'while_statement':
       return parseWhileStatement(firstChild);
+    case 'for_statement':
+      return parseForStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -233,6 +236,82 @@ function parseWhileStatement(node: Parser.SyntaxNode): WhileStatement {
     condition,
     body,
   };
+}
+
+function parseForStatement(node: Parser.SyntaxNode): ForStatement {
+  // for ( [assignment] ; [expression] ; [assignment] ) statement
+  // Need to parse in order by looking at the semicolons
+  const statementNode = node.children.find(c => c.type === 'statement');
+
+  if (!statementNode) {
+    throw new Error('Invalid for_statement: missing body statement');
+  }
+
+  const body = parseStatement(statementNode);
+  if (!body) {
+    throw new Error('Invalid for_statement: could not parse body statement');
+  }
+
+  const result: ForStatement = {
+    type: 'for_statement',
+    body,
+  };
+
+  // Find semicolon positions to determine which parts exist
+  const children = node.children;
+  const semicolonIndices: number[] = [];
+
+  for (let i = 0; i < children.length; i++) {
+    if (children[i].type === ';') {
+      semicolonIndices.push(i);
+    }
+  }
+
+  if (semicolonIndices.length !== 2) {
+    throw new Error('Invalid for_statement: expected exactly two semicolons');
+  }
+
+  // Find opening parenthesis
+  let openParenIndex = -1;
+  for (let i = 0; i < children.length; i++) {
+    if (children[i].type === '(') {
+      openParenIndex = i;
+      break;
+    }
+  }
+
+  if (openParenIndex === -1) {
+    throw new Error('Invalid for_statement: missing opening parenthesis');
+  }
+
+  // Parse init part (between ( and first ;)
+  for (let i = openParenIndex + 1; i < semicolonIndices[0]; i++) {
+    if (children[i].type === 'assignment') {
+      result.init = parseAssignment(children[i]);
+      break;
+    }
+  }
+
+  // Parse condition part (between first ; and second ;)
+  for (let i = semicolonIndices[0] + 1; i < semicolonIndices[1]; i++) {
+    if (children[i].type === 'expression') {
+      result.condition = parseExpression(children[i]);
+      break;
+    }
+  }
+
+  // Parse update part (between second ; and ))
+  for (let i = semicolonIndices[1] + 1; i < children.length; i++) {
+    if (children[i].type === ')') {
+      break;
+    }
+    if (children[i].type === 'assignment') {
+      result.update = parseAssignment(children[i]);
+      break;
+    }
+  }
+
+  return result;
 }
 
 function parseExpression(node: Parser.SyntaxNode): Expression {

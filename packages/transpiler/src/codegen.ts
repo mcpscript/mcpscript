@@ -9,6 +9,7 @@ import {
   BlockStatement,
   IfStatement,
   WhileStatement,
+  ForStatement,
   CallExpression,
   MemberExpression,
   BracketExpression,
@@ -206,6 +207,31 @@ for (const tool of __${name}_tools.tools) {
 }
 
 /**
+ * Central statement dispatcher - handles all statement types in one place
+ */
+function dispatchStatement(
+  stmt: Statement,
+  declaredVariables: Set<string>
+): string {
+  switch (stmt.type) {
+    case 'assignment':
+      return generateAssignment(stmt, declaredVariables);
+    case 'expression_statement':
+      return generateExpressionStatement(stmt);
+    case 'block_statement':
+      return generateBlockStatement(stmt, declaredVariables);
+    case 'if_statement':
+      return generateIfStatement(stmt, declaredVariables);
+    case 'while_statement':
+      return generateWhileStatement(stmt, declaredVariables);
+    case 'for_statement':
+      return generateForStatement(stmt, declaredVariables);
+    default:
+      return '';
+  }
+}
+
+/**
  * Generate code for all statements (excluding MCP declarations)
  */
 function generateStatements(statements: Statement[]): string {
@@ -214,20 +240,7 @@ function generateStatements(statements: Statement[]): string {
 
   const codeLines = statements
     .filter(stmt => stmt.type !== 'mcp_declaration')
-    .map(stmt => {
-      if (stmt.type === 'assignment') {
-        return generateAssignment(stmt, declaredVariables);
-      } else if (stmt.type === 'expression_statement') {
-        return generateExpressionStatement(stmt);
-      } else if (stmt.type === 'block_statement') {
-        return generateBlockStatement(stmt, declaredVariables);
-      } else if (stmt.type === 'if_statement') {
-        return generateIfStatement(stmt, declaredVariables);
-      } else if (stmt.type === 'while_statement') {
-        return generateWhileStatement(stmt, declaredVariables);
-      }
-      return '';
-    })
+    .map(stmt => dispatchStatement(stmt, declaredVariables))
     .filter(Boolean);
 
   if (codeLines.length === 0) {
@@ -376,20 +389,7 @@ function generateBlockStatement(
 ): string {
   const blockLines = stmt.statements
     .filter(s => s.type !== 'mcp_declaration')
-    .map(s => {
-      if (s.type === 'assignment') {
-        return generateAssignment(s, declaredVariables);
-      } else if (s.type === 'expression_statement') {
-        return generateExpressionStatement(s);
-      } else if (s.type === 'block_statement') {
-        return generateBlockStatement(s, declaredVariables);
-      } else if (s.type === 'if_statement') {
-        return generateIfStatement(s, declaredVariables);
-      } else if (s.type === 'while_statement') {
-        return generateWhileStatement(s, declaredVariables);
-      }
-      return '';
-    })
+    .map(s => dispatchStatement(s, declaredVariables))
     .filter(Boolean);
 
   if (blockLines.length === 0) {
@@ -447,6 +447,55 @@ function generateWhileStatement(
 }
 
 /**
+ * Generate code for a for statement
+ */
+function generateForStatement(
+  stmt: ForStatement,
+  declaredVariables: Set<string>
+): string {
+  const init = stmt.init
+    ? generateAssignment(stmt.init, declaredVariables).replace(/;$/, '')
+    : '';
+  const condition = stmt.condition ? generateExpression(stmt.condition) : '';
+  const update = stmt.update
+    ? generateAssignmentForUpdate(stmt.update, declaredVariables)
+    : '';
+
+  // Always normalize statements to block format for consistency
+  const bodyCode = generateStatementAsBlock(stmt.body, declaredVariables);
+
+  // Handle special case where all parts are empty to match expected format
+  if (!init && !condition && !update) {
+    return `for (;;) ${bodyCode}`;
+  }
+
+  return `for (${init}; ${condition}; ${update}) ${bodyCode}`;
+}
+
+/**
+ * Generate assignment code for for loop update (without semicolon and let/const)
+ */
+function generateAssignmentForUpdate(
+  stmt: Assignment,
+  _declaredVariables: Set<string>
+): string {
+  const value = generateExpression(stmt.value);
+
+  // Handle different assignment target types
+  if (stmt.target.type === 'identifier') {
+    const identifier = stmt.target as Identifier;
+    const variable = identifier.name;
+
+    // In update expressions, we never use 'let' - variable should already be declared in init
+    return `${variable} = ${value}`;
+  } else {
+    // For member and bracket expressions, generate direct assignment
+    const target = generateAssignmentTarget(stmt.target);
+    return `${target} = ${value}`;
+  }
+}
+
+/**
  * Generate a statement as a block, wrapping non-block statements
  */
 function generateStatementAsBlock(
@@ -480,18 +529,7 @@ function generateSingleStatement(
   stmt: Statement,
   declaredVariables: Set<string>
 ): string {
-  switch (stmt.type) {
-    case 'assignment':
-      return generateAssignment(stmt, declaredVariables);
-    case 'expression_statement':
-      return generateExpressionStatement(stmt);
-    case 'if_statement':
-      return generateIfStatement(stmt, declaredVariables);
-    case 'while_statement':
-      return generateWhileStatement(stmt, declaredVariables);
-    default:
-      return '';
-  }
+  return dispatchStatement(stmt, declaredVariables);
 }
 
 /**

@@ -139,10 +139,19 @@ export interface WhileStatement extends ASTNode {
   body: Statement;
 }
 
+export interface ForStatement extends ASTNode {
+  type: 'for_statement';
+  init?: Assignment;
+  condition?: Expression;
+  update?: Assignment;
+  body: Statement;
+}
+
 export type Statement =
   | MCPDeclaration
   | Assignment
   | ExpressionStatement
   | BlockStatement
   | IfStatement
-  | WhileStatement;
+  | WhileStatement
+  | ForStatement;
