@@ -2,8 +2,15 @@
 module.exports = grammar({
   name: 'mcpscript',
 
+  extras: $ => [
+    /\s/, // whitespace
+    $.comment
+  ],
+
   rules: {
     source_file: $ => repeat($.statement),
+
+    comment: $ => token(seq('//', /.*/)),
 
     statement: $ =>
       choice($.mcp_declaration, $.assignment, $.expression_statement),

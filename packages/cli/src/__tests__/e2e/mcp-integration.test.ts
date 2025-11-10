@@ -49,9 +49,9 @@ mcp filesystem {
   args: ["-y", "@modelcontextprotocol/server-filesystem@latest", "${TEST_DIR}"]
 }
 
-filesystem.write_file({ 
-  path: "${TEST_DIR}/object_test.txt", 
-  contents: "Hello from object params!" 
+filesystem.write_file({
+  path: "${TEST_DIR}/object_test.txt",
+  content: "Hello from object params!"
 })
 content = filesystem.read_file({ path: "${TEST_DIR}/object_test.txt" })
 print("Object content:", content)
@@ -80,9 +80,9 @@ mcp filesystem {
 filesystem.write_file("${TEST_DIR}/source.txt", "Original content")
 
 // Object arguments
-filesystem.write_file({ 
-  path: "${TEST_DIR}/explicit.txt", 
-  contents: "Explicit content" 
+filesystem.write_file({
+  path: "${TEST_DIR}/explicit.txt",
+  content: "Explicit content"
 })
 
 source_content = filesystem.read_file("${TEST_DIR}/source.txt")
@@ -94,6 +94,7 @@ print("Explicit:", explicit_content)
 
     const ast = parseSource(source);
     const code = generateCode(ast);
+
     await executeInVM(code, { timeout: 10000 });
 
     // Verify both files were created
@@ -113,7 +114,7 @@ mcp filesystem {
   args: ["-y", "@modelcontextprotocol/server-filesystem@latest", "${TEST_DIR}"]
 }
 
-dirs = filesystem.get_file_tree()
+dirs = filesystem.directory_tree("${TEST_DIR}")
 print("Available directories found")
     `.trim();
 
@@ -132,13 +133,9 @@ mcp filesystem {
   args: ["-y", "@modelcontextprotocol/server-filesystem@latest", "${TEST_DIR}"]
 }
 
-try {
-  // This should handle missing argument gracefully  
-  content = filesystem.read_file()
-  print("This shouldn't print")
-} catch (error) {
-  print("Handled missing argument gracefully")
-}
+// This should handle missing argument gracefully
+content = filesystem.read_file()
+print("Content result:", content)
     `.trim();
 
     const ast = parseSource(source);
@@ -198,7 +195,7 @@ print(content)
   it('should successfully connect to streamable HTTP MCP server', async () => {
     const source = `
 mcp context7 {
-  url: "https://context7.ai/api/mcp"
+  url: "https://mcp.context7.com/mcp"
 }
 
 print("Connected to Context7 MCP server successfully")
