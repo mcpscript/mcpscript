@@ -177,26 +177,36 @@ function parseBlockStatement(node: Parser.SyntaxNode): BlockStatement {
 }
 
 function parseIfStatement(node: Parser.SyntaxNode): IfStatement {
-  // if ( expression ) statement
+  // if ( expression ) statement [else statement]
   const conditionNode = node.children.find(c => c.type === 'expression');
-  const statementNode = node.children.find(c => c.type === 'statement');
+  const statementNodes = node.children.filter(c => c.type === 'statement');
 
-  if (!conditionNode || !statementNode) {
+  if (!conditionNode || statementNodes.length === 0) {
     throw new Error('Invalid if_statement: missing condition or statement');
   }
 
   const condition = parseExpression(conditionNode);
-  const then = parseStatement(statementNode);
+  const then = parseStatement(statementNodes[0]);
 
   if (!then) {
     throw new Error('Invalid if_statement: could not parse then statement');
   }
 
-  return {
+  const result: IfStatement = {
     type: 'if_statement',
     condition,
     then,
   };
+
+  // Check if there's an else statement
+  if (statementNodes.length > 1) {
+    const elseStatement = parseStatement(statementNodes[1]);
+    if (elseStatement) {
+      result.else = elseStatement;
+    }
+  }
+
+  return result;
 }
 
 function parseExpression(node: Parser.SyntaxNode): Expression {

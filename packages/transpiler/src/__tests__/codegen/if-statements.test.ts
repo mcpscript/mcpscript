@@ -137,4 +137,134 @@ describe('If Statement Codegen', () => {
     expect(code).toContain('  activate();');
     expect(code).toContain('}');
   });
+
+  it('should generate simple if-else statement', () => {
+    const source = 'if (true) x = 1 else y = 2';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (true) {');
+    expect(code).toContain('  let x = 1;');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  let y = 2;');
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else with block statements', () => {
+    const source = `if (condition) {
+      x = 10
+      print(x)
+    } else {
+      y = 20
+      print(y)
+    }`;
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (condition) {');
+    expect(code).toContain('  let x = 10;');
+    expect(code).toContain('  print(x);');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  let y = 20;');
+    expect(code).toContain('  print(y);');
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else with mixed block and non-block statements', () => {
+    const source = `if (x > 0) {
+      result = "positive"
+    } else result = "negative"`;
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (x > 0) {');
+    expect(code).toContain('  let result = "positive";');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  result = "negative";'); // Should not redeclare since first declaration is in then block
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else if chain', () => {
+    const source =
+      'if (x > 0) result = "positive" else if (x < 0) result = "negative" else result = "zero"';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (x > 0) {');
+    expect(code).toContain('  let result = "positive";');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  if (x < 0) {'); // Nested if inside else block
+    expect(code).toContain('    result = "negative";'); // Should not redeclare, but indented more
+    expect(code).toContain('  } else {');
+    expect(code).toContain('    result = "zero";'); // Should not redeclare, but indented more
+    expect(code).toContain('  }');
+    expect(code).toContain('}');
+  });
+
+  it('should generate nested if-else statements', () => {
+    const source = 'if (outer) if (inner) a = 1 else a = 2 else b = 3';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (outer) {');
+    expect(code).toContain('  if (inner) {');
+    expect(code).toContain('    let a = 1;');
+    expect(code).toContain('  } else {');
+    expect(code).toContain('    a = 2;'); // Should not redeclare
+    expect(code).toContain('  }');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  let b = 3;');
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else with complex expressions', () => {
+    const source =
+      'if (x >= 0 && y < 100) status = "valid" else status = "invalid"';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (x >= 0 && y < 100) {');
+    expect(code).toContain('  let status = "valid";');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  status = "invalid";'); // Should not redeclare
+    expect(code).toContain('}');
+  });
+
+  it('should handle variable scope correctly in if-else', () => {
+    const source = `x = 5
+    if (condition) x = 10 else x = 20`;
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('let x = 5;');
+    expect(code).toContain('if (condition) {');
+    expect(code).toContain('  x = 10;'); // Should not redeclare
+    expect(code).toContain('} else {');
+    expect(code).toContain('  x = 20;'); // Should not redeclare
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else with function calls', () => {
+    const source = 'if (isValid()) success() else error()';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (isValid()) {');
+    expect(code).toContain('  success();');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  error();');
+    expect(code).toContain('}');
+  });
+
+  it('should generate if-else with member expressions', () => {
+    const source = 'if (obj.enabled) obj.count = 5 else obj.count = 0';
+    const statements = parseSource(source);
+    const code = generateCode(statements);
+
+    expect(code).toContain('if (obj.enabled) {');
+    expect(code).toContain('  obj.count = 5;');
+    expect(code).toContain('} else {');
+    expect(code).toContain('  obj.count = 0;');
+    expect(code).toContain('}');
+  });
 });

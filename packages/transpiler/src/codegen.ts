@@ -415,32 +415,60 @@ function generateIfStatement(
 ): string {
   const condition = generateExpression(stmt.condition);
 
-  // Generate the then statement
-  let thenCode: string;
-  if (stmt.then.type === 'assignment') {
-    thenCode = generateAssignment(stmt.then, declaredVariables);
-  } else if (stmt.then.type === 'expression_statement') {
-    thenCode = generateExpressionStatement(stmt.then);
-  } else if (stmt.then.type === 'block_statement') {
-    thenCode = generateBlockStatement(stmt.then, declaredVariables);
-  } else if (stmt.then.type === 'if_statement') {
-    thenCode = generateIfStatement(stmt.then, declaredVariables);
-  } else {
-    thenCode = '';
-  }
+  // Always normalize statements to block format for consistency
+  const thenCode = generateStatementAsBlock(stmt.then, declaredVariables);
 
-  // If the then statement is not a block, wrap it appropriately
-  if (stmt.then.type === 'block_statement') {
-    return `if (${condition}) ${thenCode}`;
+  if (stmt.else) {
+    const elseCode = generateStatementAsBlock(stmt.else, declaredVariables);
+    return `if (${condition}) ${thenCode} else ${elseCode}`;
   } else {
-    // Handle indentation for nested statements
-    const indentedThenCode = thenCode.includes('\n')
-      ? thenCode
-          .split('\n')
-          .map(line => `  ${line}`)
-          .join('\n')
-      : `  ${thenCode}`;
-    return `if (${condition}) {\n${indentedThenCode}\n}`;
+    return `if (${condition}) ${thenCode}`;
+  }
+}
+
+/**
+ * Generate a statement as a block, wrapping non-block statements
+ */
+function generateStatementAsBlock(
+  stmt: Statement,
+  declaredVariables: Set<string>
+): string {
+  if (stmt.type === 'block_statement') {
+    return generateBlockStatement(stmt, declaredVariables);
+  } else {
+    // Wrap non-block statements in a block with proper indentation
+    const statementCode = generateSingleStatement(stmt, declaredVariables);
+    const indentedCode = indentCode(statementCode, '  ');
+    return `{\n${indentedCode}\n}`;
+  }
+}
+
+/**
+ * Indent code by adding the given prefix to each line
+ */
+function indentCode(code: string, indent: string): string {
+  return code
+    .split('\n')
+    .map(line => (line.trim() ? `${indent}${line}` : line))
+    .join('\n');
+}
+
+/**
+ * Generate code for a single statement (non-block)
+ */
+function generateSingleStatement(
+  stmt: Statement,
+  declaredVariables: Set<string>
+): string {
+  switch (stmt.type) {
+    case 'assignment':
+      return generateAssignment(stmt, declaredVariables);
+    case 'expression_statement':
+      return generateExpressionStatement(stmt);
+    case 'if_statement':
+      return generateIfStatement(stmt, declaredVariables);
+    default:
+      return '';
   }
 }
 

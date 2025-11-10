@@ -23,7 +23,17 @@ module.exports = grammar({
 
     block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
 
-    if_statement: $ => seq('if', '(', $.expression, ')', $.statement),
+    if_statement: $ =>
+      prec.right(
+        seq(
+          'if',
+          '(',
+          $.expression,
+          ')',
+          $.statement,
+          optional(seq('else', $.statement))
+        )
+      ),
 
     expression_statement: $ => $.expression,
 
