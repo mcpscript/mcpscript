@@ -22,7 +22,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 2. ✅ **DONE** - Boolean literal parsing in grammar (`true`, `false`)
 3. ✅ **DONE** - Number literal generation in codegen
 4. ✅ **DONE** - Boolean literal generation in codegen
-5. 🔲 **TODO** - Number and boolean runtime tests
+5. ✅ **DONE** - Number and boolean runtime tests
 
 **→ Complete Phase 1 before Phase 2**
 

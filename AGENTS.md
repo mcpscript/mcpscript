@@ -51,6 +51,33 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - In `packages/transpiler`
   - `npm run build:grammar` - Generate tree-sitter grammar
 
+## Testing Architecture
+
+### Test Organization Best Practices
+
+- **Unit tests**: Keep in individual packages (`packages/{package}/src/__tests__/`)
+- **Integration/E2E tests**: Place in CLI package (`packages/cli/src/__tests__/e2e/`)
+- **Rationale**: CLI is the natural user entry point and already depends on all other packages
+
+### TypeScript Cross-Package Dependencies
+
+- Avoid relative imports across package boundaries (violates `rootDir` constraints)
+- Add proper package dependencies in `package.json` when tests need cross-package imports
+- Use package imports (`@mcps/transpiler`) instead of relative paths (`../../../transpiler/src/`)
+- Example pattern for test dependencies:
+  ```json
+  "devDependencies": {
+    "@mcps/transpiler": "file:../transpiler"
+  }
+  ```
+
+### Vitest Mock Type Annotations
+
+- Use `MockInstance` type from vitest for consistent mock typing
+- Import pattern: `import { type MockInstance } from 'vitest'`
+- Declare mocks as: `let consoleSpy: MockInstance;`
+- Avoid `any` type to maintain type safety
+
 ## Development Guidelines
 
 - After finishing implementing a feature, ALWAYS run tests and linting, and make sure they pass.
