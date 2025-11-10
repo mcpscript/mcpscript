@@ -9,7 +9,8 @@ message = 'Hello World'
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
@@ -26,7 +27,8 @@ text = "Hello \"World\" with \\n newline"
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
@@ -46,7 +48,8 @@ message = 'Can\'t escape \\backslash'
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
@@ -96,7 +99,8 @@ unicode = "Unicode: \\u0041 Hex: \\x42"
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
@@ -116,14 +120,16 @@ empty2 = ''
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
             (double_quoted_string))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string

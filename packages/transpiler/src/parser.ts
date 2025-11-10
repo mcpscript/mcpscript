@@ -97,23 +97,43 @@ function parseMCPDeclaration(node: Parser.SyntaxNode): MCPDeclaration {
 }
 
 function parseAssignment(node: Parser.SyntaxNode): Assignment {
-  // <identifier> = <expression>
+  // <assignment_target> = <expression>
   const children = node.children;
-  const identifierNode = children.find(c => c.type === 'identifier');
+  const targetNode = children.find(c => c.type === 'assignment_target');
   const expressionNode = children.find(c => c.type === 'expression');
 
-  if (!identifierNode || !expressionNode) {
-    throw new Error('Invalid assignment: missing identifier or expression');
+  if (!targetNode || !expressionNode) {
+    throw new Error('Invalid assignment: missing target or expression');
   }
 
-  const variable = identifierNode.text;
+  const target = parseAssignmentTarget(targetNode);
   const value = parseExpression(expressionNode);
 
   return {
     type: 'assignment',
-    variable,
+    target,
     value,
   };
+}
+
+function parseAssignmentTarget(
+  node: Parser.SyntaxNode
+): Identifier | MemberExpression | BracketExpression {
+  const child = node.firstChild;
+  if (!child) {
+    throw new Error('Invalid assignment_target: no child node');
+  }
+
+  switch (child.type) {
+    case 'identifier':
+      return parseIdentifier(child);
+    case 'member_expression':
+      return parseMemberExpression(child);
+    case 'bracket_expression':
+      return parseBracketExpression(child);
+    default:
+      throw new Error(`Invalid assignment_target type: ${child.type}`);
+  }
 }
 
 function parseExpressionStatement(

@@ -35,7 +35,7 @@ print(content)
     // Assignment
     const assignment = statements[1] as Assignment;
     expect(assignment.type).toBe('assignment');
-    expect(assignment.variable).toBe('message');
+    expect((assignment.target as Identifier).name).toBe('message');
 
     // First call (writeFile)
     const writeStmt = statements[2] as ExpressionStatement;
@@ -47,7 +47,7 @@ print(content)
 
     // Second call (readFile)
     const readStmt = statements[3] as Assignment;
-    expect(readStmt.variable).toBe('content');
+    expect((readStmt.target as Identifier).name).toBe('content');
     const readCall = readStmt.value as CallExpression;
     const readMember = readCall.callee as MemberExpression;
     expect((readMember.object as Identifier).name).toBe('filesystem');
@@ -70,9 +70,15 @@ print("Result:", result)
     const statements = parseSource(code);
     expect(statements).toHaveLength(4);
 
-    expect((statements[0] as Assignment).variable).toBe('debug');
-    expect((statements[1] as Assignment).variable).toBe('config');
-    expect((statements[2] as Assignment).variable).toBe('result');
+    expect(((statements[0] as Assignment).target as Identifier).name).toBe(
+      'debug'
+    );
+    expect(((statements[1] as Assignment).target as Identifier).name).toBe(
+      'config'
+    );
+    expect(((statements[2] as Assignment).target as Identifier).name).toBe(
+      'result'
+    );
     expect((statements[3] as ExpressionStatement).type).toBe(
       'expression_statement'
     );

@@ -9,7 +9,8 @@ data = ["hello", "world"]
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (array_literal
@@ -33,7 +34,8 @@ config = ["string", 42, true]
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (array_literal
@@ -59,7 +61,8 @@ empty = []
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (array_literal))))))

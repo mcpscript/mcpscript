@@ -4,6 +4,7 @@ import {
   Expression,
   MCPDeclaration,
   Assignment,
+  AssignmentTarget,
   ExpressionStatement,
   CallExpression,
   MemberExpression,
@@ -309,14 +310,42 @@ function generateAssignment(
 ): string {
   const value = generateExpression(stmt.value);
 
-  // Check if this is the first time we're seeing this variable
-  if (declaredVariables.has(stmt.variable)) {
-    // Variable already declared, generate reassignment
-    return `${stmt.variable} = ${value};`;
+  // Handle different assignment target types
+  if (stmt.target.type === 'identifier') {
+    const identifier = stmt.target as Identifier;
+    const variable = identifier.name;
+
+    // Check if this is the first time we're seeing this variable
+    if (declaredVariables.has(variable)) {
+      // Variable already declared, generate reassignment
+      return `${variable} = ${value};`;
+    } else {
+      // First time seeing this variable, generate declaration
+      declaredVariables.add(variable);
+      return `let ${variable} = ${value};`;
+    }
   } else {
-    // First time seeing this variable, generate declaration
-    declaredVariables.add(stmt.variable);
-    return `let ${stmt.variable} = ${value};`;
+    // For member and bracket expressions, generate direct assignment
+    const target = generateAssignmentTarget(stmt.target);
+    return `${target} = ${value};`;
+  }
+}
+
+/**
+ * Generate code for an assignment target
+ */
+function generateAssignmentTarget(target: AssignmentTarget): string {
+  switch (target.type) {
+    case 'identifier':
+      return (target as Identifier).name;
+    case 'member':
+      return generateMemberExpression(target as MemberExpression);
+    case 'bracket':
+      return generateBracketExpression(target as BracketExpression);
+    default:
+      throw new Error(
+        `Unknown assignment target type: ${(target as AssignmentTarget).type}`
+      );
   }
 }
 

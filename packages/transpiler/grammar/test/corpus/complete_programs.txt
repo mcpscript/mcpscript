@@ -35,11 +35,11 @@ print(content)
                   (expression
                     (literal
                       (string
-                  (double_quoted_string))))
+                        (double_quoted_string))))
                   (expression
                     (literal
                       (string
-                  (double_quoted_string))))))))
+                        (double_quoted_string))))))))
           (property
             (identifier)
             (expression
@@ -47,7 +47,8 @@ print(content)
                 (number))))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (string
@@ -70,7 +71,8 @@ print(content)
               (identifier)))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (call_expression
           (expression
@@ -106,13 +108,15 @@ print("Result:", result)
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (boolean)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (call_expression
           (expression

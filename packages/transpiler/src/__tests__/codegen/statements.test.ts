@@ -63,4 +63,75 @@ x = 1
     expect(code).toContain('for (const client of Object.values(__mcpClients))');
     expect(code).toContain('await client.close()');
   });
+
+  it('should generate code for member property assignment', () => {
+    const source = `
+obj = { prop: 42 }
+obj.prop = "new value"
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let obj = { prop: 42 };');
+    expect(code).toContain('obj.prop = "new value";');
+  });
+
+  it('should generate code for array index assignment', () => {
+    const source = `
+arr = [1, 2, 3]
+arr[0] = 42
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let arr = [1, 2, 3];');
+    expect(code).toContain('arr[0] = 42;');
+  });
+
+  it('should generate code for complex member assignment', () => {
+    const source = `
+data = { nested: { prop: "old" } }
+data.nested.prop = "new"
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let data = { nested: { prop: "old" } };');
+    expect(code).toContain('data.nested.prop = "new";');
+  });
+
+  it('should generate code for complex bracket assignment', () => {
+    const source = `
+matrix = [[1, 2], [3, 4]]
+row = 0
+col = 1
+matrix[row][col] = 99
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let matrix = [[1, 2], [3, 4]];');
+    expect(code).toContain('let row = 0;');
+    expect(code).toContain('let col = 1;');
+    expect(code).toContain('matrix[row][col] = 99;');
+  });
+
+  it('should generate code for mixed assignment types', () => {
+    const source = `
+obj = { arr: [1, 2, 3] }
+obj.arr[1] = "modified"
+value = obj.arr[1]
+    `.trim();
+
+    const ast = parseSource(source);
+    const code = generateCode(ast);
+
+    expect(code).toContain('let obj = { arr: [1, 2, 3] };');
+    expect(code).toContain('obj.arr[1] = "modified";');
+    expect(code).toContain('let value = obj.arr[1];');
+  });
 });

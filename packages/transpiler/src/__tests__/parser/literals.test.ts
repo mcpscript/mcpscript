@@ -17,7 +17,7 @@ describe('Parser - Literals', () => {
       expect(statements).toHaveLength(1);
       const stmt = statements[0] as Assignment;
       expect(stmt.type).toBe('assignment');
-      expect(stmt.variable).toBe('x');
+      expect((stmt.target as Identifier).name).toBe('x');
       expect((stmt.value as StringLiteral).value).toBe('hello world');
     });
 

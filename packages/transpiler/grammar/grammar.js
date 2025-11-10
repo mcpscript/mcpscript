@@ -17,7 +17,10 @@ module.exports = grammar({
 
     expression_statement: $ => $.expression,
 
-    assignment: $ => seq($.identifier, '=', $.expression),
+    assignment: $ => seq($.assignment_target, '=', $.expression),
+
+    assignment_target: $ =>
+      choice($.identifier, $.member_expression, $.bracket_expression),
 
     expression: $ =>
       choice(

@@ -10,7 +10,8 @@ result = true && false
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -19,7 +20,8 @@ result = true && false
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -41,7 +43,8 @@ result = false || true
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -50,7 +53,8 @@ result = false || true
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -72,14 +76,16 @@ result = !true
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (unary_expression
           (expression
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (unary_expression
           (expression
@@ -98,14 +104,16 @@ result = -42
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (unary_expression
           (expression
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (unary_expression
           (expression
@@ -124,7 +132,8 @@ result = !condition || value
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -137,7 +146,8 @@ result = !condition || value
                 (identifier))))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -159,7 +169,8 @@ result = !(a == b) || c != d
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -182,7 +193,8 @@ result = !(a == b) || c != d
                   (number)))))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression

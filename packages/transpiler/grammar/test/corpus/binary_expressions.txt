@@ -13,7 +13,8 @@ result = r % s
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -22,7 +23,8 @@ result = r % s
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -31,7 +33,8 @@ result = r % s
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -40,7 +43,8 @@ result = r % s
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -49,7 +53,8 @@ result = r % s
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -69,7 +74,8 @@ result = x - y / z
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -82,7 +88,8 @@ result = x - y / z
                 (identifier))))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -105,7 +112,8 @@ result = (a + b) * c
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -131,7 +139,8 @@ result = y * 2.5
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression
@@ -141,7 +150,8 @@ result = y * 2.5
             (identifier))))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (binary_expression
           (expression

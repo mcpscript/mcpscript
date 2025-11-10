@@ -11,19 +11,22 @@ large = 123456
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number))))))
@@ -41,19 +44,22 @@ fraction = .25
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number))))))
@@ -71,19 +77,22 @@ precise = 6.022e23
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number))))))
@@ -101,19 +110,22 @@ negative = 4.56E-7
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number)))))
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (number))))))
@@ -129,7 +141,8 @@ numbers = [42, 3.14, 1e5, 2.5e-3]
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (literal
           (array_literal
@@ -157,7 +170,8 @@ result = calculate(42, 3.14, 1e-5)
 (source_file
   (statement
     (assignment
-      (identifier)
+      (assignment_target
+        (identifier))
       (expression
         (call_expression
           (expression

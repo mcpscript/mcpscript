@@ -14,7 +14,7 @@ describe('Parser - Logical Operators', () => {
 
       const assignment = statements[0] as Assignment;
       expect(assignment.type).toBe('assignment');
-      expect(assignment.variable).toBe('result');
+      expect((assignment.target as Identifier).name).toBe('result');
 
       const binary = assignment.value as BinaryExpression;
       expect(binary.type).toBe('binary');

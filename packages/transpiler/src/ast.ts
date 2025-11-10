@@ -107,9 +107,14 @@ export interface MCPDeclaration extends ASTNode {
 
 export interface Assignment extends ASTNode {
   type: 'assignment';
-  variable: string;
+  target: AssignmentTarget;
   value: Expression;
 }
+
+export type AssignmentTarget =
+  | Identifier
+  | MemberExpression
+  | BracketExpression;
 
 export interface ExpressionStatement extends ASTNode {
   type: 'expression_statement';

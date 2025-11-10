@@ -50,9 +50,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Array indexing parsing (`array[0]`)
 - ✅ **DONE** - Object property access parsing (`obj.property`, `obj["key"]`)
 - ✅ **DONE** - Member access generation in codegen
-- 🔲 **TODO** - Array assignment (`array[0] = value`)
-- 🔲 **TODO** - Object property assignment (`obj.property = value`)
-- 🔲 **TODO** - Collection runtime tests
+- ✅ **DONE** - Array assignment (`array[0] = value`)
+- ✅ **DONE** - Object property assignment (`obj.property = value`)
+- ✅ **DONE** - Collection runtime tests
 
 **→ Complete Phase 3 before Phase 4**
 

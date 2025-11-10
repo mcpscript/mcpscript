@@ -20,23 +20,29 @@ describe('Parser - Statements', () => {
       expect(statements).toHaveLength(1);
       const stmt = statements[0] as Assignment;
       expect(stmt.type).toBe('assignment');
-      expect(stmt.variable).toBe('x');
+      expect((stmt.target as Identifier).name).toBe('x');
       expect((stmt.value as NumberLiteral).value).toBe(42);
     });
 
     it('should parse multiple assignments', () => {
       const statements = parseSource('x = 1\ny = 2\nz = 3');
       expect(statements).toHaveLength(3);
-      expect((statements[0] as Assignment).variable).toBe('x');
-      expect((statements[1] as Assignment).variable).toBe('y');
-      expect((statements[2] as Assignment).variable).toBe('z');
+      expect(((statements[0] as Assignment).target as Identifier).name).toBe(
+        'x'
+      );
+      expect(((statements[1] as Assignment).target as Identifier).name).toBe(
+        'y'
+      );
+      expect(((statements[2] as Assignment).target as Identifier).name).toBe(
+        'z'
+      );
     });
 
     it('should parse assignment with identifier reference', () => {
       const statements = parseSource('x = y');
       expect(statements).toHaveLength(1);
       const stmt = statements[0] as Assignment;
-      expect(stmt.variable).toBe('x');
+      expect((stmt.target as Identifier).name).toBe('x');
       const id = stmt.value as Identifier;
       expect(id.type).toBe('identifier');
       expect(id.name).toBe('y');
