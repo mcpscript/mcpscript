@@ -1,0 +1,129 @@
+=====================================
+Simple while statement
+=====================================
+
+while (true) x = 1
+
+---
+
+(source_file
+  (statement
+    (while_statement
+      (expression
+        (literal
+          (boolean)))
+      (statement
+        (assignment
+          (assignment_target
+            (identifier))
+          (expression
+            (literal
+              (number))))))))
+
+=====================================
+While with expression statement
+=====================================
+
+while (x > 0) print("running")
+
+---
+
+(source_file
+  (statement
+    (while_statement
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (literal
+              (number)))))
+      (statement
+        (expression_statement
+          (expression
+            (call_expression
+              (expression
+                (identifier))
+              (argument_list
+                (expression
+                  (literal
+                    (string
+                      (double_quoted_string))))))))))))
+
+=====================================
+While with block statement
+=====================================
+
+while (count < 5) {
+  print(count)
+  count = count + 1
+}
+
+---
+
+(source_file
+  (statement
+    (while_statement
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (literal
+              (number)))))
+      (statement
+        (block_statement
+          (statement
+            (expression_statement
+              (expression
+                (call_expression
+                  (expression
+                    (identifier))
+                  (argument_list
+                    (expression
+                      (identifier)))))))
+          (statement
+            (assignment
+              (assignment_target
+                (identifier))
+              (expression
+                (binary_expression
+                  (expression
+                    (identifier))
+                  (expression
+                    (literal
+                      (number))))))))))))
+
+=====================================
+Complex condition with logical operators
+=====================================
+
+while (x >= 0 && y < 100) process()
+
+---
+
+(source_file
+  (statement
+    (while_statement
+      (expression
+        (binary_expression
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))))
+      (statement
+        (expression_statement
+          (expression
+            (call_expression
+              (expression
+                (identifier)))))))))

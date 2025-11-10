@@ -133,9 +133,16 @@ export interface IfStatement extends ASTNode {
   else?: Statement;
 }
 
+export interface WhileStatement extends ASTNode {
+  type: 'while_statement';
+  condition: Expression;
+  body: Statement;
+}
+
 export type Statement =
   | MCPDeclaration
   | Assignment
   | ExpressionStatement
   | BlockStatement
-  | IfStatement;
+  | IfStatement
+  | WhileStatement;

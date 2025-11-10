@@ -63,7 +63,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Block statement parsing (`{ ... }`)
 - ✅ **DONE** - If statement parsing (`if (condition) { ... }`)
 - ✅ **DONE** - If-else statement parsing (`if (condition) { ... } else { ... }`)
-- 🔲 **TODO** - While loop parsing (`while (condition) { ... }`)
+- ✅ **DONE** - While loop parsing (`while (condition) { ... }`)
 - 🔲 **TODO** - For loop parsing (`for (let i = 0; i < 10; i++) { ... }`)
 - 🔲 **TODO** - Break and continue statements
 - 🔲 **TODO** - **CRITICAL**: Refactor codegen variable tracking for proper scoping

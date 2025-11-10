@@ -18,7 +18,8 @@ module.exports = grammar({
         $.assignment,
         $.expression_statement,
         $.block_statement,
-        $.if_statement
+        $.if_statement,
+        $.while_statement
       ),
 
     block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
@@ -34,6 +35,8 @@ module.exports = grammar({
           optional(seq('else', $.statement))
         )
       ),
+
+    while_statement: $ => seq('while', '(', $.expression, ')', $.statement),
 
     expression_statement: $ => $.expression,
 

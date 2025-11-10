@@ -9,6 +9,7 @@ import {
   ExpressionStatement,
   BlockStatement,
   IfStatement,
+  WhileStatement,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -77,6 +78,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseBlockStatement(firstChild);
     case 'if_statement':
       return parseIfStatement(firstChild);
+    case 'while_statement':
+      return parseWhileStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -207,6 +210,29 @@ function parseIfStatement(node: Parser.SyntaxNode): IfStatement {
   }
 
   return result;
+}
+
+function parseWhileStatement(node: Parser.SyntaxNode): WhileStatement {
+  // while ( expression ) statement
+  const conditionNode = node.children.find(c => c.type === 'expression');
+  const statementNode = node.children.find(c => c.type === 'statement');
+
+  if (!conditionNode || !statementNode) {
+    throw new Error('Invalid while_statement: missing condition or body');
+  }
+
+  const condition = parseExpression(conditionNode);
+  const body = parseStatement(statementNode);
+
+  if (!body) {
+    throw new Error('Invalid while_statement: could not parse body statement');
+  }
+
+  return {
+    type: 'while_statement',
+    condition,
+    body,
+  };
 }
 
 function parseExpression(node: Parser.SyntaxNode): Expression {

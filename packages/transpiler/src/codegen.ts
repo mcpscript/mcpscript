@@ -8,6 +8,7 @@ import {
   ExpressionStatement,
   BlockStatement,
   IfStatement,
+  WhileStatement,
   CallExpression,
   MemberExpression,
   BracketExpression,
@@ -222,6 +223,8 @@ function generateStatements(statements: Statement[]): string {
         return generateBlockStatement(stmt, declaredVariables);
       } else if (stmt.type === 'if_statement') {
         return generateIfStatement(stmt, declaredVariables);
+      } else if (stmt.type === 'while_statement') {
+        return generateWhileStatement(stmt, declaredVariables);
       }
       return '';
     })
@@ -382,6 +385,8 @@ function generateBlockStatement(
         return generateBlockStatement(s, declaredVariables);
       } else if (s.type === 'if_statement') {
         return generateIfStatement(s, declaredVariables);
+      } else if (s.type === 'while_statement') {
+        return generateWhileStatement(s, declaredVariables);
       }
       return '';
     })
@@ -427,6 +432,21 @@ function generateIfStatement(
 }
 
 /**
+ * Generate code for a while statement
+ */
+function generateWhileStatement(
+  stmt: WhileStatement,
+  declaredVariables: Set<string>
+): string {
+  const condition = generateExpression(stmt.condition);
+
+  // Always normalize statements to block format for consistency
+  const bodyCode = generateStatementAsBlock(stmt.body, declaredVariables);
+
+  return `while (${condition}) ${bodyCode}`;
+}
+
+/**
  * Generate a statement as a block, wrapping non-block statements
  */
 function generateStatementAsBlock(
@@ -467,6 +487,8 @@ function generateSingleStatement(
       return generateExpressionStatement(stmt);
     case 'if_statement':
       return generateIfStatement(stmt, declaredVariables);
+    case 'while_statement':
+      return generateWhileStatement(stmt, declaredVariables);
     default:
       return '';
   }
