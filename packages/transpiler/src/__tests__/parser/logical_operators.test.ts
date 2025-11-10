@@ -4,6 +4,7 @@ import type {
   BinaryExpression,
   UnaryExpression,
   Assignment,
+  Identifier,
 } from '../../ast.js';
 
 describe('Parser - Logical Operators', () => {

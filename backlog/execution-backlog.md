@@ -61,13 +61,11 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 **Goal: Add conditional execution and loops**
 
 - ✅ **DONE** - Block statement parsing (`{ ... }`)
-- 🔲 **TODO** - If statement parsing (`if (condition) { ... }`)
+- ✅ **DONE** - If statement parsing (`if (condition) { ... }`)
 - 🔲 **TODO** - If-else statement parsing (`if (condition) { ... } else { ... }`)
 - 🔲 **TODO** - While loop parsing (`while (condition) { ... }`)
 - 🔲 **TODO** - For loop parsing (`for (let i = 0; i < 10; i++) { ... }`)
-- 🔲 **TODO** - Control flow generation in codegen
 - 🔲 **TODO** - Break and continue statements
-- 🔲 **TODO** - Control flow runtime tests
 - 🔲 **TODO** - **CRITICAL**: Refactor codegen variable tracking for proper scoping
   - Current approach uses flat `Set<string>` for declared variables
   - Works for current global-only scope but will break with blocks/nested scopes

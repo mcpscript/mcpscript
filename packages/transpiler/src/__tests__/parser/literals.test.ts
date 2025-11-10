@@ -8,6 +8,7 @@ import {
   BooleanLiteral,
   ArrayLiteral,
   ObjectLiteral,
+  Identifier,
 } from '../../ast.js';
 
 describe('Parser - Literals', () => {

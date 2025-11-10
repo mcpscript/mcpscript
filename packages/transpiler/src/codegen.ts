@@ -7,6 +7,7 @@ import {
   AssignmentTarget,
   ExpressionStatement,
   BlockStatement,
+  IfStatement,
   CallExpression,
   MemberExpression,
   BracketExpression,
@@ -219,6 +220,8 @@ function generateStatements(statements: Statement[]): string {
         return generateExpressionStatement(stmt);
       } else if (stmt.type === 'block_statement') {
         return generateBlockStatement(stmt, declaredVariables);
+      } else if (stmt.type === 'if_statement') {
+        return generateIfStatement(stmt, declaredVariables);
       }
       return '';
     })
@@ -377,6 +380,8 @@ function generateBlockStatement(
         return generateExpressionStatement(s);
       } else if (s.type === 'block_statement') {
         return generateBlockStatement(s, declaredVariables);
+      } else if (s.type === 'if_statement') {
+        return generateIfStatement(s, declaredVariables);
       }
       return '';
     })
@@ -399,6 +404,44 @@ function generateBlockStatement(
     .join('\n');
 
   return `{\n${indentedLines}\n}`;
+}
+
+/**
+ * Generate code for an if statement
+ */
+function generateIfStatement(
+  stmt: IfStatement,
+  declaredVariables: Set<string>
+): string {
+  const condition = generateExpression(stmt.condition);
+
+  // Generate the then statement
+  let thenCode: string;
+  if (stmt.then.type === 'assignment') {
+    thenCode = generateAssignment(stmt.then, declaredVariables);
+  } else if (stmt.then.type === 'expression_statement') {
+    thenCode = generateExpressionStatement(stmt.then);
+  } else if (stmt.then.type === 'block_statement') {
+    thenCode = generateBlockStatement(stmt.then, declaredVariables);
+  } else if (stmt.then.type === 'if_statement') {
+    thenCode = generateIfStatement(stmt.then, declaredVariables);
+  } else {
+    thenCode = '';
+  }
+
+  // If the then statement is not a block, wrap it appropriately
+  if (stmt.then.type === 'block_statement') {
+    return `if (${condition}) ${thenCode}`;
+  } else {
+    // Handle indentation for nested statements
+    const indentedThenCode = thenCode.includes('\n')
+      ? thenCode
+          .split('\n')
+          .map(line => `  ${line}`)
+          .join('\n')
+      : `  ${thenCode}`;
+    return `if (${condition}) {\n${indentedThenCode}\n}`;
+  }
 }
 
 /**

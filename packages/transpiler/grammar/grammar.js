@@ -17,10 +17,13 @@ module.exports = grammar({
         $.mcp_declaration,
         $.assignment,
         $.expression_statement,
-        $.block_statement
+        $.block_statement,
+        $.if_statement
       ),
 
     block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
+
+    if_statement: $ => seq('if', '(', $.expression, ')', $.statement),
 
     expression_statement: $ => $.expression,
 

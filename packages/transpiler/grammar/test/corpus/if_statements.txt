@@ -1,0 +1,158 @@
+=====================================
+Simple if statement
+=====================================
+
+if (true) x = 1
+
+---
+
+(source_file
+  (statement
+    (if_statement
+      (expression
+        (literal
+          (boolean)))
+      (statement
+        (assignment
+          (assignment_target
+            (identifier))
+          (expression
+            (literal
+              (number))))))))
+
+=====================================
+If with expression statement
+=====================================
+
+if (x > 0) print("positive")
+
+---
+
+(source_file
+  (statement
+    (if_statement
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (literal
+              (number)))))
+      (statement
+        (expression_statement
+          (expression
+            (call_expression
+              (expression
+                (identifier))
+              (argument_list
+                (expression
+                  (literal
+                    (string
+                      (double_quoted_string))))))))))))
+
+=====================================
+If with block statement
+=====================================
+
+if (enabled) {
+  x = 10
+  print(x)
+}
+
+---
+
+(source_file
+  (statement
+    (if_statement
+      (expression
+        (identifier))
+      (statement
+        (block_statement
+          (statement
+            (assignment
+              (assignment_target
+                (identifier))
+              (expression
+                (literal
+                  (number)))))
+          (statement
+            (expression_statement
+              (expression
+                (call_expression
+                  (expression
+                    (identifier))
+                  (argument_list
+                    (expression
+                      (identifier))))))))))))
+
+=====================================
+Nested if statements
+=====================================
+
+if (x > 0) if (y > 0) result = "positive"
+
+---
+
+(source_file
+  (statement
+    (if_statement
+      (expression
+        (binary_expression
+          (expression
+            (identifier))
+          (expression
+            (literal
+              (number)))))
+      (statement
+        (if_statement
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))
+          (statement
+            (assignment
+              (assignment_target
+                (identifier))
+              (expression
+                (literal
+                  (string
+                    (double_quoted_string)))))))))))
+
+=====================================
+Complex condition with logical operators
+=====================================
+
+if (x >= 0 && y < 100) status = "valid"
+
+---
+
+(source_file
+  (statement
+    (if_statement
+      (expression
+        (binary_expression
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))
+          (expression
+            (binary_expression
+              (expression
+                (identifier))
+              (expression
+                (literal
+                  (number)))))))
+      (statement
+        (assignment
+          (assignment_target
+            (identifier))
+          (expression
+            (literal
+              (string
+                (double_quoted_string)))))))))

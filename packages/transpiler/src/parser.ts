@@ -8,6 +8,7 @@ import {
   Assignment,
   ExpressionStatement,
   BlockStatement,
+  IfStatement,
   Identifier,
   StringLiteral,
   NumberLiteral,
@@ -74,6 +75,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseExpressionStatement(firstChild);
     case 'block_statement':
       return parseBlockStatement(firstChild);
+    case 'if_statement':
+      return parseIfStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -170,6 +173,29 @@ function parseBlockStatement(node: Parser.SyntaxNode): BlockStatement {
   return {
     type: 'block_statement',
     statements,
+  };
+}
+
+function parseIfStatement(node: Parser.SyntaxNode): IfStatement {
+  // if ( expression ) statement
+  const conditionNode = node.children.find(c => c.type === 'expression');
+  const statementNode = node.children.find(c => c.type === 'statement');
+
+  if (!conditionNode || !statementNode) {
+    throw new Error('Invalid if_statement: missing condition or statement');
+  }
+
+  const condition = parseExpression(conditionNode);
+  const then = parseStatement(statementNode);
+
+  if (!then) {
+    throw new Error('Invalid if_statement: could not parse then statement');
+  }
+
+  return {
+    type: 'if_statement',
+    condition,
+    then,
   };
 }
 

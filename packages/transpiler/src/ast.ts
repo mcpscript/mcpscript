@@ -126,8 +126,15 @@ export interface BlockStatement extends ASTNode {
   statements: Statement[];
 }
 
+export interface IfStatement extends ASTNode {
+  type: 'if_statement';
+  condition: Expression;
+  then: Statement;
+}
+
 export type Statement =
   | MCPDeclaration
   | Assignment
   | ExpressionStatement
-  | BlockStatement;
+  | BlockStatement
+  | IfStatement;
