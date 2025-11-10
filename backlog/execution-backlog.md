@@ -76,7 +76,35 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **→ Complete Phase 4 before Phase 5**
 
-### Phase 5: Functions
+### Phase 5: Enhanced Runtime (Logging and Environment)
+
+**Goal: Add observability and configuration**
+
+- 🔲 **TODO** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
+- 🔲 **TODO** - Environment variable access (`env.API_KEY`)
+- 🔲 **TODO** - Log message formatting with data objects
+- 🔲 **TODO** - Logging system injection in codegen
+- 🔲 **TODO** - Environment variable injection in codegen
+- 🔲 **TODO** - Runtime enhancement tests
+
+**→ Complete Phase 5 before Phase 6**
+
+### Phase 6: Agent System
+
+**Goal: Add AI agent integration**
+
+- 🔲 **TODO** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
+- 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
+- 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
+- 🔲 **TODO** - Agent system generation in codegen
+- 🔲 **TODO** - Agent runtime integration
+- 🔲 **TODO** - Agent response handling and parsing
+- 🔲 **TODO** - Tool access restriction per agent
+- 🔲 **TODO** - Agent system tests
+
+**→ Complete Phase 6 before Phase 7**
+
+### Phase 7: Functions
 
 **Goal: Enable user-defined reusable logic**
 
@@ -88,22 +116,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Local variable scoping implementation
 - 🔲 **TODO** - Function runtime tests
 
-**→ Complete Phase 5 before Phase 6**
+**→ Complete Phase 7 before Phase 8**
 
-### Phase 6: Enhanced Runtime (Logging and Environment)
-
-**Goal: Add observability and configuration**
-
-- 🔲 **TODO** - Structured logging runtime implementation (`log.debug`, `log.info`, `log.warn`, `log.error`)
-- 🔲 **TODO** - Environment variable access (`env.API_KEY`)
-- 🔲 **TODO** - Log message formatting with data objects
-- 🔲 **TODO** - Logging system injection in codegen
-- 🔲 **TODO** - Environment variable injection in codegen
-- 🔲 **TODO** - Runtime enhancement tests
-
-**→ Complete Phase 6 before Phase 7**
-
-### Phase 7: Error Handling
+### Phase 8: Error Handling
 
 **Goal: Add robust error management**
 
@@ -116,9 +131,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - MCP tool call error handling
 - 🔲 **TODO** - Error handling runtime tests
 
-**→ Complete Phase 7 before Phase 8**
+**→ Complete Phase 8 before Phase 9**
 
-### Phase 8: Type System
+### Phase 9: Type System
 
 **Goal: Add static typing and validation**
 
@@ -129,21 +144,6 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Type checking during transpilation
 - 🔲 **TODO** - Type-aware code generation
 - 🔲 **TODO** - Type system tests
-
-**→ Complete Phase 8 before Phase 9**
-
-### Phase 9: Agent System
-
-**Goal: Add AI agent integration**
-
-- 🔲 **TODO** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
-- 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
-- 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
-- 🔲 **TODO** - Agent system generation in codegen
-- 🔲 **TODO** - Agent runtime integration
-- 🔲 **TODO** - Agent response handling and parsing
-- 🔲 **TODO** - Tool access restriction per agent
-- 🔲 **TODO** - Agent system tests
 
 **→ Complete Phase 9 before Phase 10**
 
