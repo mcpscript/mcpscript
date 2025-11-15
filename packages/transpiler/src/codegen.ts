@@ -55,7 +55,8 @@ export function generateCode(statements: Statement[]): string {
   const modelInit = models.size > 0 ? generateModelInitialization(models) : '';
 
   // Generate agent configurations
-  const agentInit = agents.size > 0 ? generateAgentInitialization(agents) : '';
+  const agentInit =
+    agents.size > 0 ? generateAgentInitialization(agents, mcpServers) : '';
 
   // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
@@ -453,10 +454,11 @@ ${codeLines.join('\n')}`;
  * Generate agent configuration initialization code
  */
 function generateAgentInitialization(
-  agents: Map<string, AgentDeclaration>
+  agents: Map<string, AgentDeclaration>,
+  mcpServers: Map<string, MCPDeclaration>
 ): string {
   const agentInits = Array.from(agents.entries()).map(([name, decl]) =>
-    generateAgentConfig(name, decl)
+    generateAgentConfig(name, decl, mcpServers)
   );
 
   return `// Initialize agent configurations
@@ -466,7 +468,11 @@ ${agentInits.join('\n\n')}`;
 /**
  * Generate configuration object for a single agent
  */
-function generateAgentConfig(name: string, decl: AgentDeclaration): string {
+function generateAgentConfig(
+  name: string,
+  decl: AgentDeclaration,
+  mcpServers: Map<string, MCPDeclaration>
+): string {
   const config = extractObjectValues(decl.config);
   const model = config.model as string;
 
@@ -495,7 +501,7 @@ function generateAgentConfig(name: string, decl: AgentDeclaration): string {
       ?.value as ArrayLiteral;
     if (toolExprs) {
       const toolRefs = toolExprs.elements
-        .map(elem => generateExpression(elem))
+        .map(elem => generateToolReference(elem, mcpServers))
         .join(', ');
       agentParams.push(`tools: [${toolRefs}]`);
     }
@@ -518,6 +524,29 @@ function generateAgentConfig(name: string, decl: AgentDeclaration): string {
 const ${name} = __llamaindex_agent({
   ${agentParams.join(',\n  ')}
 });`;
+}
+
+/**
+ * Generate a tool reference for agent configuration
+ * Handles both MCP server identifiers (expand to all tools) and specific tool references
+ */
+function generateToolReference(
+  expr: Expression,
+  mcpServers: Map<string, MCPDeclaration>
+): string {
+  // If it's an identifier, check if it refers to an MCP server
+  if (expr.type === 'identifier') {
+    const identifierName = (expr as Identifier).name;
+    // Only expand if this identifier is actually an MCP server
+    if (mcpServers.has(identifierName)) {
+      return `...__${identifierName}_tools`;
+    }
+    // Otherwise, treat it as a regular variable reference
+    return identifierName;
+  }
+
+  // Otherwise, generate the expression normally (e.g., filesystem.readFile)
+  return generateExpression(expr);
 }
 
 /**

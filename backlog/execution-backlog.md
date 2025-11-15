@@ -99,6 +99,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
   - **Runtime VM context with actual LlamaIndex classes** (OpenAI, Anthropic, Gemini, Ollama)
 - ✅ **DONE** - Adapt MCP server declarations to use mcp tools from llamaindex
 - ✅ **DONE** - Agent declaration parsing (`agent agentName { model: modelName, tools: [tool1, tool2] }`)
+- ✅ **DONE** - Allow agent tools array to contain a MCP server (means include all tools from that server)
 - 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
 - 🔲 **TODO** - Agent runtime integration
 - 🔲 **TODO** - Agent response handling and parsing

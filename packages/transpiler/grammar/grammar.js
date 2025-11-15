@@ -107,7 +107,8 @@ module.exports = grammar({
 
     parenthesized_expression: $ => seq('(', $.expression, ')'),
 
-    argument_list: $ => seq($.expression, repeat(seq(',', $.expression))),
+    argument_list: $ =>
+      seq($.expression, repeat(seq(',', $.expression)), optional(',')),
 
     literal: $ =>
       choice($.string, $.number, $.boolean, $.array_literal, $.object_literal),
@@ -115,7 +116,9 @@ module.exports = grammar({
     array_literal: $ =>
       seq(
         '[',
-        optional(seq($.expression, repeat(seq(',', $.expression)))),
+        optional(
+          seq($.expression, repeat(seq(',', $.expression)), optional(','))
+        ),
         ']'
       ),
 
@@ -127,7 +130,8 @@ module.exports = grammar({
 
     object_literal: $ => seq('{', optional($.property_list), '}'),
 
-    property_list: $ => seq($.property, repeat(seq(',', $.property))),
+    property_list: $ =>
+      seq($.property, repeat(seq(',', $.property)), optional(',')),
 
     property: $ => seq($.identifier, ':', $.expression),
 
