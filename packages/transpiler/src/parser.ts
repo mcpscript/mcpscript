@@ -6,6 +6,7 @@ import {
   Expression,
   MCPDeclaration,
   ModelDeclaration,
+  AgentDeclaration,
   Assignment,
   ExpressionStatement,
   BlockStatement,
@@ -76,6 +77,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseMCPDeclaration(firstChild);
     case 'model_declaration':
       return parseModelDeclaration(firstChild);
+    case 'agent_declaration':
+      return parseAgentDeclaration(firstChild);
     case 'assignment':
       return parseAssignment(firstChild);
     case 'expression_statement':
@@ -132,6 +135,26 @@ function parseModelDeclaration(node: Parser.SyntaxNode): ModelDeclaration {
 
   return {
     type: 'model_declaration',
+    name,
+    config,
+  };
+}
+
+function parseAgentDeclaration(node: Parser.SyntaxNode): AgentDeclaration {
+  // agent <identifier> <object_literal>
+  const children = node.children.filter(c => c.type !== 'agent');
+  const nameNode = children.find(c => c.type === 'identifier');
+  const objectNode = children.find(c => c.type === 'object_literal');
+
+  if (!nameNode || !objectNode) {
+    throw new Error('Invalid agent_declaration: missing name or config');
+  }
+
+  const name = nameNode.text;
+  const config = parseExpression(objectNode) as ObjectLiteral;
+
+  return {
+    type: 'agent_declaration',
     name,
     config,
   };

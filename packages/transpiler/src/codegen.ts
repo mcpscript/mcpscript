@@ -4,6 +4,7 @@ import {
   Expression,
   MCPDeclaration,
   ModelDeclaration,
+  AgentDeclaration,
   Assignment,
   AssignmentTarget,
   ExpressionStatement,
@@ -30,16 +31,19 @@ import {
  * Generate JavaScript code from an array of AST statements
  */
 export function generateCode(statements: Statement[]): string {
-  // Track MCP servers and models to initialize
+  // Track MCP servers, models, and agents to initialize
   const mcpServers = new Map<string, MCPDeclaration>();
   const models = new Map<string, ModelDeclaration>();
+  const agents = new Map<string, AgentDeclaration>();
 
-  // First pass: collect all MCP and model declarations
+  // First pass: collect all MCP, model, and agent declarations
   for (const stmt of statements) {
     if (stmt.type === 'mcp_declaration') {
       mcpServers.set(stmt.name, stmt);
     } else if (stmt.type === 'model_declaration') {
       models.set(stmt.name, stmt);
+    } else if (stmt.type === 'agent_declaration') {
+      agents.set(stmt.name, stmt);
     }
   }
 
@@ -50,6 +54,9 @@ export function generateCode(statements: Statement[]): string {
   // Generate model configurations
   const modelInit = models.size > 0 ? generateModelInitialization(models) : '';
 
+  // Generate agent configurations
+  const agentInit = agents.size > 0 ? generateAgentInitialization(agents) : '';
+
   // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
 
@@ -57,7 +64,9 @@ export function generateCode(statements: Statement[]): string {
   const cleanup = mcpServers.size > 0 ? generateCleanup() : '';
 
   // Combine all parts
-  return [mcpInit, modelInit, mainCode, cleanup].filter(Boolean).join('\n\n');
+  return [mcpInit, modelInit, agentInit, mainCode, cleanup]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 /**
@@ -425,7 +434,9 @@ function generateStatements(statements: Statement[]): string {
   const codeLines = statements
     .filter(
       stmt =>
-        stmt.type !== 'mcp_declaration' && stmt.type !== 'model_declaration'
+        stmt.type !== 'mcp_declaration' &&
+        stmt.type !== 'model_declaration' &&
+        stmt.type !== 'agent_declaration'
     )
     .map(stmt => dispatchStatement(stmt, scopeStack))
     .filter(Boolean);
@@ -436,6 +447,77 @@ function generateStatements(statements: Statement[]): string {
 
   return `// Generated code
 ${codeLines.join('\n')}`;
+}
+
+/**
+ * Generate agent configuration initialization code
+ */
+function generateAgentInitialization(
+  agents: Map<string, AgentDeclaration>
+): string {
+  const agentInits = Array.from(agents.entries()).map(([name, decl]) =>
+    generateAgentConfig(name, decl)
+  );
+
+  return `// Initialize agent configurations
+${agentInits.join('\n\n')}`;
+}
+
+/**
+ * Generate configuration object for a single agent
+ */
+function generateAgentConfig(name: string, decl: AgentDeclaration): string {
+  const config = extractObjectValues(decl.config);
+  const model = config.model as string;
+
+  if (!model) {
+    throw new Error(`Agent "${name}" must specify a model reference`);
+  }
+
+  const agentParams: string[] = [];
+
+  // Add name
+  agentParams.push(`name: ${JSON.stringify(name)}`);
+
+  // Add description if provided
+  if (config.description) {
+    agentParams.push(`description: ${JSON.stringify(config.description)}`);
+  }
+
+  // Add system prompt if provided
+  if (config.systemPrompt) {
+    agentParams.push(`systemPrompt: ${JSON.stringify(config.systemPrompt)}`);
+  }
+
+  // Add tools array
+  if (config.tools && Array.isArray(config.tools)) {
+    const toolExprs = decl.config.properties.find(p => p.key === 'tools')
+      ?.value as ArrayLiteral;
+    if (toolExprs) {
+      const toolRefs = toolExprs.elements
+        .map(elem => generateExpression(elem))
+        .join(', ');
+      agentParams.push(`tools: [${toolRefs}]`);
+    }
+  }
+
+  // Add LLM reference
+  agentParams.push(`llm: ${model}`);
+
+  // Add temperature override if provided
+  if (config.temperature !== undefined) {
+    agentParams.push(`temperature: ${config.temperature}`);
+  }
+
+  // Add maxTokens override if provided
+  if (config.maxTokens !== undefined) {
+    agentParams.push(`maxTokens: ${config.maxTokens}`);
+  }
+
+  return `// Agent configuration for ${name}
+const ${name} = __llamaindex_agent({
+  ${agentParams.join(',\n  ')}
+});`;
 }
 
 /**
@@ -588,7 +670,9 @@ function generateBlockStatement(
 
   try {
     const blockLines = stmt.statements
-      .filter(s => s.type !== 'mcp_declaration')
+      .filter(
+        s => s.type !== 'mcp_declaration' && s.type !== 'agent_declaration'
+      )
       .map(s => dispatchStatement(s, scopeStack))
       .filter(Boolean);
 

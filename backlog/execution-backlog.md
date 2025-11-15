@@ -98,13 +98,12 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
   - Provider-specific code generation using class constructors (`new __llamaindex_OpenAI`, etc.)
   - **Runtime VM context with actual LlamaIndex classes** (OpenAI, Anthropic, Gemini, Ollama)
 - ✅ **DONE** - Adapt MCP server declarations to use mcp tools from llamaindex
-- 🔲 **TODO** - Agent declaration parsing (`agent agentName { model: modelName, tools: [tool1, tool2] }`)
+- ✅ **DONE** - Agent declaration parsing (`agent agentName { model: modelName, tools: [tool1, tool2] }`)
 - 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
-- 🔲 **TODO** - Agent system generation in codegen
 - 🔲 **TODO** - Agent runtime integration
 - 🔲 **TODO** - Agent response handling and parsing
-- 🔲 **TODO** - Tool access restriction per agent
-- 🔲 **TODO** - Agent system tests
+- 🔲 **TODO** - Tool access restriction per agent (enforced via agent config)
+- 🔲 **TODO** - Agent system E2E tests
 
 **→ Complete Phase 6 before Phase 7**
 
