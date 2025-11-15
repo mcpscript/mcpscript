@@ -28,11 +28,11 @@ mcp filesystem {
     const ast = parseSource(source);
     const code = generateCode(ast);
 
-    expect(code).toContain('StdioClientTransport');
+    expect(code).toContain('__llamaindex_mcp');
     expect(code).toContain('command: "npx"');
     expect(code).toContain('const filesystem = {}');
-    expect(code).toContain('await __filesystem_client.connect');
-    expect(code).toContain('__filesystem_client.listTools()');
+    expect(code).toContain('await __filesystem_server.tools()');
+    expect(code).toContain('tool.metadata.name');
   });
 
   it('should generate code for MCP tool calls', () => {
@@ -59,9 +59,10 @@ x = 1
     const ast = parseSource(source);
     const code = generateCode(ast);
 
-    expect(code).toContain('// Cleanup');
-    expect(code).toContain('for (const client of Object.values(__mcpClients))');
-    expect(code).toContain('await client.close()');
+    expect(code).toContain('// Cleanup MCP servers');
+    expect(code).toContain(
+      'LlamaIndex MCP servers handle cleanup automatically'
+    );
   });
 
   it('should generate code for member property assignment', () => {

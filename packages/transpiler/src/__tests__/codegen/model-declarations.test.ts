@@ -110,10 +110,10 @@ describe('Codegen - Model Declarations', () => {
       x = 42
     `);
     const code = generateCode(statements);
-    expect(code).toContain('// Initialize MCP clients');
+    expect(code).toContain('// Initialize MCP servers using LlamaIndex');
     expect(code).toContain('// Initialize model configurations');
-    expect(code).toContain('const __mcpClients = {};');
-    expect(code).toContain('const __models = {};');
+    expect(code).toContain('__llamaindex_mcp');
+    expect(code).toContain('const __models = {}');
     expect(code).toContain('// Generated code');
     expect(code).toContain('let x = 42;');
   });

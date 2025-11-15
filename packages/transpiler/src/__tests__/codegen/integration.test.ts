@@ -21,12 +21,12 @@ print(content)
     const code = generateCode(ast);
 
     // Check MCP initialization
-    expect(code).toContain('// Initialize MCP clients');
-    expect(code).toContain('const __mcpClients = {}');
+    expect(code).toContain('// Initialize MCP servers using LlamaIndex');
+    expect(code).toContain('__llamaindex_mcp');
 
     // Check MCP setup
     expect(code).toContain('const filesystem = {}');
-    expect(code).toContain('await __filesystem_client.connect');
+    expect(code).toContain('await __filesystem_server.tools()');
 
     // Check generated code
     expect(code).toContain('let message = "Hello from MCP Script!";');
@@ -39,6 +39,6 @@ print(content)
     expect(code).toContain('print(content);');
 
     // Check cleanup
-    expect(code).toContain('await client.close()');
+    expect(code).toContain('// Cleanup MCP servers');
   });
 });

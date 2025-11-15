@@ -88,14 +88,14 @@ config = { port: 8080, ratio: 0.75, timeout: 1e4 }
   it('should generate code for numbers in function calls', () => {
     const source = `
 result = calculate(42, 3.14, 1e-5)
-mcp server { command: "test", timeout: 5000, retries: 3 }
+mcp server { command: "test", args: [5000, 3] }
     `.trim();
 
     const ast = parseSource(source);
     const code = generateCode(ast);
 
     expect(code).toContain('let result = calculate(42, 3.14, 0.00001);');
-    expect(code).toContain('timeout: 5000, retries: 3');
+    expect(code).toContain('args: [5000, 3]');
   });
 
   it('should generate code for boolean literals', () => {
@@ -129,7 +129,7 @@ config = { enabled: true, debug: false, verbose: true }
   it('should generate code for booleans in function calls', () => {
     const source = `
 result = processData("input", 42, true, false)
-mcp server { command: "test", enabled: true, debug: false }
+mcp server { command: "test", verbose: true }
     `.trim();
 
     const ast = parseSource(source);
@@ -138,6 +138,6 @@ mcp server { command: "test", enabled: true, debug: false }
     expect(code).toContain(
       'let result = processData("input", 42, true, false);'
     );
-    expect(code).toContain('enabled: true, debug: false');
+    expect(code).toContain('verbose: true');
   });
 });

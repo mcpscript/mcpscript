@@ -1,10 +1,6 @@
 // VM-based script execution with dependency injection
 import vm from 'vm';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
-import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/websocket.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
+import { mcp } from '@llamaindex/tools';
 import { print, log, env } from './globals.js';
 import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
@@ -25,12 +21,8 @@ function createVMContext(): vm.Context {
   };
 
   const context = {
-    // MCP SDK components
-    MCPClient: Client,
-    StdioClientTransport: StdioClientTransport,
-    WebSocketClientTransport: WebSocketClientTransport,
-    StreamableHTTPClientTransport: StreamableHTTPClientTransport,
-    SSEClientTransport: SSEClientTransport,
+    // LlamaIndex MCP adapter
+    __llamaindex_mcp: mcp,
 
     // Runtime functions (imported from globals)
     print: print,

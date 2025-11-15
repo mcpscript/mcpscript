@@ -70,9 +70,7 @@ function generateMCPInitialization(
     generateMCPServerInit(name, decl)
   );
 
-  return `// Initialize MCP clients
-const __mcpClients = {};
-
+  return `// Initialize MCP servers using LlamaIndex
 ${serverInits.join('\n\n')}`;
 }
 
@@ -238,84 +236,49 @@ function serializeConfigValue(value: unknown): string {
 }
 
 /**
- * Generate transport connection code for an MCP server
+ * Generate MCP server configuration for LlamaIndex mcp() function
  */
-function generateTransportConnection(
-  name: string,
+function generateMCPServerConfig(
+  _name: string,
   config: Record<string, unknown>
 ): string {
   if (config.url) {
-    return generateWebTransportConnection(name, config);
+    // URL-based connection (HTTP/WebSocket/SSE)
+    const url = JSON.stringify(config.url);
+    const params: string[] = [`url: ${url}`];
+
+    // Add verbose flag if specified
+    if (config.verbose !== undefined) {
+      params.push(`verbose: ${config.verbose}`);
+    }
+
+    // Add useSSETransport flag if specified
+    if (config.useSSETransport !== undefined) {
+      params.push(`useSSETransport: ${config.useSSETransport}`);
+    }
+
+    return `{ ${params.join(', ')} }`;
   } else if (config.command) {
-    return generateStdioTransportConnection(name, config);
+    // Command-based connection (stdio)
+    const command = JSON.stringify(config.command);
+    const params: string[] = [`command: ${command}`];
+
+    // Add args if specified
+    if (config.args && Array.isArray(config.args)) {
+      params.push(`args: ${serializeConfigObject(config.args)}`);
+    }
+
+    // Add verbose flag if specified
+    if (config.verbose !== undefined) {
+      params.push(`verbose: ${config.verbose}`);
+    }
+
+    return `{ ${params.join(', ')} }`;
   } else {
     throw new Error(
-      `Invalid MCP configuration for ${name}: must specify either 'url' or 'command'`
+      `Invalid MCP configuration: must specify either 'url' or 'command'`
     );
   }
-}
-
-/**
- * Generate transport options (excluding URL) for web transports
- */
-function generateTransportOptions(
-  config: Record<string, unknown>
-): string | null {
-  // Extract all options except 'url'
-  const { url, ...options } = config;
-
-  // If no additional options, return null
-  if (Object.keys(options).length === 0) {
-    return null;
-  }
-
-  // Serialize the options object
-  return serializeConfigObject(options);
-}
-
-/**
- * Generate web-based transport connection (HTTP/WebSocket) with SSE fallback
- */
-function generateWebTransportConnection(
-  name: string,
-  config: Record<string, unknown>
-): string {
-  const url = JSON.stringify(config.url);
-  const transportOptions = generateTransportOptions(config);
-
-  if (url.includes('ws://') || url.includes('wss://')) {
-    // WebSocket transport (no fallback needed)
-    const wsOptions = transportOptions ? `, ${transportOptions}` : '';
-    return `const __${name}_transport = new WebSocketClientTransport(new URL(${url})${wsOptions});
-await __${name}_client.connect(__${name}_transport);
-__mcpClients.${name} = __${name}_client;`;
-  } else {
-    // HTTP transport with SSE fallback
-    const httpOptions = transportOptions ? `, ${transportOptions}` : '';
-    return `try {
-  const __${name}_transport = new StreamableHTTPClientTransport(new URL(${url})${httpOptions});
-  await __${name}_client.connect(__${name}_transport);
-  __mcpClients.${name} = __${name}_client;
-} catch (httpError) {
-  // Fallback to SSE transport for backwards compatibility
-  console.log('StreamableHTTP connection failed, falling back to SSE transport');
-  const __${name}_sseTransport = new SSEClientTransport(new URL(${url})${httpOptions});
-  await __${name}_client.connect(__${name}_sseTransport);
-  __mcpClients.${name} = __${name}_client;
-}`;
-  }
-}
-
-/**
- * Generate stdio transport connection
- */
-function generateStdioTransportConnection(
-  name: string,
-  config: Record<string, unknown>
-): string {
-  return `const __${name}_transport = new StdioClientTransport(${serializeConfigObject(config)});
-await __${name}_client.connect(__${name}_transport);
-__mcpClients.${name} = __${name}_client;`;
 }
 
 /**
@@ -323,55 +286,53 @@ __mcpClients.${name} = __${name}_client;`;
  */
 function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
   const config = extractObjectValues(decl.config);
-  const connectionCode = generateTransportConnection(name, config);
+  const serverConfig = generateMCPServerConfig(name, config);
 
-  return `// Connect to ${name} MCP server
-const __${name}_client = new MCPClient({
-  name: 'mcps',
-  version: '1.0.0'
-}, {
-  capabilities: {}
-});
+  return `// Connect to ${name} MCP server using LlamaIndex
+const __${name}_server = __llamaindex_mcp(${serverConfig});
 
-${connectionCode}
+// Get tools from MCP server
+const __${name}_tools = await __${name}_server.tools();
 
 // Create tool proxy for ${name}
 const ${name} = {};
-const __${name}_tools = await __${name}_client.listTools();
-for (const tool of __${name}_tools.tools) {
-  ${name}[tool.name] = async (...args) => {
-    let toolArgs;
-
+for (const tool of __${name}_tools) {
+  ${name}[tool.metadata.name] = async (...args) => {
+    let toolInput;
+    
     // If single object argument, use as-is (explicit parameter object)
     if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])) {
-      toolArgs = args[0];
+      toolInput = args[0];
     } else {
-      // Get tool schema to map positional args to named parameters
-      const toolInfo = __${name}_tools.tools.find(t => t.name === tool.name);
-      const inputSchema = toolInfo?.inputSchema;
-
-      if (inputSchema && inputSchema.properties) {
-        // Map positional arguments to schema parameter names
-        const paramNames = Object.keys(inputSchema.properties);
-        toolArgs = {};
+      // Map positional arguments to schema parameter names
+      const params = tool.metadata.parameters;
+      
+      if (params && params.properties) {
+        // Get parameter names from the schema
+        const paramNames = Object.keys(params.properties);
+        toolInput = {};
         paramNames.forEach((paramName, index) => {
           if (index < args.length) {
-            toolArgs[paramName] = args[index];
+            toolInput[paramName] = args[index];
           }
         });
       } else {
         // Fallback: use generic numbered parameters if no schema
-        toolArgs = Object.fromEntries(
+        toolInput = Object.fromEntries(
           args.map((arg, index) => [\`arg\${index}\`, arg])
         );
       }
     }
-
-    const result = await __${name}_client.callTool({
-      name: tool.name,
-      arguments: toolArgs
-    });
-    return result.content[0]?.type === 'text' ? result.content[0].text : result.content;
+    
+    // Call the tool with the mapped input
+    const result = await tool.call(toolInput);
+    
+    // Extract text content from the result if it's in MCP format
+    if (result && result.content && Array.isArray(result.content)) {
+      return result.content[0]?.type === 'text' ? result.content[0].text : result.content;
+    }
+    
+    return result;
   };
 }`;
 }
@@ -478,13 +439,11 @@ ${codeLines.join('\n')}`;
 }
 
 /**
- * Generate cleanup code for MCP clients
+ * Generate cleanup code for MCP servers
  */
 function generateCleanup(): string {
-  return `// Cleanup
-for (const client of Object.values(__mcpClients)) {
-  await client.close();
-}`;
+  return `// Cleanup MCP servers
+// LlamaIndex MCP servers handle cleanup automatically`;
 }
 
 /**
