@@ -15,6 +15,7 @@ module.exports = grammar({
     statement: $ =>
       choice(
         $.mcp_declaration,
+        $.model_declaration,
         $.assignment,
         $.expression_statement,
         $.block_statement,
@@ -118,6 +119,8 @@ module.exports = grammar({
       ),
 
     mcp_declaration: $ => seq('mcp', $.identifier, $.object_literal),
+
+    model_declaration: $ => seq('model', $.identifier, $.object_literal),
 
     object_literal: $ => seq('{', optional($.property_list), '}'),
 

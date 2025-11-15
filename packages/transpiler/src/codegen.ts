@@ -3,6 +3,7 @@ import {
   Statement,
   Expression,
   MCPDeclaration,
+  ModelDeclaration,
   Assignment,
   AssignmentTarget,
   ExpressionStatement,
@@ -29,19 +30,25 @@ import {
  * Generate JavaScript code from an array of AST statements
  */
 export function generateCode(statements: Statement[]): string {
-  // Track MCP servers to initialize
+  // Track MCP servers and models to initialize
   const mcpServers = new Map<string, MCPDeclaration>();
+  const models = new Map<string, ModelDeclaration>();
 
-  // First pass: collect all MCP declarations
+  // First pass: collect all MCP and model declarations
   for (const stmt of statements) {
     if (stmt.type === 'mcp_declaration') {
       mcpServers.set(stmt.name, stmt);
+    } else if (stmt.type === 'model_declaration') {
+      models.set(stmt.name, stmt);
     }
   }
 
   // Generate MCP client initialization
   const mcpInit =
     mcpServers.size > 0 ? generateMCPInitialization(mcpServers) : '';
+
+  // Generate model configurations
+  const modelInit = models.size > 0 ? generateModelInitialization(models) : '';
 
   // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
@@ -50,7 +57,7 @@ export function generateCode(statements: Statement[]): string {
   const cleanup = mcpServers.size > 0 ? generateCleanup() : '';
 
   // Combine all parts
-  return [mcpInit, mainCode, cleanup].filter(Boolean).join('\n\n');
+  return [mcpInit, modelInit, mainCode, cleanup].filter(Boolean).join('\n\n');
 }
 
 /**
@@ -67,6 +74,34 @@ function generateMCPInitialization(
 const __mcpClients = {};
 
 ${serverInits.join('\n\n')}`;
+}
+
+/**
+ * Generate model configuration initialization code
+ */
+function generateModelInitialization(
+  models: Map<string, ModelDeclaration>
+): string {
+  const modelInits = Array.from(models.entries()).map(([name, decl]) =>
+    generateModelConfig(name, decl)
+  );
+
+  return `// Initialize model configurations
+const __models = {};
+
+${modelInits.join('\n\n')}`;
+}
+
+/**
+ * Generate configuration object for a single model
+ */
+function generateModelConfig(name: string, decl: ModelDeclaration): string {
+  const config = extractObjectValues(decl.config);
+  const configStr = serializeConfigObject(config);
+
+  return `// Model configuration for ${name}
+const ${name} = ${configStr};
+__models.${name} = ${name};`;
 }
 
 /**
@@ -294,7 +329,10 @@ function generateStatements(statements: Statement[]): string {
   const scopeStack = new ScopeStack();
 
   const codeLines = statements
-    .filter(stmt => stmt.type !== 'mcp_declaration')
+    .filter(
+      stmt =>
+        stmt.type !== 'mcp_declaration' && stmt.type !== 'model_declaration'
+    )
     .map(stmt => dispatchStatement(stmt, scopeStack))
     .filter(Boolean);
 

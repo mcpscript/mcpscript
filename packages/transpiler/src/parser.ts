@@ -5,6 +5,7 @@ import {
   Statement,
   Expression,
   MCPDeclaration,
+  ModelDeclaration,
   Assignment,
   ExpressionStatement,
   BlockStatement,
@@ -73,6 +74,8 @@ function parseStatement(node: Parser.SyntaxNode): Statement | null {
   switch (firstChild.type) {
     case 'mcp_declaration':
       return parseMCPDeclaration(firstChild);
+    case 'model_declaration':
+      return parseModelDeclaration(firstChild);
     case 'assignment':
       return parseAssignment(firstChild);
     case 'expression_statement':
@@ -109,6 +112,26 @@ function parseMCPDeclaration(node: Parser.SyntaxNode): MCPDeclaration {
 
   return {
     type: 'mcp_declaration',
+    name,
+    config,
+  };
+}
+
+function parseModelDeclaration(node: Parser.SyntaxNode): ModelDeclaration {
+  // model <identifier> <object_literal>
+  const children = node.children.filter(c => c.type !== 'model');
+  const nameNode = children.find(c => c.type === 'identifier');
+  const objectNode = children.find(c => c.type === 'object_literal');
+
+  if (!nameNode || !objectNode) {
+    throw new Error('Invalid model_declaration: missing name or config');
+  }
+
+  const name = nameNode.text;
+  const config = parseExpression(objectNode) as ObjectLiteral;
+
+  return {
+    type: 'model_declaration',
     name,
     config,
   };

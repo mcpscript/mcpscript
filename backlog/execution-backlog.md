@@ -93,7 +93,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add AI agent integration**
 
-- 🔲 **TODO** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
+- ✅ **DONE** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
 - 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
 - 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
 - 🔲 **TODO** - Agent system generation in codegen

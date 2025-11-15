@@ -105,6 +105,12 @@ export interface MCPDeclaration extends ASTNode {
   config: ObjectLiteral;
 }
 
+export interface ModelDeclaration extends ASTNode {
+  type: 'model_declaration';
+  name: string;
+  config: ObjectLiteral;
+}
+
 export interface Assignment extends ASTNode {
   type: 'assignment';
   target: AssignmentTarget;
@@ -157,6 +163,7 @@ export interface ContinueStatement extends ASTNode {
 
 export type Statement =
   | MCPDeclaration
+  | ModelDeclaration
   | Assignment
   | ExpressionStatement
   | BlockStatement
