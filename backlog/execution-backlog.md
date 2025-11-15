@@ -93,7 +93,16 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Add AI agent integration**
 
-- ✅ **DONE** - Model configuration parsing (`model ModelName { provider: "openai", name: "gpt-4" }`)
+- ✅ **DONE** - Model configuration parsing with real LlamaIndex integration
+  - Grammar support for `model ModelName { provider: "...", model: "...", ... }`
+  - Provider-specific code generation using class constructors (`new __llamaindex_OpenAI`, etc.)
+  - Environment variable support via `env.VAR_NAME` → `process.env.VAR_NAME`
+  - **Runtime VM context with actual LlamaIndex classes** (OpenAI, Anthropic, Gemini, Ollama)
+  - Comprehensive test coverage (parser + codegen + grammar + e2e): 361 tests passing
+  - All providers use consistent class-based instantiation pattern matching LlamaIndex API
+  - Dependencies: `llamaindex`, `@llamaindex/openai`, `@llamaindex/anthropic`, `@llamaindex/google`, `@llamaindex/ollama`
+  - Working examples: `models-simple.mcps` (Ollama, no API key), `models.mcps` (all providers)
+- 🔲 **TODO** - Adapt MCP server declarations to use llamaindex
 - 🔲 **TODO** - Agent declaration parsing (`agent AgentName { model: ModelName, tools: [tool1, tool2] }`)
 - 🔲 **TODO** - Agent delegation syntax parsing (`"prompt text" -> AgentName`)
 - 🔲 **TODO** - Agent system generation in codegen

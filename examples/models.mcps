@@ -1,0 +1,43 @@
+// Example: Model Configuration with LlamaIndex Integration
+// This demonstrates how to declare AI models in MCP Script
+//
+// NOTE: To run this example with API-based providers, set environment variables:
+//   export OPENAI_API_KEY=your-key-here
+//   export ANTHROPIC_API_KEY=your-key-here
+//   export GOOGLE_API_KEY=your-key-here
+//
+// Or use the simpler examples/models-simple.mcps for Ollama-only testing
+
+// OpenAI model with API key from environment
+model gpt4 {
+  provider: "openai",
+  model: "gpt-5.1-2025-11-13",
+  apiKey: env.OPENAI_API_KEY,
+  temperature: 0.7,
+  maxTokens: 4000
+}
+
+// Anthropic Claude model
+model claude {
+  provider: "anthropic",
+  model: "claude-sonnet-4-5",
+  apiKey: env.ANTHROPIC_API_KEY,
+  temperature: 0.5
+}
+
+// Google Gemini model
+model gemini {
+  provider: "gemini",
+  model: "gemini-2.5-pro",
+  apiKey: env.GOOGLE_API_KEY
+}
+
+// Local Ollama model (no API key needed - works out of the box if Ollama is running)
+model localLlama {
+  provider: "ollama",
+  model: "mixtral:8x7b",
+  temperature: 0.3
+}
+
+// Models are stored in __models object and can be used with agents later
+log.info("Models configured successfully")

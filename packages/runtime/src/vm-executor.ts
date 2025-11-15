@@ -6,6 +6,10 @@ import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/webso
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 import { print, log, env } from './globals.js';
+import { OpenAI } from '@llamaindex/openai';
+import { Anthropic } from '@llamaindex/anthropic';
+import { Gemini } from '@llamaindex/google';
+import { Ollama } from '@llamaindex/ollama';
 
 /**
  * Create a VM context with all required dependencies injected
@@ -32,6 +36,12 @@ function createVMContext(): vm.Context {
     print: print,
     log: log,
     env: env,
+
+    // LlamaIndex model classes
+    __llamaindex_OpenAI: OpenAI,
+    __llamaindex_Anthropic: Anthropic,
+    __llamaindex_Gemini: Gemini,
+    __llamaindex_Ollama: Ollama,
 
     // Standard APIs (limited)
     console: console,

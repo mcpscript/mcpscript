@@ -12,7 +12,12 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.20.2"
+    "@llamaindex/anthropic": "^0.3.26",
+    "@llamaindex/google": "^0.3.22",
+    "@llamaindex/ollama": "^0.1.23",
+    "@llamaindex/openai": "^0.4.21",
+    "@modelcontextprotocol/sdk": "^1.20.2",
+    "llamaindex": "^0.12.0"
   },
   "author": "Kun Chen",
   "license": "ISC"

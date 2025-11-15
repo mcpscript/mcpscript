@@ -97,11 +97,144 @@ ${modelInits.join('\n\n')}`;
  */
 function generateModelConfig(name: string, decl: ModelDeclaration): string {
   const config = extractObjectValues(decl.config);
-  const configStr = serializeConfigObject(config);
+  const provider = config.provider as string;
+
+  if (!provider) {
+    throw new Error(
+      `Model "${name}" must specify a provider (openai, anthropic, gemini, or ollama)`
+    );
+  }
 
   return `// Model configuration for ${name}
-const ${name} = ${configStr};
+const ${name} = ${generateLlamaIndexModelInit(provider, config)};
 __models.${name} = ${name};`;
+}
+
+/**
+ * Generate LlamaIndex-compatible model initialization code
+ */
+function generateLlamaIndexModelInit(
+  provider: string,
+  config: Record<string, unknown>
+): string {
+  const { provider: _provider, ...modelConfig } = config;
+
+  switch (provider.toLowerCase()) {
+    case 'openai':
+      return generateOpenAIInit(modelConfig);
+    case 'anthropic':
+      return generateAnthropicInit(modelConfig);
+    case 'gemini':
+      return generateGeminiInit(modelConfig);
+    case 'ollama':
+      return generateOllamaInit(modelConfig);
+    default:
+      throw new Error(`Unsupported model provider: ${provider}`);
+  }
+}
+
+/**
+ * Generate OpenAI model initialization
+ */
+function generateOpenAIInit(config: Record<string, unknown>): string {
+  const params: string[] = [];
+
+  // Map common config keys to OpenAI parameters
+  if (config.apiKey) {
+    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
+  }
+  if (config.model) {
+    params.push(`model: ${serializeConfigValue(config.model)}`);
+  }
+  if (config.temperature !== undefined) {
+    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
+  }
+  if (config.maxTokens !== undefined) {
+    params.push(`maxTokens: ${serializeConfigValue(config.maxTokens)}`);
+  }
+  if (config.baseURL) {
+    params.push(`baseURL: ${serializeConfigValue(config.baseURL)}`);
+  }
+
+  return `new __llamaindex_OpenAI({ ${params.join(', ')} })`;
+}
+
+/**
+ * Generate Anthropic model initialization
+ */
+function generateAnthropicInit(config: Record<string, unknown>): string {
+  const params: string[] = [];
+
+  if (config.apiKey) {
+    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
+  }
+  if (config.model) {
+    params.push(`model: ${serializeConfigValue(config.model)}`);
+  }
+  if (config.temperature !== undefined) {
+    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
+  }
+  if (config.maxTokens !== undefined) {
+    params.push(`maxTokens: ${serializeConfigValue(config.maxTokens)}`);
+  }
+
+  return `new __llamaindex_Anthropic({ ${params.join(', ')} })`;
+}
+
+/**
+ * Generate Gemini model initialization
+ */
+function generateGeminiInit(config: Record<string, unknown>): string {
+  const params: string[] = [];
+
+  if (config.apiKey) {
+    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
+  }
+  if (config.model) {
+    params.push(`model: ${serializeConfigValue(config.model)}`);
+  }
+  if (config.temperature !== undefined) {
+    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
+  }
+  if (config.maxTokens !== undefined) {
+    params.push(`maxOutputTokens: ${serializeConfigValue(config.maxTokens)}`);
+  }
+
+  return `new __llamaindex_Gemini({ ${params.join(', ')} })`;
+}
+
+/**
+ * Generate Ollama model initialization
+ */
+function generateOllamaInit(config: Record<string, unknown>): string {
+  const params: string[] = [];
+
+  if (config.model) {
+    params.push(`model: ${serializeConfigValue(config.model)}`);
+  }
+  if (config.temperature !== undefined) {
+    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
+  }
+  if (config.baseURL) {
+    params.push(`baseURL: ${serializeConfigValue(config.baseURL)}`);
+  }
+
+  return `new __llamaindex_Ollama({ ${params.join(', ')} })`;
+}
+
+/**
+ * Serialize a single config value
+ */
+function serializeConfigValue(value: unknown): string {
+  if (typeof value === 'string') {
+    // Check if this is an environment variable reference
+    if (value.startsWith('env.')) {
+      const envVar = value.substring(4); // Remove 'env.' prefix
+      return `process.env.${envVar}`;
+    }
+    return JSON.stringify(value);
+  }
+  return serializeConfigObject(value);
 }
 
 /**
@@ -411,6 +544,17 @@ function extractValue(expr: Expression): unknown {
     }
     case 'identifier':
       return (expr as Identifier).name; // Return identifier name as string
+    case 'member': {
+      // Handle member expressions like env.OPENAI_API_KEY
+      const memberExpr = expr as MemberExpression;
+      if (
+        memberExpr.object.type === 'identifier' &&
+        (memberExpr.object as Identifier).name === 'env'
+      ) {
+        return `env.${memberExpr.property}`;
+      }
+      return undefined;
+    }
     default:
       return undefined;
   }
