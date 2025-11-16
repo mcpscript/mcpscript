@@ -997,6 +997,11 @@ function generateBracketExpression(expr: BracketExpression): string {
  * Generate code for a binary expression
  */
 function generateBinaryExpression(expr: BinaryExpression): string {
+  // Handle agent delegation operator specially
+  if (expr.operator === '->') {
+    return generateAgentDelegation(expr);
+  }
+
   const left = generateExpression(expr.left);
   const right = generateExpression(expr.right);
 
@@ -1009,6 +1014,38 @@ function generateBinaryExpression(expr: BinaryExpression): string {
   const rightCode = rightParen ? `(${right})` : right;
 
   return `${leftCode} ${expr.operator} ${rightCode}`;
+}
+
+/**
+ * Generate code for agent delegation (-> operator)
+ */
+function generateAgentDelegation(expr: BinaryExpression): string {
+  const prompt = generateExpression(expr.left);
+  const agentName = generateExpression(expr.right);
+
+  return `await (async () => {
+  const conv = new __Conversation(${prompt});
+  const messages = conv.getMessages();
+  
+  // Agent loop: repeatedly call llm.exec until no more tool calls
+  let exit = false;
+  do {
+    const { newMessages, toolCalls } = await ${agentName}.llm.exec({
+      messages,
+      tools: ${agentName}.tools || [],
+    });
+    messages.push(...newMessages);
+    exit = toolCalls.length === 0;
+  } while (!exit);
+  
+  // Reconstruct conversation from all messages
+  const finalConv = new __Conversation();
+  for (const msg of messages) {
+    finalConv.addMessage(msg);
+  }
+  
+  return finalConv;
+})()`;
 }
 
 /**
@@ -1058,6 +1095,8 @@ function generateUnaryExpression(expr: UnaryExpression): string {
  */
 function getOperatorPrecedence(op: string): number {
   switch (op) {
+    case '->':
+      return 0;
     case '||':
       return 1;
     case '&&':

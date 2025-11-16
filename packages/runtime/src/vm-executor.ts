@@ -6,6 +6,8 @@ import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
 import { Ollama } from '@llamaindex/ollama';
+import { agent } from '@llamaindex/workflow';
+import { Conversation } from './conversation.js';
 
 /**
  * Create a VM context with all required dependencies injected
@@ -24,6 +26,9 @@ function createVMContext(): vm.Context {
     // LlamaIndex MCP adapter
     __llamaindex_mcp: mcp,
 
+    // LlamaIndex agent function
+    __llamaindex_agent: agent,
+
     // Runtime functions (imported from globals)
     print: print,
     log: log,
@@ -34,6 +39,9 @@ function createVMContext(): vm.Context {
     __llamaindex_Anthropic: Anthropic,
     __llamaindex_Gemini: Gemini,
     __llamaindex_Ollama: Ollama,
+
+    // Runtime classes
+    __Conversation: Conversation,
 
     // Standard APIs (limited)
     console: console,

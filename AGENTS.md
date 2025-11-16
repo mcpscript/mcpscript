@@ -94,5 +94,6 @@ When modifying operator precedence or grammar rules, ensure consistency across c
 
 ## Development Guidelines
 
+- Whenever needed, use context7 to look up relevant dependency documentation
 - After finishing making code changes to implement a feature, ALWAYS run tests and linting, and make sure they pass
 - Do NOT write a big file explaining everything you did. Instead, just respond with a concise summary

@@ -75,7 +75,8 @@ export interface BinaryExpression extends ASTNode {
     | '<='
     | '>='
     | '&&'
-    | '||';
+    | '||'
+    | '->';
   right: Expression;
 }
 
