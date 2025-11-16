@@ -37,6 +37,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Operator precedence handling in grammar
 - ✅ **DONE** - Expression evaluation in codegen
 - ✅ **DONE** - Expression runtime tests
+- 🔲 **TODO** - Nullish coalescing operator parsing (`??`) and codegen
 
 **→ Complete Phase 2 before Phase 3**
 
@@ -54,7 +55,22 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Object property assignment (`obj.property = value`)
 - ✅ **DONE** - Collection runtime tests
 
-**→ Complete Phase 3 before Phase 4**
+**→ Complete Phase 3 before Phase 3.5**
+
+### Phase 3.5: Advanced Collections (Sets and Maps)
+
+**Goal: Add Set and Map collection types**
+
+- 🔲 **TODO** - Runtime `Set()` global function implementation (codegen should call vanilla JS `Set`)
+  - `Set()` - create empty Set
+  - `Set([1, 2, 3])` - create Set from array
+- 🔲 **TODO** - Runtime `Map()` global function implementation (codegen should call vanilla JS `Map`)
+  - `Map()` - create empty Map
+  - `Map([["key", "value"], ...])` - create Map from array of tuples
+- 🔲 **TODO** - array, Set, Map iteration support in for-of loops
+- 🔲 **TODO** - Set/Map runtime tests
+
+**→ Complete Phase 3.5 before Phase 4**
 
 ### Phase 4: Control Flow
 
@@ -87,7 +103,19 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Environment variable injection in codegen
 - ✅ **DONE** - Runtime enhancement tests
 
-**→ Complete Phase 5 before Phase 6**
+**→ Complete Phase 5 before Phase 5.5**
+
+### Phase 5.5: Standard Library and Global Validation
+
+**Goal: Provide standard utilities and validate global access**
+
+- 🔲 **TODO** - Implement global variable whitelist validation
+  - Track all globals that we do want to expose the script: `log`, `env`, `print`, `Set`, `Map`, `JSON`, etc.
+  - Static analysis during transpilation to detect references to undefined variables
+- 🔲 **TODO** - Implement `JSON.parse()` runtime function
+- 🔲 **TODO** - Implement `JSON.stringify()` runtime function
+
+**→ Complete Phase 5.5 before Phase 6**
 
 ### Phase 6: Agent System
 
@@ -105,17 +133,21 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **→ Complete Phase 6 before Phase 7**
 
-### Phase 7: Functions
+### Phase 7: Tools
 
 **Goal: Enable user-defined reusable logic**
 
-- 🔲 **TODO** - Function declaration syntax parsing (`function name(params): returnType { ... }`)
-- 🔲 **TODO** - Function parameter parsing
+- 🔲 **TODO** - Tool declaration syntax parsing (`tool name(params) { ... }`)
+- 🔲 **TODO** - Tool parameter parsing with optional type annotations
+  - Parse `param: type` syntax
+  - Parse `param?: type` for optional parameters
+  - Parse return type annotations `: type`
 - 🔲 **TODO** - Return statement parsing
-- 🔲 **TODO** - Function generation in codegen
-- 🔲 **TODO** - Function calls with arguments (extend existing)
+- 🔲 **TODO** - Tool generation in codegen
+- 🔲 **TODO** - Tool calls with arguments (extend existing)
 - 🔲 **TODO** - Local variable scoping implementation
-- 🔲 **TODO** - Function runtime tests
+- 🔲 **TODO** - Support assigning tools to agents in `tools` array
+- 🔲 **TODO** - Tool runtime tests
 
 **→ Complete Phase 7 before Phase 8**
 
@@ -124,27 +156,35 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 **Goal: Add robust error management**
 
 - 🔲 **TODO** - Try-catch block parsing (`try { ... } catch (error) { ... }`)
-- 🔲 **TODO** - Throw statement parsing
+- 🔲 **TODO** - Throw statement parsing (supports throwing strings or values)
 - 🔲 **TODO** - Finally block parsing
 - 🔲 **TODO** - Error handling generation in codegen
-- 🔲 **TODO** - Error object creation and properties
+  - `throw "message"` → transpile to `throw new Error("message")`
+  - `throw value` → transpile to `throw new Error(String(value))`
 - 🔲 **TODO** - Error propagation through async operations
 - 🔲 **TODO** - MCP tool call error handling
 - 🔲 **TODO** - Error handling runtime tests
 
 **→ Complete Phase 8 before Phase 9**
 
-### Phase 9: Type System
+### Phase 9: Runtime Type Validation
 
-**Goal: Add static typing and validation**
+**Goal: Add optional runtime type checking using Zod**
 
-- 🔲 **TODO** - Type annotation parsing for variables (`name: string = "value"`)
-- 🔲 **TODO** - Type annotation parsing for function parameters
-- 🔲 **TODO** - Type annotation parsing for function return types
-- 🔲 **TODO** - Type inference implementation
-- 🔲 **TODO** - Type checking during transpilation
-- 🔲 **TODO** - Type-aware code generation
-- 🔲 **TODO** - Type system tests
+- 🔲 **TODO** - Add Zod dependency to runtime package
+- 🔲 **TODO** - Generate Zod schemas from type annotations in codegen
+  - Primitives: `string`, `number`, `boolean`, `any`
+  - Arrays: `string[]`, `number[]`, etc.
+  - Objects: `{ key: string, value: number }`
+  - Union types: `string | number`
+  - Optional parameters: `param?: string`
+- 🔲 **TODO** - Generate runtime validation wrappers in codegen
+  - Wrap tool bodies with parameter validation
+  - Wrap return statements with return type validation
+- 🔲 **TODO** - Error messages for type validation failures
+- 🔲 **TODO** - Support for nested object types
+- 🔲 **TODO** - Support for complex array types
+- 🔲 **TODO** - Runtime type validation tests
 
 **→ Complete Phase 9 before Phase 10**
 
@@ -215,7 +255,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Type error messages during compilation
 - 🔲 **TODO** - Runtime error source mapping to .mcps files
 - 🔲 **TODO** - `mcps check` command for syntax/type checking
-- 🔲 **TODO** - Automatic system logging (workflow lifecycle, agent delegation, tool calls)
+- 🔲 **TODO** - Automatic system logging (tool lifecycle with tool names, agent delegation)
 - 🔲 **TODO** - Log configuration via environment variables
 - 🔲 **TODO** - Execution ID tracking across logs
 
@@ -226,12 +266,17 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 **Goal: Add sophisticated language constructs**
 
 - 🔲 **TODO** - For-of loops (`for (item of array) { ... }`)
-- 🔲 **TODO** - Array methods (`push`, `pop`, `length` property)
-- 🔲 **TODO** - Template string literals with interpolation
-- 🔲 **TODO** - Comment syntax (`// single-line` and `/* multi-line */`)
+  - Support iterating over arrays, Sets, and Maps
+  - Support destructuring in for-of: `for ([key, value] of mapObject) { ... }`
+- 🔲 **TODO** - Array methods (`push`, `pop`, `length` property, etc.)
+- 🔲 **TODO** - Multi-line comments (`/* ... */`)
+- 🔲 **TODO** - Template string literals with interpolation (`` `Hello ${name}` ``)
 - 🔲 **TODO** - Object destructuring in assignments
-- 🔲 **TODO** - Multi-line string support
-- 🔲 **TODO** - Escape sequence handling in strings
+- 🔲 **TODO** - Array destructuring in assignments
+- 🔲 **TODO** - Triple-quoted string literals (`"""..."""`)
+  - Support for multi-line strings with automatic indentation adjustment
+  - Remove common leading whitespace from content
+  - Ideal for agent system prompts
 
 **→ Complete Phase 15 before Phase 16**
 

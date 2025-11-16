@@ -100,18 +100,18 @@ MCP Script uses **TypeScript-like collection syntax**:
 items: string[] = ["apple", "banana", "orange"]
 numbers = [1, 2, 3, 4, 5]
 
-// Sets - constructor syntax (like TypeScript)
-uniqueIds: Set<number> = new Set([1, 2, 3, 4, 5])
-tags: Set<string> = new Set(["javascript", "typescript", "go"])
-emptySet = new Set()
+// Sets - runtime function syntax
+uniqueIds = Set([1, 2, 3, 4, 5])
+tags = Set(["javascript", "typescript", "go"])
+emptySet = Set()
 
-// Maps - constructor syntax with array of tuples (like TypeScript)
-userAges: Map<string, number> = new Map([
+// Maps - runtime function syntax with array of tuples
+userAges = Map([
     ["alice", 25],
     ["bob", 30],
     ["carol", 28]
 ])
-emptyMap = new Map()
+emptyMap = Map()
 
 // Objects - literal syntax for structured data (like JSON)
 config = {
@@ -138,23 +138,15 @@ port: number = 8080
 
 **Type System Philosophy:**
 
-MCP Script uses a TypeScript-inspired type system focused on clarity at function boundaries:
+MCP Script uses **runtime type validation** with optional type annotations:
 
-```mcps
-// Types required at function boundaries
-function processData(path: string): any {
-    content = filesystem.readFile(path)  // Implicitly async, throws on error
-    parsed = JSON.parse(content)
-    return parsed
-}
+- Type annotations are **optional** - use them where validation is needed
+- When provided, types are **validated at runtime** using Zod (not during transpilation)
+- **No static type checking** - keeps the transpiler simple and fast
+- Validation happens when tools are called, providing clear error messages
+- All tools are implicitly async behind the scenes
 
-function analyzeData(inputPath: string): number {
-    data = processData(inputPath)
-    return data.count
-}
-```
-
-Note: Return types look synchronous (`string`, `number`, `any`) but functions are implicitly async behind the scenes.
+See Section 5 for complete details on tool syntax and type annotations.
 
 ### Control Flow
 
@@ -176,7 +168,7 @@ for (item of collection) {
 }
 
 // Iterating over Maps
-userData: Map<string, number> = new Map([["alice", 25], ["bob", 30]])
+userData = Map([["alice", 25], ["bob", 30]])
 
 for ([key, value] of userData) {
     print(`${key} is ${value} years old`)
@@ -189,23 +181,22 @@ while (condition) {
 
 All control flow is familiar to JavaScript/TypeScript developers.
 
-### Function Declarations
+### Tool Declarations
 
-Workflows are declared with typed parameters and return types using TypeScript-like syntax:
+Tools are declared using the `tool` keyword with optional type annotations:
 
 ```mcps
-function processData(input: string): any {
+tool processData(input) {
     content = filesystem.readFile(input)
-    parsed = JSON.parse(content)
-    return parsed
+    return JSON.parse(content)
 }
 ```
 
-See Section 6 for complete details on function syntax.
+Tools support optional type annotations for runtime validation. See Section 5 for complete details on tool syntax, type annotations, and async execution.
 
 ### Trailing Commas
 
-MCP Script supports optional trailing commas in all comma-separated contexts (objects, arrays, function parameters, etc.). This improves developer experience by:
+MCP Script supports optional trailing commas in all comma-separated contexts (objects, arrays, tool parameters, etc.). This improves developer experience by:
 
 - Producing cleaner git diffs when adding items
 - Preventing syntax errors when reordering or commenting out items
@@ -229,6 +220,36 @@ mcp github {
   args: ["-y", "@modelcontextprotocol/server-github"],  // trailing comma optional
 }
 ```
+
+### String Literals
+
+MCP Script supports single and double-quoted strings with escape sequences:
+
+```mcps
+message = "Hello, world!"
+path = '/home/user/file.txt'
+
+// Multi-line strings use escape sequences
+longText = "This is a long string\nthat spans multiple lines\nusing escape sequences"
+
+// String interpolation (template literals) - see Phase 15
+greeting = `Hello, ${name}!`
+```
+
+**Triple-Quoted Strings for Prompts:**
+
+For writing multi-line prompts (especially agent system prompts), MCP Script supports triple-quoted strings with automatic indentation adjustment:
+
+```mcps
+systemPrompt = """
+    You are a data analyst. Analyze the provided data
+    and generate insights using the available tools.
+
+    Always provide clear explanations for your analysis.
+    """
+```
+
+The parser automatically removes common leading whitespace from triple-quoted strings, making them ideal for readable prompt definitions.
 
 ---
 
@@ -383,58 +404,78 @@ Models support various configuration parameters depending on the provider:
 
 ---
 
-## 5. Functions and Async Execution
+## 5. Tools and Async Execution
 
 ### Overview
 
-In MCP Script, functions are the fundamental unit of composition. Functions can:
+In MCP Script, tools are the fundamental unit of composition. Tools can:
 
 - Perform computations
 - Call MCP tools (async by default)
 - Delegate tasks to agents
-- Call other functions (async by default)
+- Call other tools (async by default)
 
-Functions have explicit type signatures at their boundaries and use type inference within their bodies.
+Tools have explicit type signatures at their boundaries and use type inference within their bodies.
 
-### Basic Function Syntax
+### Basic Tool Syntax
 
 ```mcps
-// Simple function (like a function)
-function calculateScore(points: number, multiplier: number): number {
+// Simple tool
+tool calculateScore(points, multiplier) {
     return points * multiplier
 }
 
-// Workflow with logic
-function processFile(path: string): any {
+// Tool with logic
+tool processFile(path) {
     content = filesystem.readFile(path)
     parsed = JSON.parse(content)
     return parsed
 }
 
-// Function calling other workflows
-function analyzeData(inputPath: string): number {
+// Tool calling other tools
+tool analyzeData(inputPath) {
     data = processFile(inputPath)
     score = calculateScore(data["points"], data["multiplier"])
     return score
 }
 ```
 
-### Function Type Signatures
+### Tool Type Signatures
 
-Workflows must declare:
-
-- Parameter names and types
-- Return type
+Tools support optional type annotations for runtime validation:
 
 ```mcps
-function myWorkflow(param1: Type1, param2: Type2): ReturnType {
-    // function body
+// With type annotations (validated at runtime with Zod)
+tool myWorkflow(param1: string, param2: number): boolean {
+    // Types are checked when tool is called
+    // If param1 is not a string or param2 is not a number, throws error
+    return param1.length > param2
 }
+
+// Without type annotations (no validation)
+tool flexibleTool(param1, param2) {
+    // No type checking
+    return param1 + param2
+}
+
+// Supported type annotations:
+// - Primitives: string, number, boolean, any
+// - Arrays: string[], number[], any[]
+// - Objects: { key: string, value: number }
+// - Union types: string | number
+// - Optional: param?: string
 ```
+
+**Runtime Validation Behavior:**
+
+- Type checks happen when tool is **called**, not when defined
+- Invalid arguments throw a runtime error with clear message
+- Return type is validated when tool returns
+- Uses Zod schemas generated from type annotations
 
 ### Async Execution Model
 
-In MCP Script, all tool calls and function calls are asynchronous by default. This enables natural parallel execution without special syntax:
+In MCP Script, all tool calls are asynchronous by default. This enables natural parallel execution without special syntax:
 
 **Key principles:**
 
@@ -447,9 +488,19 @@ In MCP Script, all tool calls and function calls are asynchronous by default. Th
 
 ### Agent Declaration
 
-Agents are declared with a reference to a model and their available tools:
+Agents are declared with a reference to a model and their available tools. Tools can be MCP server tools or user-defined tools:
 
 ```mcps
+// Define custom tools
+tool analyzeData(data: string): string {
+    parsed = JSON.parse(data)
+    return `Found ${parsed.length} records`
+}
+
+tool formatReport(content: string): string {
+    return `# Report\n\n${content}`
+}
+
 agent DataAnalyst {
     model: claude  // References the 'claude' model declared earlier
 
@@ -459,9 +510,11 @@ agent DataAnalyst {
     """
 
     tools: [
-        filesystem.readFile,
-        filesystem.writeFile,
-        database.query
+        filesystem.readFile,    // MCP server tool
+        filesystem.writeFile,   // MCP server tool
+        database.query,         // MCP server tool
+        analyzeData,            // User-defined tool
+        formatReport            // User-defined tool
     ]
 
     // Optional: Override model parameters for this agent
@@ -474,7 +527,10 @@ agent CreativeWriter {
 
     systemPrompt: "You are a creative writer who crafts engaging narratives."
 
-    tools: [filesystem.writeFile]
+    tools: [
+        filesystem.writeFile,  // MCP server tool
+        formatReport           // User-defined tool
+    ]
 
     temperature: 0.9  // Override for more creative output
     maxTokens: 10000  // Override for longer responses
@@ -519,10 +575,10 @@ conv = conv -> ReportWriter
 // ReportWriter sees the entire conversation history including DataAnalyst's analysis
 ```
 
-#### Workflow Integration
+#### Tool Integration
 
 ```mcps
-function analyzeWithAgent(inputPath: string): Conversation {
+tool analyzeWithAgent(inputPath) {
     conv = "Analyze the file at ${inputPath} and create a summary report" -> DataAnalyst
     conv += "Save the report to report.md"
     conv = conv -> DataAnalyst
@@ -534,7 +590,7 @@ function analyzeWithAgent(inputPath: string): Conversation {
 #### Conditional Agent Usage
 
 ```mcps
-function intelligentProcessing(data: any, useAgent: boolean): any {
+tool intelligentProcessing(data, useAgent) {
     if (useAgent) {
         result = "Process this data: ${data}" -> DataAnalyst
         return result.getLastMessage()
@@ -553,9 +609,9 @@ function intelligentProcessing(data: any, useAgent: boolean): any {
 MCP Script uses standard try-catch for error handling:
 
 ```mcps
-function riskyOperation(): string {
+tool riskyOperation() {
     if (somethingWrong) {
-        throw new Error("Operation failed")
+        throw "Operation failed"
     }
     return "success"
 }
@@ -571,10 +627,10 @@ try {
 
 Errors thrown from async operations (like MCP tool calls) are caught just like synchronous errors.
 
-### Function Error Handling
+### Tool Error Handling
 
 ````mcps
-function robustFileRead(path: string): any {
+tool robustFileRead(path) {
     try {
         data = filesystem.readFile(path)
         return JSON.parse(data)
@@ -586,10 +642,10 @@ function robustFileRead(path: string): any {
 
 ### State Persistence
 
-For long-running functions that need checkpointing and recovery, MCP Script provides state management primitives:
+For long-running tools that need checkpointing and recovery, MCP Script provides state management primitives:
 
 ```mcps
-function processLargeDataset(items: string[]): void {
+tool processLargeDataset(items) {
     state = {
         checkpoint: "",
         progress: 0
@@ -604,7 +660,7 @@ function processLargeDataset(items: string[]): void {
 }
 ````
 
-Note: The detailed semantics of state persistence and function recovery will be defined in a future proposal on runtime architecture.
+Note: The detailed semantics of state persistence and tool recovery will be defined in a future proposal on runtime architecture.
 
 ---
 
@@ -615,7 +671,7 @@ Note: The detailed semantics of state persistence and function recovery will be 
 MCP Script provides globally available logging and output functions:
 
 ```mcps
-function processData(input: string): any {
+tool processData(input) {
     // Simple console output (globally available)
     print("Starting processing...")
 
@@ -659,21 +715,21 @@ All logs follow a structured format for machine readability:
 The runtime automatically generates system logs for observability:
 
 ```mcps
-function example(path: string): any {
-    // System log: {"source": "system", "event": "workflow.start", "workflow": "example"}
+tool example(path) {
+    // System log: {"source": "system", "event": "tool.start", "tool": "example"}
 
     log.info("Reading file")  // User log: {"source": "user", "message": "Reading file"}
 
     // System log: {"source": "system", "event": "tool.call", "tool": "filesystem.readFile"}
     content = filesystem.readFile(path)
-    // System log: {"source": "system", "event": "tool.complete", "duration": 45}
+    // System log: {"source": "system", "event": "tool.complete", "tool": "filesystem.readFile", "duration": 45}
 
     // System log: {"source": "system", "event": "agent.start", "agent": "DataAnalyst"}
     result = "Analyze this content: ${content}" -> DataAnalyst
     // System log: {"source": "system", "event": "agent.complete", "tokens": 1234, "duration": 2300}
 
     return result
-    // System log: {"source": "system", "event": "workflow.complete", "workflow": "example"}
+    // System log: {"source": "system", "event": "tool.complete", "tool": "example"}
 }
 ```
 
@@ -681,33 +737,41 @@ function example(path: string): any {
 
 The MCP Script runtime automatically logs:
 
-- **Workflow lifecycle**: start, complete, error
+- **Tool lifecycle**: start, complete, error (for both user-defined and MCP tools)
 - **Agent delegations**: start, complete, tokens used, duration
-- **Tool calls**: invocation, parameters, results, errors
 - **Error propagation**: error source, stack trace
 - **Performance metrics**: execution time, memory usage
 
 Example system log entries:
 
 ```json
-// Workflow start
+// User-defined tool start
 {
   "source": "system",
-  "event": "workflow.start",
-  "workflow": "processData",
+  "event": "tool.start",
+  "tool": "processData",
   "executionId": "exec-123",
   "timestamp": "2025-01-02T10:30:00.000Z"
 }
 
-// Tool invocation
+// MCP tool call
 {
   "source": "system",
   "event": "tool.call",
   "tool": "filesystem.readFile",
   "params": {"path": "/data.json"},
-  "workflow": "processData",
   "executionId": "exec-123",
   "timestamp": "2025-01-02T10:30:00.100Z"
+}
+
+// MCP tool complete
+{
+  "source": "system",
+  "event": "tool.complete",
+  "tool": "filesystem.readFile",
+  "duration": 45,
+  "executionId": "exec-123",
+  "timestamp": "2025-01-02T10:30:00.145Z"
 }
 
 // Agent delegation
@@ -717,7 +781,6 @@ Example system log entries:
   "agent": "CodeReviewer",
   "tokens": 2500,
   "duration": 3400,
-  "workflow": "reviewCode",
   "executionId": "exec-123",
   "timestamp": "2025-01-02T10:30:03.500Z"
 }
@@ -798,8 +861,8 @@ mcp filesystem {
     args: ["-y", "@modelcontextprotocol/server-filesystem"]
 }
 
-// Function definitions (transpiled to async functions)
-function loadData(path: string): any {
+// Tool definitions (transpiled to async functions)
+tool loadData(path) {
     content = filesystem.readFile(path)
     return JSON.parse(content)
 }
@@ -829,24 +892,24 @@ for (file of files) {
 }
 ```
 
-**2. Libraries** - Only function definitions, no top-level execution:
+**2. Libraries** - Only tool definitions, no top-level execution:
 
 ```mcps
 // utils.mcps
-function validateEmail(email: string): boolean {
+tool validateEmail(email) {
     return email.contains("@")
 }
 
-function formatDate(date: string): string {
+tool formatDate(date) {
     // formatting logic
 }
 ```
 
-**3. Mixed** - Reusable workflows with executable script:
+**3. Mixed** - Reusable tools with executable script:
 
 ```mcps
 // process.mcps
-function transform(data: any): any {
+tool transform(data) {
     // reusable transformation
 }
 
@@ -882,10 +945,10 @@ MCP Script uses ES module-style imports to share code between `.mcps` files:
 
 ```mcps
 // Named imports from other .mcps files
-import { processData, validateEmail } from "./utils.mcps"
-import { claude, gpt4 } from "./models.mcps"
-import { filesystem, github } from "./connections.mcps"
-import { DataAnalyst, CodeReviewer } from "./agents.mcps"
+import { processData, validateEmail } from "./utils.mcps"  // Import tools
+import { claude, gpt4 } from "./models.mcps"              // Import models
+import { filesystem, github } from "./connections.mcps"    // Import MCP servers
+import { DataAnalyst, CodeReviewer } from "./agents.mcps"  // Import agents
 
 // Import all as namespace
 import * as utils from "./utils.mcps"
@@ -898,9 +961,8 @@ isValid = utils.validateEmail(email)
 **⚠️ Import Limitations:**
 
 - ✅ Importing from other `.mcps` files works
-- ✅ Importing from MCP Script standard library (`mcps`) works
-- ❌ Importing from `.js` or `.ts` files is **NOT supported** in the initial version
-- ❌ Importing from npm packages is **NOT supported** in the initial version
+- ❌ Importing from `.js` or `.ts` files is **NOT supported**
+- ❌ Importing from npm packages is **NOT supported**
 
 The focus is on MCP-native scripting. For external functionality, use MCP tools rather than npm packages.
 
@@ -925,22 +987,34 @@ The MCP Script runtime provides globally available functions and objects:
 
 - `print(value)` - Print a value to stdout (convenience function)
 
+**Collections:**
+
+- `Set(elements?)` - Create a new Set from an optional array of elements
+- `Map(entries?)` - Create a new Map from an optional array of [key, value] tuples
+
+**Data Utilities:**
+
+- `JSON.parse(text)` - Parse JSON string into an object
+- `JSON.stringify(value)` - Convert a value to JSON string
+
 **Import Behavior:**
-Top-level execution code in imported files does not run, eliminating the need for main module detection. When a file is imported, only its declarations (functions, agents, models, etc.) are made available.
+Top-level execution code in imported files does not run, eliminating the need for main module detection. When a file is imported, only its declarations (tools, agents, models, etc.) are made available.
 
 ### What Can Be Imported
 
 **Importable declarations:**
 
-- **Functions** - Reusable functions
+- **Tools** - Reusable tools
 - **Agents** - Agent configurations
 - **Models** - Model configurations
 - **MCP servers** - Server connections
-- Variables or constants
+- **Variables or constants**
 
 **Not importable:**
 
 - Top-level executable code
+
+**Note:** The module system is not yet implemented. See execution backlog Phase 10 for planned features.
 
 ### Import Behavior
 
@@ -953,7 +1027,7 @@ mcp filesystem {
     args: ["-y", "@modelcontextprotocol/server-filesystem"]
 }
 
-function processFile(path: string): any {
+tool processFile(path) {
     content = filesystem.readFile(path)
     return JSON.parse(content)
 }
