@@ -409,7 +409,5 @@ function extractValue(expr: Expression): unknown {
  */
 export function generateCleanup(): string {
   return `// Cleanup MCP servers
-for (const server of __mcpServers) {
-  await server.cleanup();
-}`;
+await Promise.all(__mcpServers.map(server => server.cleanup()));`;
 }
