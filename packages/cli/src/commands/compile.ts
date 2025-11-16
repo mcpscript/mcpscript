@@ -1,10 +1,9 @@
-// mcps run command
+// mcps compile command
 import { readFile } from 'fs/promises';
 import { parseSource, generateCode } from '@mcps/transpiler';
-import { executeInVM } from '@mcps/runtime';
-import type { RunOptions } from '../types.js';
+import type { CompileOptions } from '../types.js';
 
-export async function runCommand(options: RunOptions): Promise<void> {
+export async function compileCommand(options: CompileOptions): Promise<void> {
   const { file } = options;
 
   if (!file.endsWith('.mcps')) {
@@ -22,8 +21,8 @@ export async function runCommand(options: RunOptions): Promise<void> {
     // Generate JavaScript code
     const jsCode = generateCode(ast);
 
-    // Execute the generated JavaScript in VM
-    await executeInVM(jsCode, { timeout: options.timeout });
+    // Print to stdout
+    console.log(jsCode);
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error: ${error.message}`);

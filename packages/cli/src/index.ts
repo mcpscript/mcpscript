@@ -1,7 +1,7 @@
 // @mcps/cli - Command line interface
 import { Command } from 'commander';
-import { runCommand } from './commands/index.js';
-import type { RunOptions } from './types.js';
+import { runCommand, compileCommand } from './commands/index.js';
+import type { RunOptions, CompileOptions } from './types.js';
 import packageJson from '../package.json' with { type: 'json' };
 
 export async function main(args: string[]): Promise<void> {
@@ -32,6 +32,16 @@ export async function main(args: string[]): Promise<void> {
         timeout: timeout === 0 ? 0 : timeout,
       };
       await runCommand(options);
+    });
+
+  program
+    .command('compile <file>')
+    .description('Compile a MCP Script file to JavaScript and print to stdout')
+    .action(async (file: string) => {
+      const options: CompileOptions = {
+        file,
+      };
+      await compileCommand(options);
     });
 
   await program.parseAsync(args, { from: 'user' });

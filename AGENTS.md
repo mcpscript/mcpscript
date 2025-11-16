@@ -78,6 +78,10 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - Declare mocks as: `let consoleSpy: MockInstance;`
 - Avoid `any` type to maintain type safety
 
+### Local LLM
+
+- Use `gpt-oss:20b` as model id from ollama provider for any e2e testing that requires actual LLM
+
 ## Grammar and Codegen Consistency
 
 ### Critical Synchronization Points

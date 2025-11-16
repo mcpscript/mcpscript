@@ -4,3 +4,7 @@ export interface RunOptions {
   file: string;
   timeout?: number;
 }
+
+export interface CompileOptions {
+  file: string;
+}

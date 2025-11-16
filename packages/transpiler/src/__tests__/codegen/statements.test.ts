@@ -60,9 +60,8 @@ x = 1
     const code = generateCode(ast);
 
     expect(code).toContain('// Cleanup MCP servers');
-    expect(code).toContain(
-      'LlamaIndex MCP servers handle cleanup automatically'
-    );
+    expect(code).toContain('for (const server of __mcpServers)');
+    expect(code).toContain('await server.cleanup()');
   });
 
   it('should generate code for member property assignment', () => {

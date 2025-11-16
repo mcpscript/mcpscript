@@ -35,7 +35,7 @@ model gemini {
 // Local Ollama model (no API key needed - works out of the box if Ollama is running)
 model localLlama {
   provider: "ollama",
-  model: "mixtral:8x7b",
+  model: "gpt-oss:20b",
   temperature: 0.3
 }
 

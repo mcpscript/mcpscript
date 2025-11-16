@@ -25,6 +25,9 @@ export function generateMCPInitialization(
   );
 
   return `// Initialize MCP servers using LlamaIndex
+// Track all MCP servers for cleanup
+const __mcpServers = [];
+
 ${serverInits.join('\n\n')}`;
 }
 
@@ -37,6 +40,9 @@ function generateMCPServerInit(name: string, decl: MCPDeclaration): string {
 
   return `// Connect to ${name} MCP server using LlamaIndex
 const __${name}_server = __llamaindex_mcp(${serverConfig});
+
+// Register for cleanup
+__mcpServers.push(__${name}_server);
 
 // Get tools from MCP server
 const __${name}_tools = await __${name}_server.tools();
@@ -468,5 +474,7 @@ function extractValue(expr: Expression): unknown {
  */
 export function generateCleanup(): string {
   return `// Cleanup MCP servers
-// LlamaIndex MCP servers handle cleanup automatically`;
+for (const server of __mcpServers) {
+  await server.cleanup();
+}`;
 }

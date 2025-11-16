@@ -101,13 +101,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Agent declaration parsing (`agent agentName { model: modelName, tools: [tool1, tool2] }`)
 - ✅ **DONE** - Allow agent tools array to contain a MCP server (means include all tools from that server)
 - ✅ **DONE** - Agent delegation syntax (`"prompt text" -> AgentName`)
-  - Added `->` operator to grammar with right-associative precedence 0
-  - Created Conversation runtime class to hold messages with append() and result() methods
-  - Agent delegation generates async IIFE that creates Conversation, calls agent.run(), and adds response
-  - Response extraction handles result.data.result or result.data.message?.content
-  - Comprehensive test coverage: parser tests, codegen tests, and E2E tests
-- 🔲 **TODO** - Agent response handling and parsing
-- 🔲 **TODO** - Agent system E2E tests
+- ✅ **DONE** - Agent system e2e example script
 
 **→ Complete Phase 6 before Phase 7**
 
