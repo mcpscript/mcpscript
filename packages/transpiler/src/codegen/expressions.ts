@@ -164,6 +164,23 @@ function generateBinaryExpression(expr: BinaryExpression): string {
 }
 
 /**
+ * Check if mixing ?? with && or || requires explicit parentheses (JavaScript restriction)
+ */
+function requiresNullishCoalescingParens(
+  childOp: string,
+  parentOp: string
+): boolean {
+  // JavaScript doesn't allow mixing ?? with && or || without parentheses
+  if (parentOp === '??' && (childOp === '&&' || childOp === '||')) {
+    return true;
+  }
+  if ((parentOp === '&&' || parentOp === '||') && childOp === '??') {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Generate code for agent delegation (-> operator)
  */
 function generateAgentDelegation(expr: BinaryExpression): string {
@@ -186,6 +203,12 @@ function needsParentheses(
   }
 
   const childOp = (expr as BinaryExpression).operator;
+
+  // JavaScript restriction: ?? cannot be mixed with && or || without parentheses
+  if (requiresNullishCoalescingParens(childOp, parentOp)) {
+    return true;
+  }
+
   const parentPrec = getOperatorPrecedence(parentOp);
   const childPrec = getOperatorPrecedence(childOp);
 
@@ -209,24 +232,26 @@ function getOperatorPrecedence(op: string): number {
   switch (op) {
     case '->':
       return 0;
-    case '||':
+    case '??':
       return 1;
-    case '&&':
+    case '||':
       return 2;
+    case '&&':
+      return 3;
     case '==':
     case '!=':
     case '<':
     case '>':
     case '<=':
     case '>=':
-      return 3;
+      return 4;
     case '+':
     case '-':
-      return 4;
+      return 5;
     case '*':
     case '/':
     case '%':
-      return 5;
+      return 6;
     default:
       return 0;
   }

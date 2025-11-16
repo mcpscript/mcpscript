@@ -4,6 +4,8 @@
 
 This backlog outlines the implementation steps. Items are ordered sequentially with clear dependencies.
 
+Do NOT drop implementation notes into this document.
+
 **Legend:**
 
 - ✅ **DONE** - Completed
@@ -37,7 +39,14 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - ✅ **DONE** - Operator precedence handling in grammar
 - ✅ **DONE** - Expression evaluation in codegen
 - ✅ **DONE** - Expression runtime tests
-- 🔲 **TODO** - Nullish coalescing operator parsing (`??`) and codegen
+- ✅ **DONE** - Nullish coalescing operator parsing (`??`) and codegen
+  - Added `??` operator to grammar with correct precedence (between `->` and `||`)
+  - Updated parser to handle `??` operator
+  - Updated codegen to generate `??` with required parentheses when mixed with `&&` or `||` (JavaScript restriction)
+  - Added comprehensive parser tests (14 test cases)
+  - Added comprehensive codegen tests (25 test cases)
+  - Added comprehensive E2E tests (20 test cases) covering real-world use cases
+  - All tests pass, formatting and linting verified
 
 **→ Complete Phase 2 before Phase 3**
 
@@ -207,11 +216,8 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **Goal: Enhance MCP integration**
 
-- 🔲 **TODO** - Named parameter tool calling (`tool(param: value)`)
 - 🔲 **TODO** - MCP resource access beyond tools
 - 🔲 **TODO** - MCP server authentication (HTTP/WebSocket)
-- 🔲 **TODO** - Connection pooling and persistent connections
-- 🔲 **TODO** - Tool result caching mechanisms
 - 🔲 **TODO** - MCP server health checking
 - 🔲 **TODO** - Advanced MCP tests
 
@@ -320,23 +326,6 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Error handling pattern examples
 - 🔲 **TODO** - Multi-module project examples
 - 🔲 **TODO** - Migration guide from MVP to full spec
-
----
-
-## Implementation Notes
-
-**Key Dependencies:**
-
-- **Grammar → Parser → Codegen → Tests** is the standard flow for each feature
-- **Phase order is critical** - later phases depend on earlier ones
-- **Test each phase thoroughly** before moving to the next
-- **Each item should be individually testable** and mergeable
-
-**Parallel Work Opportunities:**
-
-- Documentation can be written alongside implementation
-- CLI enhancements can be done in parallel with core features
-- Performance optimization can happen after core features are stable
 
 ---
 

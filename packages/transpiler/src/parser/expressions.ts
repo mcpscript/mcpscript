@@ -300,6 +300,7 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
       c.type === '>=' ||
       c.type === '&&' ||
       c.type === '||' ||
+      c.type === '??' ||
       c.type === '->'
   );
 
@@ -323,6 +324,7 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
     | '>='
     | '&&'
     | '||'
+    | '??'
     | '->';
 
   return {

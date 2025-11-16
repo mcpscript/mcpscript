@@ -82,29 +82,30 @@ module.exports = grammar({
     binary_expression: $ =>
       choice(
         prec.right(0, seq($.expression, '->', $.expression)),
-        prec.left(1, seq($.expression, '||', $.expression)),
-        prec.left(2, seq($.expression, '&&', $.expression)),
+        prec.left(1, seq($.expression, '??', $.expression)),
+        prec.left(2, seq($.expression, '||', $.expression)),
+        prec.left(3, seq($.expression, '&&', $.expression)),
         prec.left(
-          3,
+          4,
           seq(
             $.expression,
             choice('==', '!=', '<', '>', '<=', '>='),
             $.expression
           )
         ),
-        prec.left(4, seq($.expression, choice('+', '-'), $.expression)),
-        prec.left(5, seq($.expression, choice('*', '/', '%'), $.expression))
+        prec.left(5, seq($.expression, choice('+', '-'), $.expression)),
+        prec.left(6, seq($.expression, choice('*', '/', '%'), $.expression))
       ),
 
-    unary_expression: $ => prec(6, seq(choice('!', '-'), $.expression)),
+    unary_expression: $ => prec(7, seq(choice('!', '-'), $.expression)),
 
     call_expression: $ =>
-      prec.left(7, seq($.expression, '(', optional($.argument_list), ')')),
+      prec.left(8, seq($.expression, '(', optional($.argument_list), ')')),
 
-    member_expression: $ => prec.left(7, seq($.expression, '.', $.identifier)),
+    member_expression: $ => prec.left(8, seq($.expression, '.', $.identifier)),
 
     bracket_expression: _$ =>
-      prec.left(7, seq(_$.expression, '[', _$.expression, ']')),
+      prec.left(8, seq(_$.expression, '[', _$.expression, ']')),
 
     parenthesized_expression: $ => seq('(', $.expression, ')'),
 
