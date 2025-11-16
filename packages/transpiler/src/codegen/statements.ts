@@ -10,6 +10,7 @@ import {
   ForStatement,
   BreakStatement,
   ContinueStatement,
+  Comment,
   Identifier,
   MemberExpression,
   BracketExpression,
@@ -80,6 +81,8 @@ export function dispatchStatement(
   scopeStack: ScopeStack
 ): string {
   switch (stmt.type) {
+    case 'comment':
+      return generateComment(stmt);
     case 'assignment':
       return generateAssignment(stmt, scopeStack);
     case 'expression_statement':
@@ -274,6 +277,13 @@ function generateBreakStatement(_stmt: BreakStatement): string {
  */
 function generateContinueStatement(_stmt: ContinueStatement): string {
   return 'continue;';
+}
+
+/**
+ * Generate code for a comment
+ */
+function generateComment(stmt: Comment): string {
+  return stmt.text;
 }
 
 /**

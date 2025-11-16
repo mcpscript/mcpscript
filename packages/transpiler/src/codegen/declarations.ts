@@ -52,14 +52,14 @@ const ${name} = {};
 for (const tool of __${name}_tools) {
   ${name}[tool.metadata.name] = async (...args) => {
     let toolInput;
-    
+
     // If single object argument, use as-is (explicit parameter object)
     if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])) {
       toolInput = args[0];
     } else {
       // Map positional arguments to schema parameter names
       const params = tool.metadata.parameters;
-      
+
       if (params && params.properties) {
         // Get parameter names from the schema
         const paramNames = Object.keys(params.properties);
@@ -76,15 +76,15 @@ for (const tool of __${name}_tools) {
         );
       }
     }
-    
+
     // Call the tool with the mapped input
     const result = await tool.call(toolInput);
-    
+
     // Extract text content from the result if it's in MCP format
     if (result && result.content && Array.isArray(result.content)) {
       return result.content[0]?.type === 'text' ? result.content[0].text : result.content;
     }
-    
+
     return result;
   };
 }`;
@@ -121,6 +121,11 @@ function generateMCPServerConfig(
     // Add args if specified
     if (config.args && Array.isArray(config.args)) {
       params.push(`args: ${serializeConfigObject(config.args)}`);
+    }
+
+    // Add stderr if specified
+    if (config.stderr !== undefined) {
+      params.push(`stderr: ${serializeConfigValue(config.stderr)}`);
     }
 
     // Add verbose flag if specified
@@ -161,7 +166,7 @@ function generateModelConfig(name: string, decl: ModelDeclaration): string {
 
   if (!provider) {
     throw new Error(
-      `Model "${name}" must specify a provider (openai, anthropic, gemini, or ollama)`
+      `Model "${name}" must specify a provider (openai, anthropic, or gemini)`
     );
   }
 
@@ -186,8 +191,6 @@ function generateLlamaIndexModelInit(
       return generateAnthropicInit(modelConfig);
     case 'gemini':
       return generateGeminiInit(modelConfig);
-    case 'ollama':
-      return generateOllamaInit(modelConfig);
     default:
       throw new Error(`Unsupported model provider: ${provider}`);
   }
@@ -261,25 +264,6 @@ function generateGeminiInit(config: Record<string, unknown>): string {
   }
 
   return `new __llamaindex_Gemini({ ${params.join(', ')} })`;
-}
-
-/**
- * Generate Ollama model initialization
- */
-function generateOllamaInit(config: Record<string, unknown>): string {
-  const params: string[] = [];
-
-  if (config.model) {
-    params.push(`model: ${serializeConfigValue(config.model)}`);
-  }
-  if (config.temperature !== undefined) {
-    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
-  }
-  if (config.baseURL) {
-    params.push(`baseURL: ${serializeConfigValue(config.baseURL)}`);
-  }
-
-  return `new __llamaindex_Ollama({ ${params.join(', ')} })`;
 }
 
 /**
@@ -357,18 +341,8 @@ function generateAgentConfig(
   // Add LLM reference
   agentParams.push(`llm: ${model}`);
 
-  // Add temperature override if provided
-  if (config.temperature !== undefined) {
-    agentParams.push(`temperature: ${config.temperature}`);
-  }
-
-  // Add maxTokens override if provided
-  if (config.maxTokens !== undefined) {
-    agentParams.push(`maxTokens: ${config.maxTokens}`);
-  }
-
   return `// Agent configuration for ${name}
-const ${name} = __llamaindex_agent({
+const ${name} = new __Agent({
   ${agentParams.join(',\n  ')}
 });`;
 }

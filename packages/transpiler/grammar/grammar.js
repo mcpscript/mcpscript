@@ -2,9 +2,8 @@
 module.exports = grammar({
   name: 'mcpscript',
 
-  extras: $ => [
+  extras: _$ => [
     /\s/, // whitespace
-    $.comment,
   ],
 
   rules: {
@@ -14,6 +13,7 @@ module.exports = grammar({
 
     statement: $ =>
       choice(
+        $.comment,
         $.mcp_declaration,
         $.model_declaration,
         $.agent_declaration,

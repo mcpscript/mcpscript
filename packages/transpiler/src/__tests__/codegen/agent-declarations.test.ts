@@ -4,7 +4,7 @@ import { parseSource } from '../../parser.js';
 import { generateCode } from '../../codegen.js';
 
 describe('Codegen - Agent Declarations', () => {
-  it('should generate LlamaIndex-compatible agent with model', () => {
+  it('should generate agent with model', () => {
     const statements = parseSource(`
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent DataAnalyst { model: claude, description: "Analyzes data" }
@@ -12,7 +12,7 @@ describe('Codegen - Agent Declarations', () => {
     const code = generateCode(statements);
     expect(code).toContain('// Initialize agent configurations');
     expect(code).toContain('// Agent configuration for DataAnalyst');
-    expect(code).toContain('const DataAnalyst = __llamaindex_agent({');
+    expect(code).toContain('const DataAnalyst = new __Agent({');
     expect(code).toContain('name: "DataAnalyst"');
     expect(code).toContain('description: "Analyzes data"');
     expect(code).toContain('llm: claude');
@@ -37,24 +37,6 @@ describe('Codegen - Agent Declarations', () => {
     expect(code).toContain(
       'tools: [filesystem.readFile, filesystem.writeFile]'
     );
-  });
-
-  it('should generate agent with temperature override', () => {
-    const statements = parseSource(`
-      model gpt4 { provider: "openai", model: "gpt-4o" }
-      agent CreativeWriter { model: gpt4, temperature: 0.9 }
-    `);
-    const code = generateCode(statements);
-    expect(code).toContain('temperature: 0.9');
-  });
-
-  it('should generate agent with maxTokens override', () => {
-    const statements = parseSource(`
-      model gpt4 { provider: "openai", model: "gpt-4o" }
-      agent LongFormWriter { model: gpt4, maxTokens: 10000 }
-    `);
-    const code = generateCode(statements);
-    expect(code).toContain('maxTokens: 10000');
   });
 
   it('should throw error for agent without model', () => {
@@ -87,8 +69,8 @@ describe('Codegen - Agent Declarations', () => {
     const code = generateCode(statements);
     expect(code).toContain('// Agent configuration for ResearchAgent');
     expect(code).toContain('// Agent configuration for WriteAgent');
-    expect(code).toContain('const ResearchAgent = __llamaindex_agent({');
-    expect(code).toContain('const WriteAgent = __llamaindex_agent({');
+    expect(code).toContain('const ResearchAgent = new __Agent({');
+    expect(code).toContain('const WriteAgent = new __Agent({');
   });
 
   it('should not include agent declarations in main code section', () => {
@@ -113,9 +95,7 @@ describe('Codegen - Agent Declarations', () => {
         model: claude,
         description: "Complete configuration",
         systemPrompt: "You are helpful",
-        tools: [filesystem.readFile],
-        temperature: 0.7,
-        maxTokens: 4000
+        tools: [filesystem.readFile]
       }
     `);
     const code = generateCode(statements);
@@ -124,8 +104,6 @@ describe('Codegen - Agent Declarations', () => {
     expect(code).toContain('systemPrompt: "You are helpful"');
     expect(code).toContain('tools: [filesystem.readFile]');
     expect(code).toContain('llm: claude');
-    expect(code).toContain('temperature: 0.7');
-    expect(code).toContain('maxTokens: 4000');
   });
 
   it('should handle agents mixed with models and MCP servers', () => {
@@ -141,7 +119,7 @@ describe('Codegen - Agent Declarations', () => {
     expect(code).toContain('// Initialize agent configurations');
     expect(code).toContain('__llamaindex_mcp');
     expect(code).toContain('const __models = {}');
-    expect(code).toContain('const DataAnalyst = __llamaindex_agent({');
+    expect(code).toContain('const DataAnalyst = new __Agent({');
     expect(code).toContain('tools: [filesystem.readFile]');
     expect(code).toContain('// Generated code');
     expect(code).toContain('let x = 42;');
@@ -165,7 +143,7 @@ describe('Codegen - Agent Declarations', () => {
       agent SimpleAgent { model: claude, description: "No tools" }
     `);
     const code = generateCode(statements);
-    expect(code).toContain('const SimpleAgent = __llamaindex_agent({');
+    expect(code).toContain('const SimpleAgent = new __Agent({');
     expect(code).toContain('llm: claude');
     expect(code).not.toContain('tools: [');
   });
@@ -185,7 +163,7 @@ describe('Codegen - Agent Declarations', () => {
     expect(modelIndex).toBeLessThan(agentIndex);
 
     // Both agents should be present
-    expect(code).toContain('const FirstAgent = __llamaindex_agent({');
-    expect(code).toContain('const SecondAgent = __llamaindex_agent({');
+    expect(code).toContain('const FirstAgent = new __Agent({');
+    expect(code).toContain('const SecondAgent = new __Agent({');
   });
 });

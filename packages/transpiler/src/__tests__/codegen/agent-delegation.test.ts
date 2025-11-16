@@ -12,11 +12,7 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('__Conversation');
-    expect(code).toContain('DataAnalyst.llm.exec');
-    expect(code).toContain('"Analyze this data"');
-    expect(code).toContain('newMessages');
-    expect(code).toContain('toolCalls');
+    expect(code).toContain('await DataAnalyst.run("Analyze this data")');
   });
 
   it('should generate agent delegation with variable prompt', () => {
@@ -29,8 +25,7 @@ describe('Codegen - Agent Delegation', () => {
     const code = generateCode(statements);
 
     expect(code).toContain('let prompt = "Review this code"');
-    expect(code).toContain('__Conversation');
-    expect(code).toContain('CodeReviewer.llm.exec');
+    expect(code).toContain('await CodeReviewer.run(prompt)');
   });
 
   it('should generate multiple agent delegations', () => {
@@ -43,10 +38,8 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('Agent1.llm.exec');
-    expect(code).toContain('Agent2.llm.exec');
-    expect(code).toContain('"Task 1"');
-    expect(code).toContain('"Task 2"');
+    expect(code).toContain('await Agent1.run("Task 1")');
+    expect(code).toContain('await Agent2.run("Task 2")');
   });
 
   it('should generate agent delegation as expression statement', () => {
@@ -57,12 +50,10 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('__Conversation');
-    expect(code).toContain('DataAnalyst.llm.exec');
-    expect(code).toContain('"Analyze data"');
+    expect(code).toContain('await DataAnalyst.run("Analyze data")');
   });
 
-  it('should wrap agent delegation in async IIFE', () => {
+  it('should generate simple agent delegation call', () => {
     const statements = parseSource(`
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent DataAnalyst { model: claude }
@@ -70,14 +61,10 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('await (async () => {');
-    expect(code).toContain('const conv = new __Conversation');
-    expect(code).toContain('const messages = conv.getMessages()');
-    expect(code).toContain('return finalConv;');
-    expect(code).toContain('})()');
+    expect(code).toContain('await DataAnalyst.run("prompt")');
   });
 
-  it('should handle agent loop with tool calls', () => {
+  it('should handle agent delegation returning conversation', () => {
     const statements = parseSource(`
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent DataAnalyst { model: claude }
@@ -85,11 +72,7 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('let exit = false;');
-    expect(code).toContain('do {');
-    expect(code).toContain('const { newMessages, toolCalls }');
-    expect(code).toContain('exit = toolCalls.length === 0;');
-    expect(code).toContain('} while (!exit);');
+    expect(code).toContain('let conv = await DataAnalyst.run("prompt")');
   });
 
   it('should generate agent delegation with agent that has tools', () => {
@@ -104,7 +87,7 @@ describe('Codegen - Agent Delegation', () => {
     expect(code).toContain('// Initialize MCP servers using LlamaIndex');
     expect(code).toContain('// Initialize model configurations');
     expect(code).toContain('// Initialize agent configurations');
-    expect(code).toContain('FileAgent.llm.exec');
+    expect(code).toContain('await FileAgent.run("Read the file")');
   });
 
   it('should handle agent delegation in control flow', () => {
@@ -119,7 +102,7 @@ describe('Codegen - Agent Delegation', () => {
     const code = generateCode(statements);
 
     expect(code).toContain('if (useAgent)');
-    expect(code).toContain('DataAnalyst.llm.exec');
+    expect(code).toContain('await DataAnalyst.run("Analyze")');
   });
 
   it('should preserve agent delegation in complex expressions', () => {
@@ -130,7 +113,6 @@ describe('Codegen - Agent Delegation', () => {
     `);
     const code = generateCode(statements);
 
-    expect(code).toContain('__Conversation');
-    expect(code).toContain('Agent1.llm.exec');
+    expect(code).toContain('await Agent1.run("prompt")');
   });
 });

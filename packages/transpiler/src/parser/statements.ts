@@ -10,6 +10,7 @@ import {
   ForStatement,
   BreakStatement,
   ContinueStatement,
+  Comment,
   Identifier,
   MemberExpression,
   BracketExpression,
@@ -34,6 +35,8 @@ export function parseStatement(node: Parser.SyntaxNode): Statement | null {
   if (!firstChild) return null;
 
   switch (firstChild.type) {
+    case 'comment':
+      return parseComment(firstChild);
     case 'mcp_declaration':
       return parseMCPDeclaration(firstChild);
     case 'model_declaration':
@@ -303,5 +306,15 @@ function parseBreakStatement(_node: Parser.SyntaxNode): BreakStatement {
 function parseContinueStatement(_node: Parser.SyntaxNode): ContinueStatement {
   return {
     type: 'continue_statement',
+  };
+}
+
+/**
+ * Parse a comment
+ */
+function parseComment(node: Parser.SyntaxNode): Comment {
+  return {
+    type: 'comment',
+    text: node.text,
   };
 }

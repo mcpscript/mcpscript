@@ -80,7 +80,9 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 
 ### Local LLM
 
-- Use `gpt-oss:20b` as model id from ollama provider for any e2e testing that requires actual LLM
+- Use Ollama's OpenAI API-compatible endpoint for local LLM for testing
+- That means using OpenAI as the provider, `http://localhost:11434/v1` as the API base URL, and "ollama" as api key
+- Always use `gpt-oss:20b` as test model id
 
 ## Grammar and Codegen Consistency
 

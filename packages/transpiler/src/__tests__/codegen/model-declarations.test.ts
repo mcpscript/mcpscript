@@ -42,17 +42,6 @@ describe('Codegen - Model Declarations', () => {
     expect(code).toContain('__models.gemini = gemini;');
   });
 
-  it('should generate LlamaIndex-compatible Ollama model', () => {
-    const statements = parseSource(
-      'model local { provider: "ollama", model: "mixtral:8x7b" }'
-    );
-    const code = generateCode(statements);
-    expect(code).toContain('// Model configuration for local');
-    expect(code).toContain('new __llamaindex_Ollama');
-    expect(code).toContain('model: "mixtral:8x7b"');
-    expect(code).toContain('__models.local = local;');
-  });
-
   it('should generate model with temperature and maxTokens', () => {
     const statements = parseSource(
       'model gpt4 { provider: "openai", model: "gpt-4o", temperature: 0.7, maxTokens: 4000 }'
@@ -82,12 +71,12 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(`
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       model gpt4 { provider: "openai", model: "gpt-4o" }
-      model local { provider: "ollama", model: "llama2" }
+      model gemini { provider: "gemini", model: "gemini-2.0-flash" }
     `);
     const code = generateCode(statements);
     expect(code).toContain('new __llamaindex_Anthropic');
     expect(code).toContain('new __llamaindex_OpenAI');
-    expect(code).toContain('new __llamaindex_Ollama');
+    expect(code).toContain('new __llamaindex_Gemini');
   });
 
   it('should not include model declarations in main code section', () => {
@@ -126,15 +115,6 @@ describe('Codegen - Model Declarations', () => {
     expect(code).toContain('model: "gpt-4"');
     expect(code).toContain('temperature: 0.5');
     expect(code).toContain('maxTokens: 2000');
-  });
-
-  it('should handle Ollama model with temperature', () => {
-    const statements = parseSource(
-      'model local { provider: "ollama", model: "llama2", temperature: 0.8 }'
-    );
-    const code = generateCode(statements);
-    expect(code).toContain('model: "llama2"');
-    expect(code).toContain('temperature: 0.8');
   });
 
   it('should convert env member expressions to process.env', () => {

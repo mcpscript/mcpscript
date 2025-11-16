@@ -168,6 +168,11 @@ export interface ContinueStatement extends ASTNode {
   type: 'continue_statement';
 }
 
+export interface Comment extends ASTNode {
+  type: 'comment';
+  text: string;
+}
+
 export type Statement =
   | MCPDeclaration
   | ModelDeclaration
@@ -179,4 +184,5 @@ export type Statement =
   | WhileStatement
   | ForStatement
   | BreakStatement
-  | ContinueStatement;
+  | ContinueStatement
+  | Comment;

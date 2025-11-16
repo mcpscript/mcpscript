@@ -103,12 +103,12 @@ describe('Parser - Model Declarations', () => {
     const statements = parseSource(`
       model claude { provider: "anthropic" }
       model gpt4 { provider: "openai" }
-      model local { provider: "ollama" }
+      model gemini { provider: "gemini" }
     `);
     expect(statements).toHaveLength(3);
     expect((statements[0] as ModelDeclaration).name).toBe('claude');
     expect((statements[1] as ModelDeclaration).name).toBe('gpt4');
-    expect((statements[2] as ModelDeclaration).name).toBe('local');
+    expect((statements[2] as ModelDeclaration).name).toBe('gemini');
   });
 
   it('should parse model declaration with all common parameters', () => {

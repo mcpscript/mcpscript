@@ -9,7 +9,9 @@
 
 // Configure a local AI model using Ollama
 model localLlama {
-  provider: "ollama",
+  provider: "openai",
+  apiKey: "ollama",
+  baseURL: "http://localhost:11434/v1",
   model: "gpt-oss:20b",
   temperature: 0.7
 }
@@ -28,15 +30,11 @@ agent FileAssistant {
   tools: [filesystem]
 }
 
-log.info("Agent system initialized")
-
 // Create a test file
 filesystem.write_file("/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
-log.info("Created test file")
 
 // Use the agent to read and analyze the file
 conv = "Read the file /tmp/example.txt and tell me what number is mentioned in it" -> FileAssistant
 result = conv.result()
 
-log.info("Agent response", { response: result })
-print("Agent found:", result)
+print(result)

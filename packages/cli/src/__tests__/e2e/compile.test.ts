@@ -40,8 +40,8 @@ print(x)`;
   it('should compile model declarations correctly', async () => {
     const scriptPath = join(TEST_DIR, 'model.mcps');
     const script = `model myModel {
-  provider: "ollama",
-  model: "gpt-oss:20b"
+  provider: "openai",
+  model: "gpt-4o"
 }`;
 
     await writeFile(scriptPath, script, 'utf-8');
@@ -54,7 +54,7 @@ print(x)`;
 
     expect(stdout).toContain('// Initialize model configurations');
     expect(stdout).toContain('const __models = {};');
-    expect(stdout).toContain('const myModel = new __llamaindex_Ollama');
+    expect(stdout).toContain('const myModel = new __llamaindex_OpenAI');
   });
 
   it('should error on non-.mcps files', async () => {
