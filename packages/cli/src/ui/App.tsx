@@ -16,7 +16,7 @@ export const App: React.FC<AppProps> = ({ state }) => {
           msg.title ? (
             <TitledBox
               key={index}
-              borderStyle="single"
+              borderStyle="round"
               titles={[msg.title]}
               marginBottom={1}
               padding={1}
@@ -26,7 +26,7 @@ export const App: React.FC<AppProps> = ({ state }) => {
           ) : (
             <Box
               key={index}
-              borderStyle="single"
+              borderStyle="round"
               flexDirection="column"
               marginBottom={1}
               padding={1}

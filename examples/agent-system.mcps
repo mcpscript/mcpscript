@@ -1,14 +1,10 @@
 // Example: Simple Agent System Demonstration
-// This demonstrates how to use agents in MCP Script
-//
-// To run this example:
-//   mcps run examples/agent-system.mcps
-//
+/
 // Requirements:
 //   - Ollama running locally with gpt-oss:20b model installed
 
 // Configure a local AI model using Ollama
-model localLlama {
+model gpt {
   provider: "openai",
   apiKey: "ollama",
   baseURL: "http://localhost:11434/v1",
@@ -24,8 +20,8 @@ mcp filesystem {
 }
 
 // Declare an agent with access to filesystem tools
-agent FileAssistant {
-  model: localLlama,
+agent fileAssistant {
+  model: gpt,
   systemPrompt: "You are a helpful file assistant. Help users work with files efficiently.",
   tools: [filesystem]
 }
@@ -34,5 +30,4 @@ agent FileAssistant {
 filesystem.write_file("/private/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
 
 // Use the agent to read and analyze the file
-conv = "Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> FileAssistant
-result = conv.result()
+"Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> fileAssistant

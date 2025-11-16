@@ -300,6 +300,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 ### Advanced Features
 
 - 🔲 **TODO** - Interactive debugger with breakpoints
+- 🔲 **TODO** - Use dotenv to load environment variables in CLI's run command
 - 🔲 **TODO** - Language server for IDE integration
 - 🔲 **TODO** - Package manager for MCP Script modules
 - 🔲 **TODO** - CI/CD integration tools
@@ -309,6 +310,7 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 ### Ecosystem Integration
 
 - 🔲 **TODO** - VS Code extension with syntax highlighting
+- 🔲 **TODO** - Tree-sitter syntax highlighting support for Neovim
 - 🔲 **TODO** - GitHub Actions for MCP Script workflows
 - 🔲 **TODO** - Docker containers for isolated execution
 - 🔲 **TODO** - Web-based playground for learning
