@@ -255,14 +255,14 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Add Set and Map collection types**
 
-- 🔲 **TODO** - Runtime `Set()` global function implementation (codegen should call vanilla JS `Set`)
+- ✅ **DONE** - Runtime `Set()` global function implementation (codegen should call vanilla JS `Set`)
   - `Set()` - create empty Set
   - `Set([1, 2, 3])` - create Set from array
-- 🔲 **TODO** - Runtime `Map()` global function implementation (codegen should call vanilla JS `Map`)
+- ✅ **DONE** - Runtime `Map()` global function implementation (codegen should call vanilla JS `Map`)
   - `Map()` - create empty Map
   - `Map([["key", "value"], ...])` - create Map from array of tuples
+- ✅ **DONE** - Set/Map runtime tests
 - 🔲 **TODO** - array, Set, Map iteration support in for-of loops
-- 🔲 **TODO** - Set/Map runtime tests
 
 **→ Complete Phase 14.5 before Phase 15**
 

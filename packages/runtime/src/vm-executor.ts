@@ -1,7 +1,14 @@
 // VM-based script execution with dependency injection
 import vm from 'vm';
 import { mcp } from '@llamaindex/tools';
-import { print, log, env, configurePrint } from './globals.js';
+import {
+  print,
+  log,
+  env,
+  configurePrint,
+  createSet,
+  createMap,
+} from './globals.js';
 import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
@@ -70,9 +77,9 @@ function createVMContext(
     // JSON utilities
     JSON: JSON,
 
-    // Collections
-    Set: Set,
-    Map: Map,
+    // Collections (wrapper functions that don't require 'new' keyword)
+    Set: createSet,
+    Map: createMap,
 
     // Math and other safe globals
     Math: Math,

@@ -89,3 +89,23 @@ export const env = new Proxy(
     },
   }
 );
+
+/**
+ * Create a Set without requiring the 'new' keyword
+ * @param iterable Optional iterable to initialize the Set
+ * @returns A new Set instance
+ */
+export function createSet<T = unknown>(iterable?: Iterable<T>): Set<T> {
+  return new Set(iterable);
+}
+
+/**
+ * Create a Map without requiring the 'new' keyword
+ * @param iterable Optional iterable of key-value pairs to initialize the Map
+ * @returns A new Map instance
+ */
+export function createMap<K = unknown, V = unknown>(
+  iterable?: Iterable<readonly [K, V]>
+): Map<K, V> {
+  return new Map(iterable);
+}
