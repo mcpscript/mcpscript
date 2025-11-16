@@ -19,15 +19,15 @@ mcp filesystem {
   stderr: "ignore"
 }
 
+// Create a test file
+filesystem.write_file("/private/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
+
 // Declare an agent with access to filesystem tools
 agent fileAssistant {
   model: gpt,
   systemPrompt: "You are a helpful file assistant. Help users work with files efficiently.",
   tools: [filesystem]
 }
-
-// Create a test file
-filesystem.write_file("/private/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
 
 // Use the agent to read and analyze the file
 "Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> fileAssistant
