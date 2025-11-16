@@ -10,7 +10,6 @@ import {
   BooleanLiteral,
   ArrayLiteral,
   Identifier,
-  MemberExpression,
 } from '../ast.js';
 import { generateExpression } from './expressions.js';
 
@@ -132,7 +131,7 @@ function generateModelConfig(name: string, decl: ModelDeclaration): string {
   }
 
   return `// Model configuration for ${name}
-const ${name} = ${generateLlamaIndexModelInit(provider, config)};
+const ${name} = ${generateLlamaIndexModelInit(provider, decl.config)};
 __models.${name} = ${name};`;
 }
 
@@ -141,17 +140,15 @@ __models.${name} = ${name};`;
  */
 function generateLlamaIndexModelInit(
   provider: string,
-  config: Record<string, unknown>
+  config: ObjectLiteral
 ): string {
-  const { provider: _provider, ...modelConfig } = config;
-
   switch (provider.toLowerCase()) {
     case 'openai':
-      return generateOpenAIInit(modelConfig);
+      return generateOpenAIInit(config);
     case 'anthropic':
-      return generateAnthropicInit(modelConfig);
+      return generateAnthropicInit(config);
     case 'gemini':
-      return generateGeminiInit(modelConfig);
+      return generateGeminiInit(config);
     default:
       throw new Error(`Unsupported model provider: ${provider}`);
   }
@@ -160,24 +157,24 @@ function generateLlamaIndexModelInit(
 /**
  * Generate OpenAI model initialization
  */
-function generateOpenAIInit(config: Record<string, unknown>): string {
+function generateOpenAIInit(config: ObjectLiteral): string {
   const params: string[] = [];
 
   // Map common config keys to OpenAI parameters
-  if (config.apiKey) {
-    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
-  }
-  if (config.model) {
-    params.push(`model: ${serializeConfigValue(config.model)}`);
-  }
-  if (config.temperature !== undefined) {
-    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
-  }
-  if (config.maxTokens !== undefined) {
-    params.push(`maxTokens: ${serializeConfigValue(config.maxTokens)}`);
-  }
-  if (config.baseURL) {
-    params.push(`baseURL: ${serializeConfigValue(config.baseURL)}`);
+  for (const prop of config.properties) {
+    if (prop.key === 'provider') continue; // Skip provider field
+
+    if (prop.key === 'apiKey') {
+      params.push(`apiKey: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'model') {
+      params.push(`model: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'temperature') {
+      params.push(`temperature: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'maxTokens') {
+      params.push(`maxTokens: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'baseURL') {
+      params.push(`baseURL: ${generateExpression(prop.value)}`);
+    }
   }
 
   return `new __llamaindex_OpenAI({ ${params.join(', ')} })`;
@@ -186,20 +183,21 @@ function generateOpenAIInit(config: Record<string, unknown>): string {
 /**
  * Generate Anthropic model initialization
  */
-function generateAnthropicInit(config: Record<string, unknown>): string {
+function generateAnthropicInit(config: ObjectLiteral): string {
   const params: string[] = [];
 
-  if (config.apiKey) {
-    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
-  }
-  if (config.model) {
-    params.push(`model: ${serializeConfigValue(config.model)}`);
-  }
-  if (config.temperature !== undefined) {
-    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
-  }
-  if (config.maxTokens !== undefined) {
-    params.push(`maxTokens: ${serializeConfigValue(config.maxTokens)}`);
+  for (const prop of config.properties) {
+    if (prop.key === 'provider') continue;
+
+    if (prop.key === 'apiKey') {
+      params.push(`apiKey: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'model') {
+      params.push(`model: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'temperature') {
+      params.push(`temperature: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'maxTokens') {
+      params.push(`maxTokens: ${generateExpression(prop.value)}`);
+    }
   }
 
   return `new __llamaindex_Anthropic({ ${params.join(', ')} })`;
@@ -208,20 +206,21 @@ function generateAnthropicInit(config: Record<string, unknown>): string {
 /**
  * Generate Gemini model initialization
  */
-function generateGeminiInit(config: Record<string, unknown>): string {
+function generateGeminiInit(config: ObjectLiteral): string {
   const params: string[] = [];
 
-  if (config.apiKey) {
-    params.push(`apiKey: ${serializeConfigValue(config.apiKey)}`);
-  }
-  if (config.model) {
-    params.push(`model: ${serializeConfigValue(config.model)}`);
-  }
-  if (config.temperature !== undefined) {
-    params.push(`temperature: ${serializeConfigValue(config.temperature)}`);
-  }
-  if (config.maxTokens !== undefined) {
-    params.push(`maxOutputTokens: ${serializeConfigValue(config.maxTokens)}`);
+  for (const prop of config.properties) {
+    if (prop.key === 'provider') continue;
+
+    if (prop.key === 'apiKey') {
+      params.push(`apiKey: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'model') {
+      params.push(`model: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'temperature') {
+      params.push(`temperature: ${generateExpression(prop.value)}`);
+    } else if (prop.key === 'maxTokens') {
+      params.push(`maxOutputTokens: ${generateExpression(prop.value)}`);
+    }
   }
 
   return `new __llamaindex_Gemini({ ${params.join(', ')} })`;
@@ -232,11 +231,6 @@ function generateGeminiInit(config: Record<string, unknown>): string {
  */
 function serializeConfigValue(value: unknown): string {
   if (typeof value === 'string') {
-    // Check if this is an environment variable reference
-    if (value.startsWith('env.')) {
-      const envVar = value.substring(4); // Remove 'env.' prefix
-      return `process.env.${envVar}`;
-    }
     return JSON.stringify(value);
   }
   return serializeConfigObject(value);
@@ -388,17 +382,6 @@ function extractValue(expr: Expression): unknown {
     }
     case 'identifier':
       return (expr as Identifier).name; // Return identifier name as string
-    case 'member': {
-      // Handle member expressions like env.OPENAI_API_KEY
-      const memberExpr = expr as MemberExpression;
-      if (
-        memberExpr.object.type === 'identifier' &&
-        (memberExpr.object as Identifier).name === 'env'
-      ) {
-        return `env.${memberExpr.property}`;
-      }
-      return undefined;
-    }
     default:
       return undefined;
   }

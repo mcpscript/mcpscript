@@ -13,7 +13,7 @@ describe('Codegen - Model Declarations', () => {
     expect(code).toContain('const __models = {};');
     expect(code).toContain('// Model configuration for gpt4');
     expect(code).toContain('new __llamaindex_OpenAI');
-    expect(code).toContain('apiKey: process.env.OPENAI_API_KEY');
+    expect(code).toContain('apiKey: env.OPENAI_API_KEY');
     expect(code).toContain('model: "gpt-4o"');
     expect(code).toContain('__models.gpt4 = gpt4;');
   });
@@ -25,7 +25,7 @@ describe('Codegen - Model Declarations', () => {
     const code = generateCode(statements);
     expect(code).toContain('// Model configuration for claude');
     expect(code).toContain('new __llamaindex_Anthropic');
-    expect(code).toContain('apiKey: process.env.ANTHROPIC_API_KEY');
+    expect(code).toContain('apiKey: env.ANTHROPIC_API_KEY');
     expect(code).toContain('model: "claude-3-opus-20240229"');
     expect(code).toContain('__models.claude = claude;');
   });
@@ -37,7 +37,7 @@ describe('Codegen - Model Declarations', () => {
     const code = generateCode(statements);
     expect(code).toContain('// Model configuration for gemini');
     expect(code).toContain('new __llamaindex_Gemini');
-    expect(code).toContain('apiKey: process.env.GOOGLE_API_KEY');
+    expect(code).toContain('apiKey: env.GOOGLE_API_KEY');
     expect(code).toContain('model: "gemini-2.0-flash"');
     expect(code).toContain('__models.gemini = gemini;');
   });
@@ -117,11 +117,33 @@ describe('Codegen - Model Declarations', () => {
     expect(code).toContain('maxTokens: 2000');
   });
 
-  it('should convert env member expressions to process.env', () => {
+  it('should preserve env member expressions as env.VAR', () => {
     const statements = parseSource(
       'model gpt4 { provider: "openai", apiKey: env.OPENAI_API_KEY }'
     );
     const code = generateCode(statements);
-    expect(code).toContain('process.env.OPENAI_API_KEY');
+    expect(code).toContain('env.OPENAI_API_KEY');
+  });
+
+  it('should NOT convert string literals starting with "env." to env member expressions', () => {
+    const statements = parseSource(
+      'model test { provider: "openai", apiKey: "env.LITERAL_STRING" }'
+    );
+    const code = generateCode(statements);
+
+    // String literals should remain as string literals, not converted to env member expressions
+    expect(code).toContain('apiKey: "env.LITERAL_STRING"');
+    expect(code).not.toContain('apiKey: env.LITERAL_STRING');
+  });
+
+  it('should handle both env member expressions and string literals correctly', () => {
+    const statements = parseSource(
+      'model test { provider: "openai", apiKey: env.OPENAI_API_KEY, model: "env.model-name" }'
+    );
+    const code = generateCode(statements);
+
+    // Member expression preserved, string literal preserved
+    expect(code).toContain('apiKey: env.OPENAI_API_KEY');
+    expect(code).toContain('model: "env.model-name"');
   });
 });
