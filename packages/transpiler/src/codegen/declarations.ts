@@ -48,46 +48,7 @@ __mcpServers.push(__${name}_server);
 const __${name}_tools = await __${name}_server.tools();
 
 // Create tool proxy for ${name}
-const ${name} = {};
-for (const tool of __${name}_tools) {
-  ${name}[tool.metadata.name] = async (...args) => {
-    let toolInput;
-
-    // If single object argument, use as-is (explicit parameter object)
-    if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])) {
-      toolInput = args[0];
-    } else {
-      // Map positional arguments to schema parameter names
-      const params = tool.metadata.parameters;
-
-      if (params && params.properties) {
-        // Get parameter names from the schema
-        const paramNames = Object.keys(params.properties);
-        toolInput = {};
-        paramNames.forEach((paramName, index) => {
-          if (index < args.length) {
-            toolInput[paramName] = args[index];
-          }
-        });
-      } else {
-        // Fallback: use generic numbered parameters if no schema
-        toolInput = Object.fromEntries(
-          args.map((arg, index) => [\`arg\${index}\`, arg])
-        );
-      }
-    }
-
-    // Call the tool with the mapped input
-    const result = await tool.call(toolInput);
-
-    // Extract text content from the result if it's in MCP format
-    if (result && result.content && Array.isArray(result.content)) {
-      return result.content[0]?.type === 'text' ? result.content[0].text : result.content;
-    }
-
-    return result;
-  };
-}`;
+const ${name} = __createToolProxy(__${name}_tools);`;
 }
 
 /**

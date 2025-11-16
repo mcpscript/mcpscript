@@ -7,6 +7,7 @@ import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
 import { Conversation } from './conversation.js';
 import { Agent } from './agent.js';
+import { createToolProxy } from './mcp.js';
 
 /**
  * Create a VM context with all required dependencies injected
@@ -38,6 +39,9 @@ function createVMContext(): vm.Context {
     // Runtime classes
     __Conversation: Conversation,
     __Agent: Agent,
+
+    // MCP utility functions
+    __createToolProxy: createToolProxy,
 
     // Standard APIs (limited)
     console: console,

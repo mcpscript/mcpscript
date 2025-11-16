@@ -30,9 +30,10 @@ mcp filesystem {
 
     expect(code).toContain('__llamaindex_mcp');
     expect(code).toContain('command: "npx"');
-    expect(code).toContain('const filesystem = {}');
+    expect(code).toContain(
+      'const filesystem = __createToolProxy(__filesystem_tools)'
+    );
     expect(code).toContain('await __filesystem_server.tools()');
-    expect(code).toContain('tool.metadata.name');
   });
 
   it('should generate code for MCP tool calls', () => {
@@ -44,7 +45,7 @@ result = server.getTool("arg1", "arg2")
     const ast = parseSource(source);
     const code = generateCode(ast);
 
-    expect(code).toContain('const server = {}');
+    expect(code).toContain('const server = __createToolProxy(__server_tools)');
     expect(code).toContain(
       'let result = await server.getTool("arg1", "arg2");'
     );

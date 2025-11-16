@@ -19,7 +19,7 @@ model localLlama {
 // Set up an MCP server for file operations
 mcp filesystem {
   command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-filesystem@latest", "/tmp"],
+  args: ["-y", "@modelcontextprotocol/server-filesystem@latest", "/private/tmp"],
   stderr: "ignore"
 }
 
@@ -31,10 +31,10 @@ agent FileAssistant {
 }
 
 // Create a test file
-filesystem.write_file("/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
+filesystem.write_file("/private/tmp/example.txt", "Hello from MCP Script! The answer is 42.")
 
 // Use the agent to read and analyze the file
-conv = "Read the file /tmp/example.txt and tell me what number is mentioned in it" -> FileAssistant
+conv = "Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> FileAssistant
 result = conv.result()
 
 print(result)

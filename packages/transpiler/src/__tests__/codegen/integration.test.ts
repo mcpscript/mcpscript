@@ -25,7 +25,9 @@ print(content)
     expect(code).toContain('__llamaindex_mcp');
 
     // Check MCP setup
-    expect(code).toContain('const filesystem = {}');
+    expect(code).toContain(
+      'const filesystem = __createToolProxy(__filesystem_tools)'
+    );
     expect(code).toContain('await __filesystem_server.tools()');
 
     // Check generated code
