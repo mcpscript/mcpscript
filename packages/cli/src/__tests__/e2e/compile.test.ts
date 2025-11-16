@@ -7,7 +7,7 @@ import { promisify } from 'util';
 
 const execFileAsync = promisify(execFile);
 
-const TEST_DIR = join(process.cwd(), 'tmp_e2e_test');
+const TEST_DIR = join(process.cwd(), 'tmp_e2e_test_compile');
 const CLI_PATH = join(process.cwd(), 'bin', 'mcps.mjs');
 
 describe('Compile Command', () => {

@@ -2,6 +2,7 @@
 import type { BaseLLM } from '@llamaindex/core/llms';
 import type { BaseTool } from '@llamaindex/core/llms';
 import { Conversation } from './conversation.js';
+import { printChatMessage } from './globals.js';
 
 /**
  * Configuration options for creating an agent
@@ -52,6 +53,10 @@ export class Agent {
       });
     }
 
+    for (const msg of messages) {
+      printChatMessage(this.config.name, msg);
+    }
+
     // Agent loop: repeatedly call llm.exec until no more tool calls
     let exit = false;
     do {
@@ -60,6 +65,11 @@ export class Agent {
         tools: this.config.tools || [],
       });
       messages.push(...newMessages);
+
+      for (const msg of newMessages) {
+        printChatMessage(this.config.name, msg);
+      }
+
       exit = toolCalls.length === 0;
     } while (!exit);
 

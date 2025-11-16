@@ -1,0 +1,40 @@
+import React from 'react';
+import { Box, Text } from 'ink';
+import { TitledBox } from '@mishieck/ink-titled-box';
+
+import type { AppState, AppMessage } from '@mcps/runtime';
+
+interface AppProps {
+  state: AppState;
+}
+
+export const App: React.FC<AppProps> = ({ state }) => {
+  return (
+    <Box flexDirection="column">
+      {state.messages.length > 0 &&
+        state.messages.map((msg: AppMessage, index: number) =>
+          msg.title ? (
+            <TitledBox
+              key={index}
+              borderStyle="single"
+              titles={[msg.title]}
+              marginBottom={1}
+              padding={1}
+            >
+              <Text>{msg.body}</Text>
+            </TitledBox>
+          ) : (
+            <Box
+              key={index}
+              borderStyle="single"
+              flexDirection="column"
+              marginBottom={1}
+              padding={1}
+            >
+              <Text>{msg.body}</Text>
+            </Box>
+          )
+        )}
+    </Box>
+  );
+};

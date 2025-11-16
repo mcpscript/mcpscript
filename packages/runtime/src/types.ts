@@ -9,3 +9,12 @@ export interface MCPServer {
   name: string;
   config: MCPServerConfig;
 }
+
+export type AppMessage = {
+  title: string;
+  body: string;
+};
+
+export interface AppState {
+  messages: AppMessage[];
+}

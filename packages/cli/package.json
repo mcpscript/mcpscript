@@ -17,8 +17,14 @@
   "dependencies": {
     "@mcps/runtime": "file:../runtime",
     "@mcps/transpiler": "file:../transpiler",
-    "commander": "^14.0.2"
+    "@mishieck/ink-titled-box": "^0.3.0",
+    "commander": "^14.0.2",
+    "ink": "^6.5.0",
+    "react": "^19.2.0"
   },
   "author": "Kun Chen",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^19.2.5"
+  }
 }

@@ -1,18 +1,21 @@
 // VM-based script execution with dependency injection
 import vm from 'vm';
 import { mcp } from '@llamaindex/tools';
-import { print, log, env } from './globals.js';
+import { print, log, env, configurePrint } from './globals.js';
 import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
 import { Conversation } from './conversation.js';
 import { Agent } from './agent.js';
 import { createToolProxy } from './mcp.js';
+import type { AppMessage } from './types.js';
 
 /**
  * Create a VM context with all required dependencies injected
  */
-function createVMContext(): vm.Context {
+function createVMContext(
+  addAppMessage?: (msg: AppMessage) => void
+): vm.Context {
   // Create a safe subset of process object
   const safeProcess = {
     env: process.env,
@@ -42,6 +45,9 @@ function createVMContext(): vm.Context {
 
     // MCP utility functions
     __createToolProxy: createToolProxy,
+
+    // App message function for UI integration
+    __addAppMessage: addAppMessage,
 
     // Standard APIs (limited)
     console: console,
@@ -85,6 +91,8 @@ function createVMContext(): vm.Context {
 export interface VMExecutionOptions {
   /** Timeout in milliseconds. Set to 0 for no timeout. Default: 30000 (30s) */
   timeout?: number;
+  /** Callback to add a message to the app state from within the VM */
+  addMessage?: (msg: AppMessage) => void;
 }
 
 /**
@@ -94,7 +102,12 @@ export async function executeInVM(
   code: string,
   options: VMExecutionOptions = {}
 ): Promise<Record<string, unknown>> {
-  const context = createVMContext();
+  // Configure print function for UI integration if callback provided
+  if (options.addMessage) {
+    configurePrint(options.addMessage);
+  }
+
+  const context = createVMContext(options.addMessage);
 
   try {
     // Wrap code to assign variables to the context for test access
@@ -141,6 +154,9 @@ ${code.replace(/\blet\s+(\w+)/g, 'this.$1')}
     } else {
       throw error;
     }
+  } finally {
+    // Reset print configuration after execution
+    configurePrint(null);
   }
 }
 

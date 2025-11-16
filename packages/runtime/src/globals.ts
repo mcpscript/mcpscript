@@ -1,7 +1,41 @@
 // Global functions available in MCP Script
 
+import { ChatMessage } from 'llamaindex';
+import { AppMessage } from './types';
+
+/**
+ * Add message callback type for UI integration
+ */
+type AddMessageHandler = (msg: AppMessage) => void;
+
+/**
+ * Add message callback for UI integration
+ */
+let addMessage: AddMessageHandler | null = null;
+
+/**
+ * Configure print function for UI integration
+ */
+export function configurePrint(
+  addMessageHandler: AddMessageHandler | null
+): void {
+  addMessage = addMessageHandler;
+}
+
+/**
+ * Print output. Integrates with UI when configured, otherwise uses console.log
+ */
 export function print(...values: unknown[]): void {
-  console.log(...values);
+  const message = values.map(v => String(v)).join(' ');
+
+  addMessage?.({ title: '', body: message });
+}
+
+export function printChatMessage(agentName: string, msg: ChatMessage): void {
+  const content =
+    typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
+  const author = msg.role === 'user' ? 'User' : `Agent[${agentName}]`;
+  addMessage?.({ title: author, body: content });
 }
 
 /**

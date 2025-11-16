@@ -36,5 +36,3 @@ filesystem.write_file("/private/tmp/example.txt", "Hello from MCP Script! The an
 // Use the agent to read and analyze the file
 conv = "Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> FileAssistant
 result = conv.result()
-
-print(result)

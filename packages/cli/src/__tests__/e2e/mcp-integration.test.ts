@@ -4,7 +4,7 @@ import { parseSource, generateCode } from '@mcps/transpiler';
 import { executeInVM } from '@mcps/runtime';
 import * as fs from 'fs/promises';
 
-const TEST_DIR = 'tmp_e2e_test';
+const TEST_DIR = 'tmp_e2e_test_mcp';
 
 describe('End-to-End MCP Integration', () => {
   beforeEach(async () => {
