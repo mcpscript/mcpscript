@@ -196,7 +196,24 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 
 **→ Complete Phase 12 before Phase 13**
 
-### Phase 13: Developer Experience Enhancements
+### Phase 13: Code Organization and Refactoring
+
+**Goal: Improve codebase maintainability**
+
+- ✅ **DONE** - Refactor `packages/transpiler/src/parser.ts` into separate modules
+  - Extracted declaration parsers into `parser/declarations.ts`
+  - Extracted expression parsers into `parser/expressions.ts`
+  - Extracted statement parsers into `parser/statements.ts`
+  - Main `parser.ts` now serves as entry point and orchestrator
+
+- ✅ **DONE** - Refactor `packages/transpiler/src/codegen.ts` into separate modules
+  - Extracted declaration generators (models, agents, MCPs) into `codegen/declarations.ts`
+  - Extracted expression generators into `codegen/expressions.ts`
+  - Extracted statement generators into `codegen/statements.ts`
+  - Main `codegen.ts` now serves as orchestrator with scope management
+    **→ Complete Phase 13 before Phase 14**
+
+### Phase 14: Developer Experience Enhancements
 
 **Goal: Improve debugging and tooling**
 
@@ -208,9 +225,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Log configuration via environment variables
 - 🔲 **TODO** - Execution ID tracking across logs
 
-**→ Complete Phase 13 before Phase 14**
+**→ Complete Phase 14 before Phase 15**
 
-### Phase 14: Advanced Language Features
+### Phase 15: Advanced Language Features
 
 **Goal: Add sophisticated language constructs**
 
@@ -222,9 +239,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Multi-line string support
 - 🔲 **TODO** - Escape sequence handling in strings
 
-**→ Complete Phase 14 before Phase 15**
+**→ Complete Phase 15 before Phase 16**
 
-### Phase 15: Security and Sandboxing
+### Phase 16: Security and Sandboxing
 
 **Goal: Enhance execution security**
 
@@ -237,9 +254,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Tool permission system
 - 🔲 **TODO** - Secure credential management
 
-**→ Complete Phase 15 before Phase 16**
+**→ Complete Phase 16 before Phase 17**
 
-### Phase 16: Additional CLI and Tooling
+### Phase 17: Additional CLI and Tooling
 
 **Goal: Complete developer tooling**
 
@@ -250,9 +267,9 @@ This backlog outlines the implementation steps. Items are ordered sequentially w
 - 🔲 **TODO** - Configuration file support (`.mcpsrc`)
 - 🔲 **TODO** - Source map generation for debugging
 
-**→ Complete Phase 16 before Phase 17**
+**→ Complete Phase 17 before Phase 18**
 
-### Phase 17: Documentation and Examples
+### Phase 18: Documentation and Examples
 
 **Goal: Complete user-facing materials**
 
