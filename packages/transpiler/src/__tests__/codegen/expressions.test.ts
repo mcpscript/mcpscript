@@ -1,7 +1,7 @@
 // Code generator tests for expressions
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - Expressions', () => {
   it('should handle function calls', () => {
@@ -11,7 +11,7 @@ print("Result:", result)
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let result = processData("input", 42, true);');
     expect(code).toContain('print("Result:", result);');
@@ -28,7 +28,7 @@ w = r % s
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = a + b;');
       expect(code).toContain('let x = 10 - 5;');
@@ -44,7 +44,7 @@ x = m - n / p
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = a + b * c;');
       expect(code).toContain('let x = m - n / p;');
@@ -57,7 +57,7 @@ x = (m - n) / p
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = (a + b) * c;');
       expect(code).toContain('let x = (m - n) / p;');
@@ -70,7 +70,7 @@ x = m / n * p
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = a - b + c;');
       expect(code).toContain('let x = m / n * p;');
@@ -83,7 +83,7 @@ complex = (x + y * 2) / (z - 1)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = (a + b) * (c - d);');
       expect(code).toContain('let complex = (x + y * 2) / (z - 1);');
@@ -96,7 +96,7 @@ calc = y / 3 - 1.5
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = 10 + x * 2.5;');
       expect(code).toContain('let calc = y / 3 - 1.5;');
@@ -109,7 +109,7 @@ process(10 - 5, m / n)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = calculate(a + b, x * y);');
       expect(code).toContain('process(10 - 5, m / n);');
@@ -123,7 +123,7 @@ mixed = 3.14 * radius
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = count + 1;');
       expect(code).toContain('let flag = enabled + false;');
@@ -136,7 +136,7 @@ results = [a + b, x * y, m - n]
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let results = [a + b, x * y, m - n];');
     });
@@ -147,7 +147,7 @@ config = { sum: a + b, product: x * y, diff: m - n }
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain(
         'let config = { sum: a + b, product: x * y, diff: m - n };'
@@ -162,7 +162,7 @@ result2 = x != y
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result1 = a == b;');
       expect(code).toContain('let result2 = x != y;');
@@ -177,7 +177,7 @@ result4 = p >= q
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result1 = a < b;');
       expect(code).toContain('let result2 = x > y;');
@@ -193,7 +193,7 @@ result3 = m * 2 < n + 1
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result1 = a + b == c * d;');
       expect(code).toContain('let result2 = x - y != p / q;');
@@ -209,7 +209,7 @@ result4 = flag != true
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result1 = age >= 18;');
       expect(code).toContain('let result2 = score < 100;');
@@ -224,7 +224,7 @@ result2 = (x + y) > (m - n)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       // For same-precedence comparison operators, left operand doesn't need parentheses
       // but right operand with same precedence does need them in some cases
@@ -240,7 +240,7 @@ check(age >= 18, score > 90)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = process(a == b, x < y);');
       expect(code).toContain('check(age >= 18, score > 90);');
@@ -253,7 +253,7 @@ results = { equal: a == b, less: x < y, greater: m > n }
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let checks = [a == b, x < y, m >= n];');
       expect(code).toContain(
@@ -268,7 +268,7 @@ result2 = x != y <= z
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result1 = a < b == c;');
       expect(code).toContain('let result2 = x != y <= z;');

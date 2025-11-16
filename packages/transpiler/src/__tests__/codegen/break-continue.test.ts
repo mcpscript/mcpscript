@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Break and Continue Statement Codegen', () => {
   it('should generate break statement', () => {
     const source = 'break';
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('break;');
   });
@@ -14,7 +14,7 @@ describe('Break and Continue Statement Codegen', () => {
   it('should generate continue statement', () => {
     const source = 'continue';
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('continue;');
   });
@@ -25,7 +25,7 @@ describe('Break and Continue Statement Codegen', () => {
       x = x + 1
     }`;
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('while (true) {');
     expect(code).toContain('if (condition) {');
@@ -39,7 +39,7 @@ describe('Break and Continue Statement Codegen', () => {
       print(i)
     }`;
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('for (let i = 0; i < 10; i = i + 1) {');
     expect(code).toContain('if (i % 2 == 0) {');
@@ -57,7 +57,7 @@ describe('Break and Continue Statement Codegen', () => {
       if (done) break
     }`;
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('while (outer) {');
     expect(code).toContain('for (let i = 0; i < 5; i = i + 1) {');
@@ -80,7 +80,7 @@ describe('Break and Continue Statement Codegen', () => {
       }
     }`;
     const statements = parseSource(source);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('for (let i = 0; i < 10; i = i + 1) {');
     expect(code).toContain('  if (skip) {');

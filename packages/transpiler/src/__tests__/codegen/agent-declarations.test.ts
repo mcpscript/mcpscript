@@ -1,7 +1,7 @@
 // Codegen tests for agent declarations
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Codegen - Agent Declarations', () => {
   it('should generate agent with model', () => {
@@ -9,7 +9,7 @@ describe('Codegen - Agent Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent DataAnalyst { model: claude, description: "Analyzes data" }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize agent configurations');
     expect(code).toContain('// Agent configuration for DataAnalyst');
     expect(code).toContain('const DataAnalyst = new __Agent({');
@@ -23,7 +23,7 @@ describe('Codegen - Agent Declarations', () => {
       model gpt4 { provider: "openai", model: "gpt-4o" }
       agent CodeReviewer { model: gpt4, systemPrompt: "You are a code reviewer" }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('systemPrompt: "You are a code reviewer"');
   });
 
@@ -33,7 +33,7 @@ describe('Codegen - Agent Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent FileAgent { model: claude, tools: [filesystem.readFile, filesystem.writeFile] }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain(
       'tools: [filesystem.readFile, filesystem.writeFile]'
     );
@@ -43,7 +43,7 @@ describe('Codegen - Agent Declarations', () => {
     const statements = parseSource(
       'agent Invalid { description: "Missing model" }'
     );
-    expect(() => generateCode(statements)).toThrow(
+    expect(() => generateCodeForTest(statements)).toThrow(
       'Agent "Invalid" must specify a model reference'
     );
   });
@@ -55,7 +55,7 @@ describe('Codegen - Agent Declarations', () => {
       myTool = filesystem.readFile
       agent FileAgent { model: claude, tools: [myTool, filesystem.writeFile] }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('tools: [myTool, filesystem.writeFile]');
   });
 
@@ -66,7 +66,7 @@ describe('Codegen - Agent Declarations', () => {
       agent ResearchAgent { model: claude, description: "Researcher" }
       agent WriteAgent { model: gpt4, description: "Writer" }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Agent configuration for ResearchAgent');
     expect(code).toContain('// Agent configuration for WriteAgent');
     expect(code).toContain('const ResearchAgent = new __Agent({');
@@ -79,7 +79,7 @@ describe('Codegen - Agent Declarations', () => {
       agent DataAnalyst { model: claude }
       x = 42
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize agent configurations');
     expect(code).toContain('// Generated code');
     expect(code).toContain('let x = 42;');
@@ -98,7 +98,7 @@ describe('Codegen - Agent Declarations', () => {
         tools: [filesystem.readFile]
       }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('name: "CompleteAgent"');
     expect(code).toContain('description: "Complete configuration"');
     expect(code).toContain('systemPrompt: "You are helpful"');
@@ -113,7 +113,7 @@ describe('Codegen - Agent Declarations', () => {
       agent DataAnalyst { model: claude, tools: [filesystem.readFile] }
       x = 42
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize MCP servers using LlamaIndex');
     expect(code).toContain('// Initialize model configurations');
     expect(code).toContain('// Initialize agent configurations');
@@ -131,7 +131,7 @@ describe('Codegen - Agent Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent FileAgent { model: claude, tools: [filesystem.readFile, filesystem.writeFile, filesystem.listFiles] }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain(
       'tools: [filesystem.readFile, filesystem.writeFile, filesystem.listFiles]'
     );
@@ -142,7 +142,7 @@ describe('Codegen - Agent Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       agent SimpleAgent { model: claude, description: "No tools" }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('const SimpleAgent = new __Agent({');
     expect(code).toContain('llm: claude');
     expect(code).not.toContain('tools: [');
@@ -155,7 +155,7 @@ describe('Codegen - Agent Declarations', () => {
       model gpt4 { provider: "openai", model: "gpt-4o" }
       agent SecondAgent { model: gpt4 }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     // Models should be initialized before agents
     const modelIndex = code.indexOf('// Initialize model configurations');

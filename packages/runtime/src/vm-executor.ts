@@ -70,10 +70,33 @@ function createVMContext(
     // JSON utilities
     JSON: JSON,
 
+    // Collections
+    Set: Set,
+    Map: Map,
+
     // Math and other safe globals
     Math: Math,
     Date: Date,
     RegExp: RegExp,
+
+    // Constructor functions
+    Object: Object,
+    Array: Array,
+    String: String,
+    Number: Number,
+    Boolean: Boolean,
+
+    // Parsing utilities
+    parseInt: parseInt,
+    parseFloat: parseFloat,
+    isNaN: isNaN,
+    isFinite: isFinite,
+
+    // URI encoding/decoding
+    encodeURIComponent: encodeURIComponent,
+    decodeURIComponent: decodeURIComponent,
+    encodeURI: encodeURI,
+    decodeURI: decodeURI,
 
     // Error types
     Error: Error,

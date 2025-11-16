@@ -1,7 +1,7 @@
 // Code generator tests for statements
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - Statements', () => {
   it('should generate code for simple assignment and print', () => {
@@ -11,7 +11,7 @@ print(message)
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let message = "Hello World";');
     expect(code).toContain('print(message);');
@@ -26,7 +26,7 @@ mcp filesystem {
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('__llamaindex_mcp');
     expect(code).toContain('command: "npx"');
@@ -43,7 +43,7 @@ result = server.getTool("arg1", "arg2")
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('const server = __createToolProxy(__server_tools)');
     expect(code).toContain(
@@ -58,7 +58,7 @@ x = 1
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('// Cleanup MCP servers');
     expect(code).toContain(
@@ -73,7 +73,7 @@ obj.prop = "new value"
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let obj = { prop: 42 };');
     expect(code).toContain('obj.prop = "new value";');
@@ -86,7 +86,7 @@ arr[0] = 42
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let arr = [1, 2, 3];');
     expect(code).toContain('arr[0] = 42;');
@@ -99,7 +99,7 @@ data.nested.prop = "new"
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let data = { nested: { prop: "old" } };');
     expect(code).toContain('data.nested.prop = "new";');
@@ -114,7 +114,7 @@ matrix[row][col] = 99
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let matrix = [[1, 2], [3, 4]];');
     expect(code).toContain('let row = 0;');
@@ -130,7 +130,7 @@ value = obj.arr[1]
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let obj = { arr: [1, 2, 3] };');
     expect(code).toContain('obj.arr[1] = "modified";');

@@ -1,13 +1,13 @@
 // Code generator tests for for statements
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - For Statements', () => {
   it('should generate code for basic for loop', () => {
     const source = 'for (i = 0; i < 10; i = i + 1) { print(i) }';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 10; i = i + 1) {');
     expect(code).toContain('  print(i);');
@@ -21,7 +21,7 @@ for (; i > 0; i = i - 1) { print(i) }
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let i = 5;');
     expect(code).toContain('for (; i > 0; i = i - 1) {');
@@ -31,7 +31,7 @@ for (; i > 0; i = i - 1) { print(i) }
   it('should generate code for for loop with empty condition', () => {
     const source = 'for (count = 0; ; count = count + 1) { print("infinite") }';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let count = 0; ; count = count + 1) {');
     expect(code).toContain('  print("infinite");');
@@ -40,7 +40,7 @@ for (; i > 0; i = i - 1) { print(i) }
   it('should generate code for for loop with empty update', () => {
     const source = 'for (i = 0; i < 5; ) { print(i) }';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 5; ) {');
     expect(code).toContain('  print(i);');
@@ -49,7 +49,7 @@ for (; i > 0; i = i - 1) { print(i) }
   it('should generate code for for loop with all parts empty', () => {
     const source = 'for (;;) { print("loop") }';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (;;) {');
     expect(code).toContain('  print("loop");');
@@ -58,7 +58,7 @@ for (; i > 0; i = i - 1) { print(i) }
   it('should generate code for for loop with single statement body', () => {
     const source = 'for (i = 0; i < 3; i = i + 1) print(i)';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 3; i = i + 1) {');
     expect(code).toContain('  print(i);');
@@ -75,7 +75,7 @@ for (i = 0; i < 2; i = i + 1) {
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 2; i = i + 1) {');
     expect(code).toContain('  for (let j = 0; j < 2; j = j + 1) {');
@@ -90,7 +90,7 @@ print(x)
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let x = 10;');
     expect(code).toContain('for (x = 0; x < 5; x = x + 1) {');
@@ -101,7 +101,7 @@ print(x)
     const source =
       'for (x = 2 * 5; x > 0 && x < 100; x = x - 2) { result = x / 2 }';
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain(
       'for (let x = 2 * 5; x > 0 && x < 100; x = x - 2) {'
@@ -118,7 +118,7 @@ for (i = 0; i < 5; i = i + 1) {
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let arr = [1, 2, 3, 4, 5];');
     expect(code).toContain('for (let i = 0; i < 5; i = i + 1) {');
@@ -134,7 +134,7 @@ for (i = 0; i < 3; i = i + 1) {
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let obj = { count: 0 };');
     expect(code).toContain('for (let i = 0; i < 3; i = i + 1) {');

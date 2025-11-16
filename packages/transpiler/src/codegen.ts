@@ -12,11 +12,13 @@ import {
   generateCleanup,
 } from './codegen/declarations.js';
 import { ScopeStack, dispatchStatement } from './codegen/statements.js';
+import { validateStatements } from './validator.js';
 
 /**
- * Generate JavaScript code from an array of AST statements
+ * Generate JavaScript code from an array of AST statements (without validation)
+ * This is exposed for testing purposes only. Production code should use generateCode().
  */
-export function generateCode(statements: Statement[]): string {
+export function generateCodeUnsafe(statements: Statement[]): string {
   // Track MCP servers, models, and agents to initialize
   const mcpServers = new Map<string, MCPDeclaration>();
   const models = new Map<string, ModelDeclaration>();
@@ -54,6 +56,18 @@ export function generateCode(statements: Statement[]): string {
   return [mcpInit, modelInit, agentInit, mainCode, cleanup]
     .filter(Boolean)
     .join('\n\n');
+}
+
+/**
+ * Generate JavaScript code from an array of AST statements
+ * Validates variable references before code generation.
+ */
+export function generateCode(statements: Statement[]): string {
+  // Validate all variable references before code generation
+  validateStatements(statements);
+
+  // Generate code
+  return generateCodeUnsafe(statements);
 }
 
 /**

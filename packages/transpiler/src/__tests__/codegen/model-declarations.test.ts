@@ -1,14 +1,14 @@
 // Codegen tests for model declarations
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Codegen - Model Declarations', () => {
   it('should generate LlamaIndex-compatible OpenAI model', () => {
     const statements = parseSource(
       'model gpt4 { provider: "openai", model: "gpt-4o", apiKey: env.OPENAI_API_KEY }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize model configurations');
     expect(code).toContain('const __models = {};');
     expect(code).toContain('// Model configuration for gpt4');
@@ -22,7 +22,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model claude { provider: "anthropic", model: "claude-3-opus-20240229", apiKey: env.ANTHROPIC_API_KEY }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Model configuration for claude');
     expect(code).toContain('new __llamaindex_Anthropic');
     expect(code).toContain('apiKey: env.ANTHROPIC_API_KEY');
@@ -34,7 +34,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model gemini { provider: "gemini", model: "gemini-2.0-flash", apiKey: env.GOOGLE_API_KEY }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Model configuration for gemini');
     expect(code).toContain('new __llamaindex_Gemini');
     expect(code).toContain('apiKey: env.GOOGLE_API_KEY');
@@ -46,14 +46,14 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model gpt4 { provider: "openai", model: "gpt-4o", temperature: 0.7, maxTokens: 4000 }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('temperature: 0.7');
     expect(code).toContain('maxTokens: 4000');
   });
 
   it('should throw error for model without provider', () => {
     const statements = parseSource('model invalid { model: "gpt-4" }');
-    expect(() => generateCode(statements)).toThrow(
+    expect(() => generateCodeForTest(statements)).toThrow(
       'Model "invalid" must specify a provider'
     );
   });
@@ -62,7 +62,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model invalid { provider: "unsupported", model: "test" }'
     );
-    expect(() => generateCode(statements)).toThrow(
+    expect(() => generateCodeForTest(statements)).toThrow(
       'Unsupported model provider: unsupported'
     );
   });
@@ -73,7 +73,7 @@ describe('Codegen - Model Declarations', () => {
       model gpt4 { provider: "openai", model: "gpt-4o" }
       model gemini { provider: "gemini", model: "gemini-2.0-flash" }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('new __llamaindex_Anthropic');
     expect(code).toContain('new __llamaindex_OpenAI');
     expect(code).toContain('new __llamaindex_Gemini');
@@ -84,7 +84,7 @@ describe('Codegen - Model Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       x = 42
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize model configurations');
     expect(code).toContain('// Generated code');
     expect(code).toContain('let x = 42;');
@@ -98,7 +98,7 @@ describe('Codegen - Model Declarations', () => {
       model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
       x = 42
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('// Initialize MCP servers using LlamaIndex');
     expect(code).toContain('// Initialize model configurations');
     expect(code).toContain('__llamaindex_mcp');
@@ -111,7 +111,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model custom { provider: "openai", model: "gpt-4", temperature: 0.5, maxTokens: 2000 }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('model: "gpt-4"');
     expect(code).toContain('temperature: 0.5');
     expect(code).toContain('maxTokens: 2000');
@@ -121,7 +121,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model gpt4 { provider: "openai", apiKey: env.OPENAI_API_KEY }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
     expect(code).toContain('env.OPENAI_API_KEY');
   });
 
@@ -129,7 +129,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model test { provider: "openai", apiKey: "env.LITERAL_STRING" }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     // String literals should remain as string literals, not converted to env member expressions
     expect(code).toContain('apiKey: "env.LITERAL_STRING"');
@@ -140,7 +140,7 @@ describe('Codegen - Model Declarations', () => {
     const statements = parseSource(
       'model test { provider: "openai", apiKey: env.OPENAI_API_KEY, model: "env.model-name" }'
     );
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     // Member expression preserved, string literal preserved
     expect(code).toContain('apiKey: env.OPENAI_API_KEY');

@@ -1,7 +1,7 @@
 // Code generator tests for member access expressions
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - Member Access', () => {
   describe('Dot Notation', () => {
@@ -9,7 +9,7 @@ describe('Code Generator - Member Access', () => {
       const source = `result = obj.property`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = obj.property;');
     });
@@ -18,7 +18,7 @@ describe('Code Generator - Member Access', () => {
       const source = `value = user.profile.name`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = user.profile.name;');
     });
@@ -30,7 +30,7 @@ product = config.width * config.height
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let sum = obj.a + obj.b;');
       expect(code).toContain('let product = config.width * config.height;');
@@ -43,7 +43,7 @@ output = format(data.title)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = process(user.name, user.age);');
       expect(code).toContain('let output = format(data.title);');
@@ -56,7 +56,7 @@ output = data.process("arg1", 42)
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = await obj.method();');
       expect(code).toContain('let output = await data.process("arg1", 42);');
@@ -66,7 +66,7 @@ output = data.process("arg1", 42)
       const source = `result = obj.getData().process()`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = await obj.getData().process();');
     });
@@ -75,7 +75,7 @@ output = data.process("arg1", 42)
       const source = `items = [user.name, user.email, user.age]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let items = [user.name, user.email, user.age];');
     });
@@ -84,7 +84,7 @@ output = data.process("arg1", 42)
       const source = `config = { title: data.title, size: data.size }`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain(
         'let config = { title: data.title, size: data.size };'
@@ -97,7 +97,7 @@ output = data.process("arg1", 42)
       const source = `result = obj["key"]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = obj["key"];');
     });
@@ -109,7 +109,7 @@ last = items[count - 1]
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let first = items[0];');
       expect(code).toContain('let last = items[count - 1];');
@@ -122,7 +122,7 @@ result = data[fieldName]
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = obj[key];');
       expect(code).toContain('let result = data[fieldName];');
@@ -132,7 +132,7 @@ result = data[fieldName]
       const source = `value = matrix[row][col]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = matrix[row][col];');
     });
@@ -144,7 +144,7 @@ result = data[key + suffix]
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = arr[index + 1];');
       expect(code).toContain('let result = data[key + suffix];');
@@ -154,7 +154,7 @@ result = data[key + suffix]
       const source = `result = process(arr[0], obj["key"])`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = process(arr[0], obj["key"]);');
     });
@@ -168,7 +168,7 @@ result = data["config"].settings
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = obj.items[0];');
       expect(code).toContain('let result = data["config"].settings;');
@@ -178,7 +178,7 @@ result = data["config"].settings
       const source = `value = users[0].profile.settings["theme"]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = users[0].profile.settings["theme"];');
     });
@@ -190,7 +190,7 @@ sum = data.width * data.height
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let result = obj.a + arr[0];');
       expect(code).toContain('let sum = data.width * data.height;');
@@ -203,7 +203,7 @@ hasItems = arr.length > 0
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let isValid = user.age >= 18;');
       expect(code).toContain('let hasItems = arr.length > 0;');
@@ -218,7 +218,7 @@ data.process("arg")
       `.trim();
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('await obj.method();');
       expect(code).toContain('await data.process("arg");');
@@ -228,7 +228,7 @@ data.process("arg")
       const source = `obj.getData().process().save()`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('await obj.getData().process().save();');
     });
@@ -239,7 +239,7 @@ data.process("arg")
       const source = `value = obj["special-key"]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = obj["special-key"];');
     });
@@ -248,7 +248,7 @@ data.process("arg")
       const source = `value = obj[123]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = obj[123];');
     });
@@ -257,7 +257,7 @@ data.process("arg")
       const source = `value = obj[key == "test"]`;
 
       const ast = parseSource(source);
-      const code = generateCode(ast);
+      const code = generateCodeForTest(ast);
 
       expect(code).toContain('let value = obj[key == "test"];');
     });

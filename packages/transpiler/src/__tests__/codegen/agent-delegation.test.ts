@@ -1,7 +1,7 @@
 // Codegen tests for agent delegation operator
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Codegen - Agent Delegation', () => {
   it('should generate agent delegation with string literal', () => {
@@ -10,7 +10,7 @@ describe('Codegen - Agent Delegation', () => {
       agent DataAnalyst { model: claude }
       result = "Analyze this data" -> DataAnalyst
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('await DataAnalyst.run("Analyze this data")');
   });
@@ -22,7 +22,7 @@ describe('Codegen - Agent Delegation', () => {
       prompt = "Review this code"
       result = prompt -> CodeReviewer
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('let prompt = "Review this code"');
     expect(code).toContain('await CodeReviewer.run(prompt)');
@@ -36,7 +36,7 @@ describe('Codegen - Agent Delegation', () => {
       result1 = "Task 1" -> Agent1
       result2 = "Task 2" -> Agent2
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('await Agent1.run("Task 1")');
     expect(code).toContain('await Agent2.run("Task 2")');
@@ -48,7 +48,7 @@ describe('Codegen - Agent Delegation', () => {
       agent DataAnalyst { model: claude }
       "Analyze data" -> DataAnalyst
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('await DataAnalyst.run("Analyze data")');
   });
@@ -59,7 +59,7 @@ describe('Codegen - Agent Delegation', () => {
       agent DataAnalyst { model: claude }
       result = "prompt" -> DataAnalyst
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('await DataAnalyst.run("prompt")');
   });
@@ -70,7 +70,7 @@ describe('Codegen - Agent Delegation', () => {
       agent DataAnalyst { model: claude }
       conv = "prompt" -> DataAnalyst
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('let conv = await DataAnalyst.run("prompt")');
   });
@@ -82,7 +82,7 @@ describe('Codegen - Agent Delegation', () => {
       agent FileAgent { model: claude, tools: [filesystem.readFile] }
       result = "Read the file" -> FileAgent
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('// Initialize MCP servers using LlamaIndex');
     expect(code).toContain('// Initialize model configurations');
@@ -99,7 +99,7 @@ describe('Codegen - Agent Delegation', () => {
         result = "Analyze" -> DataAnalyst
       }
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('if (useAgent)');
     expect(code).toContain('await DataAnalyst.run("Analyze")');
@@ -111,7 +111,7 @@ describe('Codegen - Agent Delegation', () => {
       agent Agent1 { model: claude }
       result = ("prompt" -> Agent1)
     `);
-    const code = generateCode(statements);
+    const code = generateCodeForTest(statements);
 
     expect(code).toContain('await Agent1.run("prompt")');
   });

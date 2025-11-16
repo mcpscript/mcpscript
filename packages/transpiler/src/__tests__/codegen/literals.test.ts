@@ -1,7 +1,7 @@
 // Code generator tests for literals
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - Literals', () => {
   it('should handle arrays and objects', () => {
@@ -11,7 +11,7 @@ items = [1, 2, 3]
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain(
       'let config = { name: "test", port: 8080, enabled: true };'
@@ -27,7 +27,7 @@ large = 123456
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let zero = 0;');
     expect(code).toContain('let positive = 42;');
@@ -42,7 +42,7 @@ fraction = .25
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let pi = 3.14159;');
     expect(code).toContain('let half = 0.5;');
@@ -60,7 +60,7 @@ negative = 4.56E-7
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let large = 100000;');
     expect(code).toContain('let small = 0.0025;');
@@ -77,7 +77,7 @@ config = { port: 8080, ratio: 0.75, timeout: 1e4 }
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let numbers = [42, 3.14, 100000, 0.0025];');
     expect(code).toContain(
@@ -92,7 +92,7 @@ mcp server { command: "test", args: [5000, 3] }
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let result = calculate(42, 3.14, 0.00001);');
     expect(code).toContain('args: [5000, 3]');
@@ -105,7 +105,7 @@ isDisabled = false
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let isEnabled = true;');
     expect(code).toContain('let isDisabled = false;');
@@ -118,7 +118,7 @@ config = { enabled: true, debug: false, verbose: true }
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain('let flags = [true, false, true];');
     expect(code).toContain(
@@ -133,7 +133,7 @@ mcp server { command: "test", verbose: true }
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     expect(code).toContain(
       'let result = processData("input", 42, true, false);'

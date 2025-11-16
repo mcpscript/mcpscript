@@ -64,22 +64,7 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Object property assignment (`obj.property = value`)
 - ✅ **DONE** - Collection runtime tests
 
-**→ Complete Phase 3 before Phase 3.5**
-
-### Phase 3.5: Advanced Collections (Sets and Maps)
-
-**Goal: Add Set and Map collection types**
-
-- 🔲 **TODO** - Runtime `Set()` global function implementation (codegen should call vanilla JS `Set`)
-  - `Set()` - create empty Set
-  - `Set([1, 2, 3])` - create Set from array
-- 🔲 **TODO** - Runtime `Map()` global function implementation (codegen should call vanilla JS `Map`)
-  - `Map()` - create empty Map
-  - `Map([["key", "value"], ...])` - create Map from array of tuples
-- 🔲 **TODO** - array, Set, Map iteration support in for-of loops
-- 🔲 **TODO** - Set/Map runtime tests
-
-**→ Complete Phase 3.5 before Phase 4**
+**→ Complete Phase 3 before Phase 4**
 
 ### Phase 4: Control Flow
 
@@ -118,11 +103,10 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Provide standard utilities and validate global access**
 
-- 🔲 **TODO** - Implement global variable whitelist validation
+- ✅ **DONE** - Implement global variable whitelist validation
   - Track all globals that we do want to expose the script: `log`, `env`, `print`, `Set`, `Map`, `JSON`, etc.
   - Static analysis during transpilation to detect references to undefined variables
-- 🔲 **TODO** - Implement `JSON.parse()` runtime function
-- 🔲 **TODO** - Implement `JSON.stringify()` runtime function
+- ✅ **DONE** - Implement `JSON.parse()` and `JSON.stringify()` and any missing runtime function (just wrappers around vanilla JS)
 
 **→ Complete Phase 5.5 before Phase 6**
 
@@ -265,7 +249,22 @@ Do NOT drop implementation notes into this document.
 - 🔲 **TODO** - Log configuration via environment variables
 - 🔲 **TODO** - Execution ID tracking across logs
 
-**→ Complete Phase 14 before Phase 15**
+**→ Complete Phase 14 before Phase 14.5**
+
+### Phase 14.5: Advanced Collections (Sets and Maps)
+
+**Goal: Add Set and Map collection types**
+
+- 🔲 **TODO** - Runtime `Set()` global function implementation (codegen should call vanilla JS `Set`)
+  - `Set()` - create empty Set
+  - `Set([1, 2, 3])` - create Set from array
+- 🔲 **TODO** - Runtime `Map()` global function implementation (codegen should call vanilla JS `Map`)
+  - `Map()` - create empty Map
+  - `Map([["key", "value"], ...])` - create Map from array of tuples
+- 🔲 **TODO** - array, Set, Map iteration support in for-of loops
+- 🔲 **TODO** - Set/Map runtime tests
+
+**→ Complete Phase 14.5 before Phase 15**
 
 ### Phase 15: Advanced Language Features
 

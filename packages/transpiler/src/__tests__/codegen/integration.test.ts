@@ -1,7 +1,7 @@
 // Code generator integration tests
 import { describe, it, expect } from 'vitest';
 import { parseSource } from '../../parser.js';
-import { generateCode } from '../../codegen.js';
+import { generateCodeForTest } from '../test-helpers.js';
 
 describe('Code Generator - Integration', () => {
   it('should generate code for complete MVP example', () => {
@@ -18,7 +18,7 @@ print(content)
     `.trim();
 
     const ast = parseSource(source);
-    const code = generateCode(ast);
+    const code = generateCodeForTest(ast);
 
     // Check MCP initialization
     expect(code).toContain('// Initialize MCP servers using LlamaIndex');
