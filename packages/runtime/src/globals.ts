@@ -26,9 +26,12 @@ export function configurePrint(
  * Print output. Integrates with UI when configured, otherwise uses console.log
  */
 export function print(...values: unknown[]): void {
-  const message = values.map(v => String(v)).join(' ');
-
-  addMessage?.({ title: '', body: message });
+  if (addMessage) {
+    const message = values.map(v => String(v)).join(' ');
+    addMessage({ title: '', body: message });
+  } else {
+    console.log(...values);
+  }
 }
 
 export function printChatMessage(agentName: string, msg: ChatMessage): void {
