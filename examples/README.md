@@ -18,5 +18,5 @@ Before running examples, ensure you have:
 Run any example from the project root:
 
 ```bash
-npm run mcps -- run examples/hello.mcps
+npm run mcps -- run examples/hello-world.mcps
 ```

@@ -1,17 +1,16 @@
-name: Release
+name: CI
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
-  release-please:
-    name: Test and Release
+  test:
+    name: Build, Test and Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,7 +20,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install npm 11.5.1 or above
         run: npm install -g npm@^11.5.1
@@ -40,11 +38,3 @@ jobs:
 
       - name: Run linter
         run: npm run lint
-
-      - name: Create Release PR or GitHub Release
-        uses: googleapis/release-please-action@v4
-        id: release
-
-      - name: Publish to npm
-        run: cd packages/cli && npm publish
-        if: ${{ steps.release.outputs.release_created }}

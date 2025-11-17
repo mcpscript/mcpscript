@@ -1,2 +1,0 @@
-message = "Hello from MCP Script!"
-print(message)

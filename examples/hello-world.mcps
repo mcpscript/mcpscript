@@ -1,0 +1,2 @@
+message = "Hello world, from MCP Script!"
+print(message)
