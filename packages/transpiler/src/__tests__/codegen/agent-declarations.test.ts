@@ -166,4 +166,113 @@ describe('Codegen - Agent Declarations', () => {
     expect(code).toContain('const FirstAgent = new __Agent({');
     expect(code).toContain('const SecondAgent = new __Agent({');
   });
+
+  it('should generate agent with user-defined tools', () => {
+    const statements = parseSource(`
+      tool analyzeData(input) {
+        return input + " analyzed"
+      }
+      
+      tool formatReport(content) {
+        return "Report: " + content
+      }
+      
+      model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
+      agent DataAnalyst { 
+        model: claude, 
+        tools: [analyzeData, formatReport] 
+      }
+    `);
+    const code = generateCodeForTest(statements);
+
+    // Tools should be declared with __createUserTool
+    expect(code).toContain('__createUserTool("analyzeData"');
+    expect(code).toContain('__createUserTool("formatReport"');
+
+    // Should pass tools directly to agent (Agent will wrap at runtime)
+    expect(code).toContain('tools: [analyzeData, formatReport]');
+  });
+
+  it('should generate agent with mixed MCP and user-defined tools', () => {
+    const statements = parseSource(`
+      mcp filesystem { command: "npx", args: ["-y", "@modelcontextprotocol/server-filesystem"] }
+      
+      tool customTool(data) {
+        return data
+      }
+      
+      model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
+      agent MixedAgent { 
+        model: claude, 
+        tools: [filesystem.readFile, customTool, filesystem.writeFile] 
+      }
+    `);
+    const code = generateCodeForTest(statements);
+
+    // Should have both MCP tools and user tools
+    expect(code).toContain('filesystem.readFile');
+    expect(code).toContain('__createUserTool("customTool"');
+    expect(code).toContain('filesystem.writeFile');
+    expect(code).toContain(
+      'tools: [filesystem.readFile, customTool, filesystem.writeFile]'
+    );
+  });
+
+  it('should generate agent with user-defined tool and MCP server expansion', () => {
+    const statements = parseSource(`
+      mcp filesystem { command: "npx", args: ["-y", "@modelcontextprotocol/server-filesystem"] }
+      
+      tool analyzeFile(path) {
+        return path
+      }
+      
+      model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
+      agent FileAnalyst { 
+        model: claude, 
+        tools: [filesystem, analyzeFile] 
+      }
+    `);
+    const code = generateCodeForTest(statements);
+
+    // Should pass MCP server proxy (filesystem) and user tool directly
+    // Agent will expand the MCP server proxy at runtime
+    expect(code).toContain('__createUserTool("analyzeFile"');
+    expect(code).toContain('tools: [filesystem, analyzeFile]');
+  });
+
+  it('should handle agent with user-defined tool with multiple parameters', () => {
+    const statements = parseSource(`
+      tool calculate(a, b, c) {
+        return a + b + c
+      }
+      
+      model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
+      agent Calculator { 
+        model: claude, 
+        tools: [calculate] 
+      }
+    `);
+    const code = generateCodeForTest(statements);
+
+    expect(code).toContain('__createUserTool("calculate"');
+    expect(code).toContain('tools: [calculate]');
+  });
+
+  it('should handle agent with user-defined tool with no parameters', () => {
+    const statements = parseSource(`
+      tool getTimestamp() {
+        return 42
+      }
+      
+      model claude { provider: "anthropic", model: "claude-3-opus-20240229" }
+      agent TimestampAgent { 
+        model: claude, 
+        tools: [getTimestamp] 
+      }
+    `);
+    const code = generateCodeForTest(statements);
+
+    expect(code).toContain('__createUserTool("getTimestamp"');
+    expect(code).toContain('tools: [getTimestamp]');
+  });
 });

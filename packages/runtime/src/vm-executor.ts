@@ -14,7 +14,7 @@ import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
 import { Conversation } from './conversation.js';
 import { Agent } from './agent.js';
-import { createToolProxy } from './mcp.js';
+import { createToolProxy, createUserTool } from './mcp.js';
 import type { AppMessage } from './types.js';
 
 /**
@@ -52,6 +52,7 @@ function createVMContext(
 
     // MCP utility functions
     __createToolProxy: createToolProxy,
+    __createUserTool: createUserTool,
 
     // App message function for UI integration
     __addAppMessage: addAppMessage,

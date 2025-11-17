@@ -124,9 +124,9 @@ Do NOT drop implementation notes into this document.
 **Goal: Enable user-defined reusable logic**
 
 - ✅ **DONE** - Tool declaration syntax parsing and codegen (`tool name(params) { ... }`)
-- 🔲 **TODO** - Support assigning tools to agents in `tools` array
-- 🔲 **TODO** - Tool runtime tests with agents
-- 🔲 **TODO** - Create example scripts demonstrating tool usage with agents
+- ✅ **DONE** - Support assigning tools to agents in `tools` array
+- ✅ **DONE** - Tool runtime tests with agents
+- ✅ **DONE** - Create example scripts demonstrating tool usage with agents
 
 **→ Complete Phase 7 before Phase 8**
 

@@ -47,14 +47,13 @@ export function generateCodeUnsafe(statements: Statement[]): string {
   // Generate model configurations
   const modelInit = models.size > 0 ? generateModelInitialization(models) : '';
 
-  // Generate agent configurations
-  const agentInit =
-    agents.size > 0 ? generateAgentInitialization(agents, mcpServers) : '';
-
-  // Generate tool declarations
+  // Generate tool declarations (with metadata attached via Proxy)
   const toolDecls = Array.from(tools.values())
     .map(tool => generateToolDeclaration(tool))
     .join('\n\n');
+
+  // Generate agent configurations
+  const agentInit = agents.size > 0 ? generateAgentInitialization(agents) : '';
 
   // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
@@ -63,7 +62,7 @@ export function generateCodeUnsafe(statements: Statement[]): string {
   const cleanup = mcpServers.size > 0 ? generateCleanup() : '';
 
   // Combine all parts
-  return [mcpInit, modelInit, agentInit, toolDecls, mainCode, cleanup]
+  return [mcpInit, modelInit, toolDecls, agentInit, mainCode, cleanup]
     .filter(Boolean)
     .join('\n\n');
 }

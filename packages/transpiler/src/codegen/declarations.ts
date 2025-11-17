@@ -242,11 +242,10 @@ function serializeConfigValue(value: unknown): string {
  * Generate agent configuration initialization code
  */
 export function generateAgentInitialization(
-  agents: Map<string, AgentDeclaration>,
-  mcpServers: Map<string, MCPDeclaration>
+  agents: Map<string, AgentDeclaration>
 ): string {
   const agentInits = Array.from(agents.entries()).map(([name, decl]) =>
-    generateAgentConfig(name, decl, mcpServers)
+    generateAgentConfig(name, decl)
   );
 
   return `// Initialize agent configurations
@@ -256,11 +255,7 @@ ${agentInits.join('\n\n')}`;
 /**
  * Generate configuration object for a single agent
  */
-function generateAgentConfig(
-  name: string,
-  decl: AgentDeclaration,
-  mcpServers: Map<string, MCPDeclaration>
-): string {
+function generateAgentConfig(name: string, decl: AgentDeclaration): string {
   const config = extractObjectValues(decl.config);
   const model = config.model as string;
 
@@ -289,7 +284,7 @@ function generateAgentConfig(
       ?.value as ArrayLiteral;
     if (toolExprs) {
       const toolRefs = toolExprs.elements
-        .map(elem => generateToolReference(elem, mcpServers))
+        .map(elem => generateExpression(elem))
         .join(', ');
       agentParams.push(`tools: [${toolRefs}]`);
     }
@@ -302,29 +297,6 @@ function generateAgentConfig(
 const ${name} = new __Agent({
   ${agentParams.join(',\n  ')}
 });`;
-}
-
-/**
- * Generate a tool reference for agent configuration
- * Handles both MCP server identifiers (expand to all tools) and specific tool references
- */
-function generateToolReference(
-  expr: Expression,
-  mcpServers: Map<string, MCPDeclaration>
-): string {
-  // If it's an identifier, check if it refers to an MCP server
-  if (expr.type === 'identifier') {
-    const identifierName = (expr as Identifier).name;
-    // Only expand if this identifier is actually an MCP server
-    if (mcpServers.has(identifierName)) {
-      return `...__${identifierName}_tools`;
-    }
-    // Otherwise, treat it as a regular variable reference
-    return identifierName;
-  }
-
-  // Otherwise, generate the expression normally (e.g., filesystem.readFile)
-  return generateExpression(expr);
 }
 
 /**
@@ -390,7 +362,8 @@ function extractValue(expr: Expression): unknown {
 }
 
 /**
- * Generate tool declaration code
+ * Generate tool declaration code using __createUserTool helper
+ * This wraps the tool function with metadata via Proxy
  */
 export function generateToolDeclaration(decl: ToolDeclaration): string {
   // Create a new scope stack for the tool body
@@ -404,9 +377,12 @@ export function generateToolDeclaration(decl: ToolDeclaration): string {
   // Generate the tool body
   const bodyCode = generateBlockStatement(decl.body, scopeStack, false);
 
-  // Generate async function
+  // Generate tool using __createUserTool helper
   const params = decl.parameters.join(', ');
-  return `const ${decl.name} = async (${params}) => ${bodyCode};`;
+  const paramsJson = JSON.stringify(decl.parameters);
+  const nameJson = JSON.stringify(decl.name);
+
+  return `const ${decl.name} = __createUserTool(${nameJson}, ${paramsJson}, async (${params}) => ${bodyCode});`;
 }
 
 /**

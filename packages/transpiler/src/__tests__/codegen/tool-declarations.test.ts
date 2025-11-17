@@ -12,7 +12,8 @@ describe('Codegen - Tool Declarations', () => {
     const statements = parseSource(source);
     const code = generateCodeUnsafe(statements);
 
-    expect(code).toContain('const myTool = async () =>');
+    expect(code).toContain('const myTool = __createUserTool(');
+    expect(code).toContain('async () =>');
     expect(code).toContain('let x = 5;');
   });
 
@@ -25,7 +26,8 @@ describe('Codegen - Tool Declarations', () => {
     const statements = parseSource(source);
     const code = generateCodeUnsafe(statements);
 
-    expect(code).toContain('const processData = async (input) =>');
+    expect(code).toContain('const processData = __createUserTool(');
+    expect(code).toContain('async (input) =>');
     expect(code).toContain('return input;');
   });
 
@@ -39,9 +41,8 @@ describe('Codegen - Tool Declarations', () => {
     const statements = parseSource(source);
     const code = generateCodeUnsafe(statements);
 
-    expect(code).toContain(
-      'const calculateScore = async (points, multiplier, bonus) =>'
-    );
+    expect(code).toContain('const calculateScore = __createUserTool(');
+    expect(code).toContain('async (points, multiplier, bonus) =>');
     expect(code).toContain('let result = points * multiplier + bonus;');
     expect(code).toContain('return result;');
   });
@@ -136,8 +137,10 @@ describe('Codegen - Tool Declarations', () => {
     const statements = parseSource(source);
     const code = generateCodeUnsafe(statements);
 
-    expect(code).toContain('const first = async (a) =>');
-    expect(code).toContain('const second = async (b, c) =>');
+    expect(code).toContain('const first = __createUserTool(');
+    expect(code).toContain('const second = __createUserTool(');
+    expect(code).toContain('async (a) =>');
+    expect(code).toContain('async (b, c) =>');
   });
 
   it('should generate code for a tool that calls other functions', () => {
@@ -170,8 +173,10 @@ describe('Codegen - Tool Declarations', () => {
     const statements = parseSource(source);
     const code = generateCodeUnsafe(statements);
 
-    expect(code).toContain('const helper = async (x) =>');
-    expect(code).toContain('const main = async (value) =>');
+    expect(code).toContain('const helper = __createUserTool(');
+    expect(code).toContain('const main = __createUserTool(');
+    expect(code).toContain('async (x) =>');
+    expect(code).toContain('async (value) =>');
     // Tool calls are async and require await
     expect(code).toContain('let result = await helper(value);');
   });
@@ -208,7 +213,8 @@ describe('Codegen - Tool Declarations', () => {
     // Tool should be in its own section, not in "Generated code" section
     const parts = code.split('// Generated code');
     expect(parts.length).toBe(2);
-    expect(parts[0]).toContain('const myTool = async (a) =>');
+    expect(parts[0]).toContain('const myTool = __createUserTool(');
+    expect(parts[0]).toContain('async (a) =>');
     expect(parts[1]).toContain('let x = 5;');
     expect(parts[1]).not.toContain('const myTool');
   });

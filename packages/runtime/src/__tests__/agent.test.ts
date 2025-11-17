@@ -21,6 +21,7 @@ describe('Agent', () => {
         name: 'testTool',
         description: 'A test tool',
       },
+      call: vi.fn(),
     } as unknown as BaseTool;
   });
 
