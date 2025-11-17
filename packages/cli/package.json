@@ -53,6 +53,10 @@
     "transpiler",
     "compiler"
   ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "devDependencies": {
     "@types/react": "^19.2.5"
   }

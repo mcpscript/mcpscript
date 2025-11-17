@@ -145,11 +145,8 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Add CONTRIBUTING.md with development guidelines
 - ✅ **DONE** - Add CODE_OF_CONDUCT.md
 - ✅ **DONE** - Set up issue templates for GitHub
-- 🔲 **TODO** - Verify build artifacts are properly .gitignored
-- 🔲 **TODO** - Set up automated npm package release via GitHub Actions
-  - Create release workflow using `semantic-release`
-  - Tell me how to set up NPM_TOKEN secret in GitHub repository settings
-  - Tell me how to enable npm provenance for supply-chain security
+- ✅ **DONE** - Verify build artifacts are properly .gitignored
+- ✅ **DONE** - Set up automated npm package release via GitHub Actions
 - 🔲 **TODO** - Update examples to be more practical
   - Review and enhance existing examples in `examples/` directory
   - Ideate real-world use cases with me (e.g., file processing, API integration)
