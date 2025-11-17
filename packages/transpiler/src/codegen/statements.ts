@@ -10,6 +10,7 @@ import {
   ForStatement,
   BreakStatement,
   ContinueStatement,
+  ReturnStatement,
   Comment,
   Identifier,
   MemberExpression,
@@ -99,6 +100,8 @@ export function dispatchStatement(
       return generateBreakStatement(stmt);
     case 'continue_statement':
       return generateContinueStatement(stmt);
+    case 'return_statement':
+      return generateReturnStatement(stmt);
     default:
       return '';
   }
@@ -277,6 +280,18 @@ function generateBreakStatement(_stmt: BreakStatement): string {
  */
 function generateContinueStatement(_stmt: ContinueStatement): string {
   return 'continue;';
+}
+
+/**
+ * Generate code for a return statement
+ */
+function generateReturnStatement(stmt: ReturnStatement): string {
+  if (stmt.value) {
+    const value = generateExpression(stmt.value);
+    return `return ${value};`;
+  } else {
+    return 'return;';
+  }
 }
 
 /**

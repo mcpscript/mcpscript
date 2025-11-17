@@ -10,6 +10,7 @@ import {
   ForStatement,
   BreakStatement,
   ContinueStatement,
+  ReturnStatement,
   Comment,
   Identifier,
   MemberExpression,
@@ -25,6 +26,7 @@ import {
   parseMCPDeclaration,
   parseModelDeclaration,
   parseAgentDeclaration,
+  parseToolDeclaration,
 } from './declarations.js';
 
 /**
@@ -43,6 +45,8 @@ export function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseModelDeclaration(firstChild);
     case 'agent_declaration':
       return parseAgentDeclaration(firstChild);
+    case 'tool_declaration':
+      return parseToolDeclaration(firstChild);
     case 'assignment':
       return parseAssignment(firstChild);
     case 'expression_statement':
@@ -59,6 +63,8 @@ export function parseStatement(node: Parser.SyntaxNode): Statement | null {
       return parseBreakStatement(firstChild);
     case 'continue_statement':
       return parseContinueStatement(firstChild);
+    case 'return_statement':
+      return parseReturnStatement(firstChild);
     default:
       throw new Error(`Unknown statement type: ${firstChild.type}`);
   }
@@ -130,9 +136,9 @@ function parseExpressionStatement(
 }
 
 /**
- * Parse a block statement
+ * Parse a block statement (exported for use by tool declarations)
  */
-function parseBlockStatement(node: Parser.SyntaxNode): BlockStatement {
+export function parseBlockStatement(node: Parser.SyntaxNode): BlockStatement {
   const statements: Statement[] = [];
 
   for (const child of node.children) {
@@ -306,6 +312,18 @@ function parseBreakStatement(_node: Parser.SyntaxNode): BreakStatement {
 function parseContinueStatement(_node: Parser.SyntaxNode): ContinueStatement {
   return {
     type: 'continue_statement',
+  };
+}
+
+/**
+ * Parse a return statement
+ */
+function parseReturnStatement(node: Parser.SyntaxNode): ReturnStatement {
+  const expressionNode = node.children.find(c => c.type === 'expression');
+
+  return {
+    type: 'return_statement',
+    value: expressionNode ? parseExpression(expressionNode) : undefined,
   };
 }
 

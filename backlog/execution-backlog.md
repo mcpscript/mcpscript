@@ -40,13 +40,6 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Expression evaluation in codegen
 - ✅ **DONE** - Expression runtime tests
 - ✅ **DONE** - Nullish coalescing operator parsing (`??`) and codegen
-  - Added `??` operator to grammar with correct precedence (between `->` and `||`)
-  - Updated parser to handle `??` operator
-  - Updated codegen to generate `??` with required parentheses when mixed with `&&` or `||` (JavaScript restriction)
-  - Added comprehensive parser tests (14 test cases)
-  - Added comprehensive codegen tests (25 test cases)
-  - Added comprehensive E2E tests (20 test cases) covering real-world use cases
-  - All tests pass, formatting and linting verified
 
 **→ Complete Phase 2 before Phase 3**
 
@@ -130,17 +123,10 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Enable user-defined reusable logic**
 
-- 🔲 **TODO** - Tool declaration syntax parsing (`tool name(params) { ... }`)
-- 🔲 **TODO** - Tool parameter parsing with optional type annotations
-  - Parse `param: type` syntax
-  - Parse `param?: type` for optional parameters
-  - Parse return type annotations `: type`
-- 🔲 **TODO** - Return statement parsing
-- 🔲 **TODO** - Tool generation in codegen
-- 🔲 **TODO** - Tool calls with arguments (extend existing)
-- 🔲 **TODO** - Local variable scoping implementation
+- ✅ **DONE** - Tool declaration syntax parsing and codegen (`tool name(params) { ... }`)
 - 🔲 **TODO** - Support assigning tools to agents in `tools` array
-- 🔲 **TODO** - Tool runtime tests
+- 🔲 **TODO** - Tool runtime tests with agents
+- 🔲 **TODO** - Create example scripts demonstrating tool usage with agents
 
 **→ Complete Phase 7 before Phase 8**
 
@@ -164,6 +150,10 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Add optional runtime type checking using Zod**
 
+- 🔲 **TODO** - Tool parameter parsing with optional type annotations
+  - Parse `param: type` syntax
+  - Parse `param?: type` for optional parameters
+  - Parse return type annotations `: type`
 - 🔲 **TODO** - Add Zod dependency to runtime package
 - 🔲 **TODO** - Generate Zod schemas from type annotations in codegen
   - Primitives: `string`, `number`, `boolean`, `any`

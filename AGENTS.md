@@ -78,6 +78,24 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 - Declare mocks as: `let consoleSpy: MockInstance;`
 - Avoid `any` type to maintain type safety
 
+### E2E Test Patterns
+
+- **Always use `executeInVM` from `@mcps/runtime`** for E2E tests, never raw Node.js `vm` module
+- Benefits: Proper dependency injection, consistent test patterns, sandboxing, timeout support
+- Standard pattern:
+
+  ```typescript
+  import { executeInVM } from '@mcps/runtime';
+  import { parseSource, generateCode } from '@mcps/transpiler';
+
+  const ast = parseSource(source);
+  const code = generateCode(ast);
+  await executeInVM(code, { timeout: 5000 });
+  ```
+
+- Use `console.log` spy for assertions: `vi.spyOn(console, 'log')`
+- Set up/tear down spies in `beforeEach`/`afterEach` hooks
+
 ### Local LLM
 
 - Use Ollama's OpenAI API-compatible endpoint for local LLM for testing

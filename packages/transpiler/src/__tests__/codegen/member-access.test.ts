@@ -45,8 +45,10 @@ output = format(data.title)
       const ast = parseSource(source);
       const code = generateCodeForTest(ast);
 
-      expect(code).toContain('let result = process(user.name, user.age);');
-      expect(code).toContain('let output = format(data.title);');
+      expect(code).toContain(
+        'let result = await process(user.name, user.age);'
+      );
+      expect(code).toContain('let output = await format(data.title);');
     });
 
     it('should generate code for method calls', () => {
@@ -156,7 +158,7 @@ result = data[key + suffix]
       const ast = parseSource(source);
       const code = generateCodeForTest(ast);
 
-      expect(code).toContain('let result = process(arr[0], obj["key"]);');
+      expect(code).toContain('let result = await process(arr[0], obj["key"]);');
     });
   });
 

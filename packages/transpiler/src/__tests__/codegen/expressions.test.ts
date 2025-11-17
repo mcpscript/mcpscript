@@ -13,7 +13,9 @@ print("Result:", result)
     const ast = parseSource(source);
     const code = generateCodeForTest(ast);
 
-    expect(code).toContain('let result = processData("input", 42, true);');
+    expect(code).toContain(
+      'let result = await processData("input", 42, true);'
+    );
     expect(code).toContain('print("Result:", result);');
   });
 
@@ -111,7 +113,7 @@ process(10 - 5, m / n)
       const ast = parseSource(source);
       const code = generateCodeForTest(ast);
 
-      expect(code).toContain('let result = calculate(a + b, x * y);');
+      expect(code).toContain('let result = await calculate(a + b, x * y);');
       expect(code).toContain('process(10 - 5, m / n);');
     });
 
@@ -242,7 +244,7 @@ check(age >= 18, score > 90)
       const ast = parseSource(source);
       const code = generateCodeForTest(ast);
 
-      expect(code).toContain('let result = process(a == b, x < y);');
+      expect(code).toContain('let result = await process(a == b, x < y);');
       expect(code).toContain('check(age >= 18, score > 90);');
     });
 

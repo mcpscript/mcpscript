@@ -95,7 +95,8 @@ function generateCallExpression(expr: CallExpression): string {
   }
 
   const callee = generateExpression(expr.callee);
-  return `${callee}(${args.join(', ')})`;
+  // All function calls are async in MCP Script (including user-defined tools)
+  return `await ${callee}(${args.join(', ')})`;
 }
 
 /**

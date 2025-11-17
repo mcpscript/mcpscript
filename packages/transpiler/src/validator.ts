@@ -16,9 +16,11 @@ import {
   IfStatement,
   WhileStatement,
   ForStatement,
+  ReturnStatement,
   MCPDeclaration,
   ModelDeclaration,
   AgentDeclaration,
+  ToolDeclaration,
 } from './ast.js';
 
 /**
@@ -128,7 +130,7 @@ class ValidationScope {
 export function validateStatements(statements: Statement[]): void {
   const scope = new ValidationScope();
 
-  // First pass: collect all top-level declarations (MCP servers, models, agents)
+  // First pass: collect all top-level declarations (MCP servers, models, agents, tools)
   for (const stmt of statements) {
     if (stmt.type === 'mcp_declaration') {
       scope.declare((stmt as MCPDeclaration).name);
@@ -136,6 +138,8 @@ export function validateStatements(statements: Statement[]): void {
       scope.declare((stmt as ModelDeclaration).name);
     } else if (stmt.type === 'agent_declaration') {
       scope.declare((stmt as AgentDeclaration).name);
+    } else if (stmt.type === 'tool_declaration') {
+      scope.declare((stmt as ToolDeclaration).name);
     }
   }
 
@@ -156,6 +160,9 @@ function validateStatement(stmt: Statement, scope: ValidationScope): void {
       // These are validated in the first pass
       validateDeclarationConfig(stmt, scope);
       break;
+    case 'tool_declaration':
+      validateToolDeclaration(stmt as ToolDeclaration, scope);
+      break;
     case 'assignment':
       validateAssignment(stmt as Assignment, scope);
       break;
@@ -173,6 +180,9 @@ function validateStatement(stmt: Statement, scope: ValidationScope): void {
       break;
     case 'for_statement':
       validateForStatement(stmt as ForStatement, scope);
+      break;
+    case 'return_statement':
+      validateReturnStatement(stmt as ReturnStatement, scope);
       break;
     case 'break_statement':
     case 'continue_statement':
@@ -198,6 +208,42 @@ function validateDeclarationConfig(
     validateExpression((stmt as ModelDeclaration).config, scope);
   } else if (stmt.type === 'agent_declaration') {
     validateExpression((stmt as AgentDeclaration).config, scope);
+  }
+}
+
+/**
+ * Validate a tool declaration
+ */
+function validateToolDeclaration(
+  stmt: ToolDeclaration,
+  scope: ValidationScope
+): void {
+  // Create a new scope for the tool body
+  scope.pushScope();
+  try {
+    // Declare all parameters in the tool's scope
+    for (const param of stmt.parameters) {
+      scope.declare(param);
+    }
+
+    // Validate the tool body
+    for (const s of stmt.body.statements) {
+      validateStatement(s, scope);
+    }
+  } finally {
+    scope.popScope();
+  }
+}
+
+/**
+ * Validate a return statement
+ */
+function validateReturnStatement(
+  stmt: ReturnStatement,
+  scope: ValidationScope
+): void {
+  if (stmt.value) {
+    validateExpression(stmt.value, scope);
   }
 }
 

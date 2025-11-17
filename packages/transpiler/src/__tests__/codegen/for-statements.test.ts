@@ -10,7 +10,7 @@ describe('Code Generator - For Statements', () => {
     const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 10; i = i + 1) {');
-    expect(code).toContain('  print(i);');
+    expect(code).toContain('  await print(i);');
     expect(code).toContain('}');
   });
 
@@ -25,7 +25,7 @@ for (; i > 0; i = i - 1) { print(i) }
 
     expect(code).toContain('let i = 5;');
     expect(code).toContain('for (; i > 0; i = i - 1) {');
-    expect(code).toContain('  print(i);');
+    expect(code).toContain('  await print(i);');
   });
 
   it('should generate code for for loop with empty condition', () => {
@@ -34,7 +34,7 @@ for (; i > 0; i = i - 1) { print(i) }
     const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let count = 0; ; count = count + 1) {');
-    expect(code).toContain('  print("infinite");');
+    expect(code).toContain('  await print("infinite");');
   });
 
   it('should generate code for for loop with empty update', () => {
@@ -43,7 +43,7 @@ for (; i > 0; i = i - 1) { print(i) }
     const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 5; ) {');
-    expect(code).toContain('  print(i);');
+    expect(code).toContain('  await print(i);');
   });
 
   it('should generate code for for loop with all parts empty', () => {
@@ -52,7 +52,7 @@ for (; i > 0; i = i - 1) { print(i) }
     const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (;;) {');
-    expect(code).toContain('  print("loop");');
+    expect(code).toContain('  await print("loop");');
   });
 
   it('should generate code for for loop with single statement body', () => {
@@ -61,7 +61,7 @@ for (; i > 0; i = i - 1) { print(i) }
     const code = generateCodeForTest(ast);
 
     expect(code).toContain('for (let i = 0; i < 3; i = i + 1) {');
-    expect(code).toContain('  print(i);');
+    expect(code).toContain('  await print(i);');
     expect(code).toContain('}');
   });
 
@@ -79,7 +79,7 @@ for (i = 0; i < 2; i = i + 1) {
 
     expect(code).toContain('for (let i = 0; i < 2; i = i + 1) {');
     expect(code).toContain('  for (let j = 0; j < 2; j = j + 1) {');
-    expect(code).toContain('    print(i + j);');
+    expect(code).toContain('    await print(i + j);');
   });
 
   it('should generate code for for loop with variable reuse', () => {

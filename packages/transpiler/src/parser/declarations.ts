@@ -4,9 +4,11 @@ import {
   MCPDeclaration,
   ModelDeclaration,
   AgentDeclaration,
+  ToolDeclaration,
   ObjectLiteral,
 } from '../ast.js';
 import { parseExpression } from './expressions.js';
+import { parseBlockStatement } from './statements.js';
 
 /**
  * Parse an MCP server declaration
@@ -79,4 +81,43 @@ export function parseAgentDeclaration(
     name,
     config,
   };
+}
+
+/**
+ * Parse a tool declaration
+ */
+export function parseToolDeclaration(node: Parser.SyntaxNode): ToolDeclaration {
+  // tool <identifier> '(' <parameter_list>? ')' <block_statement>
+  const children = node.children.filter(c => c.type !== 'tool');
+  const nameNode = children.find(c => c.type === 'identifier');
+  const paramListNode = children.find(c => c.type === 'parameter_list');
+  const blockNode = children.find(c => c.type === 'block_statement');
+
+  if (!nameNode || !blockNode) {
+    throw new Error('Invalid tool_declaration: missing name or body');
+  }
+
+  const name = nameNode.text;
+  const parameters = paramListNode ? parseParameterList(paramListNode) : [];
+  const body = parseBlockStatement(blockNode);
+
+  return {
+    type: 'tool_declaration',
+    name,
+    parameters,
+    body,
+  };
+}
+
+/**
+ * Parse a parameter list
+ */
+function parseParameterList(node: Parser.SyntaxNode): string[] {
+  const parameters: string[] = [];
+  for (const child of node.children) {
+    if (child.type === 'identifier') {
+      parameters.push(child.text);
+    }
+  }
+  return parameters;
 }

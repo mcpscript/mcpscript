@@ -17,6 +17,7 @@ module.exports = grammar({
         $.mcp_declaration,
         $.model_declaration,
         $.agent_declaration,
+        $.tool_declaration,
         $.assignment,
         $.expression_statement,
         $.block_statement,
@@ -24,7 +25,8 @@ module.exports = grammar({
         $.while_statement,
         $.for_statement,
         $.break_statement,
-        $.continue_statement
+        $.continue_statement,
+        $.return_statement
       ),
 
     block_statement: $ => prec(1, seq('{', repeat($.statement), '}')),
@@ -59,6 +61,21 @@ module.exports = grammar({
     break_statement: _$ => 'break',
 
     continue_statement: _$ => 'continue',
+
+    return_statement: $ => prec.right(seq('return', optional($.expression))),
+
+    tool_declaration: $ =>
+      seq(
+        'tool',
+        $.identifier,
+        '(',
+        optional($.parameter_list),
+        ')',
+        $.block_statement
+      ),
+
+    parameter_list: $ =>
+      seq($.identifier, repeat(seq(',', $.identifier)), optional(',')),
 
     expression_statement: $ => $.expression,
 

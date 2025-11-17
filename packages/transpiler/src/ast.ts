@@ -169,6 +169,18 @@ export interface ContinueStatement extends ASTNode {
   type: 'continue_statement';
 }
 
+export interface ReturnStatement extends ASTNode {
+  type: 'return_statement';
+  value?: Expression;
+}
+
+export interface ToolDeclaration extends ASTNode {
+  type: 'tool_declaration';
+  name: string;
+  parameters: string[];
+  body: BlockStatement;
+}
+
 export interface Comment extends ASTNode {
   type: 'comment';
   text: string;
@@ -178,6 +190,7 @@ export type Statement =
   | MCPDeclaration
   | ModelDeclaration
   | AgentDeclaration
+  | ToolDeclaration
   | Assignment
   | ExpressionStatement
   | BlockStatement
@@ -186,4 +199,5 @@ export type Statement =
   | ForStatement
   | BreakStatement
   | ContinueStatement
+  | ReturnStatement
   | Comment;

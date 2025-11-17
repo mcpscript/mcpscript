@@ -172,7 +172,9 @@ describe('Codegen - Nullish Coalescing Operator', () => {
     it('should generate ?? with function calls', () => {
       const statements = parseSource('result = getValue() ?? getDefault()');
       const code = generateCodeForTest(statements);
-      expect(code).toContain('let result = getValue() ?? getDefault();');
+      expect(code).toContain(
+        'let result = await getValue() ?? await getDefault();'
+      );
     });
 
     it('should generate ?? in complex assignment', () => {

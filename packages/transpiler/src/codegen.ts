@@ -4,11 +4,13 @@ import {
   MCPDeclaration,
   ModelDeclaration,
   AgentDeclaration,
+  ToolDeclaration,
 } from './ast.js';
 import {
   generateMCPInitialization,
   generateModelInitialization,
   generateAgentInitialization,
+  generateToolDeclaration,
   generateCleanup,
 } from './codegen/declarations.js';
 import { ScopeStack, dispatchStatement } from './codegen/statements.js';
@@ -19,12 +21,13 @@ import { validateStatements } from './validator.js';
  * This is exposed for testing purposes only. Production code should use generateCode().
  */
 export function generateCodeUnsafe(statements: Statement[]): string {
-  // Track MCP servers, models, and agents to initialize
+  // Track MCP servers, models, agents, and tools to initialize
   const mcpServers = new Map<string, MCPDeclaration>();
   const models = new Map<string, ModelDeclaration>();
   const agents = new Map<string, AgentDeclaration>();
+  const tools = new Map<string, ToolDeclaration>();
 
-  // First pass: collect all MCP, model, and agent declarations
+  // First pass: collect all MCP, model, agent, and tool declarations
   for (const stmt of statements) {
     if (stmt.type === 'mcp_declaration') {
       mcpServers.set(stmt.name, stmt);
@@ -32,6 +35,8 @@ export function generateCodeUnsafe(statements: Statement[]): string {
       models.set(stmt.name, stmt);
     } else if (stmt.type === 'agent_declaration') {
       agents.set(stmt.name, stmt);
+    } else if (stmt.type === 'tool_declaration') {
+      tools.set(stmt.name, stmt);
     }
   }
 
@@ -46,6 +51,11 @@ export function generateCodeUnsafe(statements: Statement[]): string {
   const agentInit =
     agents.size > 0 ? generateAgentInitialization(agents, mcpServers) : '';
 
+  // Generate tool declarations
+  const toolDecls = Array.from(tools.values())
+    .map(tool => generateToolDeclaration(tool))
+    .join('\n\n');
+
   // Generate main code with variable tracking
   const mainCode = generateStatements(statements);
 
@@ -53,7 +63,7 @@ export function generateCodeUnsafe(statements: Statement[]): string {
   const cleanup = mcpServers.size > 0 ? generateCleanup() : '';
 
   // Combine all parts
-  return [mcpInit, modelInit, agentInit, mainCode, cleanup]
+  return [mcpInit, modelInit, agentInit, toolDecls, mainCode, cleanup]
     .filter(Boolean)
     .join('\n\n');
 }
@@ -82,7 +92,8 @@ function generateStatements(statements: Statement[]): string {
       stmt =>
         stmt.type !== 'mcp_declaration' &&
         stmt.type !== 'model_declaration' &&
-        stmt.type !== 'agent_declaration'
+        stmt.type !== 'agent_declaration' &&
+        stmt.type !== 'tool_declaration'
     )
     .map(stmt => dispatchStatement(stmt, scopeStack))
     .filter(Boolean);

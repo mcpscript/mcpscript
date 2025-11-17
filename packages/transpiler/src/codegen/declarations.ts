@@ -3,6 +3,7 @@ import {
   MCPDeclaration,
   ModelDeclaration,
   AgentDeclaration,
+  ToolDeclaration,
   ObjectLiteral,
   Expression,
   StringLiteral,
@@ -12,6 +13,7 @@ import {
   Identifier,
 } from '../ast.js';
 import { generateExpression } from './expressions.js';
+import { ScopeStack, generateBlockStatement } from './statements.js';
 
 /**
  * Generate MCP client initialization code
@@ -385,6 +387,26 @@ function extractValue(expr: Expression): unknown {
     default:
       return undefined;
   }
+}
+
+/**
+ * Generate tool declaration code
+ */
+export function generateToolDeclaration(decl: ToolDeclaration): string {
+  // Create a new scope stack for the tool body
+  const scopeStack = new ScopeStack();
+
+  // Declare all parameters in the tool's scope
+  for (const param of decl.parameters) {
+    scopeStack.declare(param);
+  }
+
+  // Generate the tool body
+  const bodyCode = generateBlockStatement(decl.body, scopeStack, false);
+
+  // Generate async function
+  const params = decl.parameters.join(', ');
+  return `const ${decl.name} = async (${params}) => ${bodyCode};`;
 }
 
 /**

@@ -94,7 +94,7 @@ mcp server { command: "test", args: [5000, 3] }
     const ast = parseSource(source);
     const code = generateCodeForTest(ast);
 
-    expect(code).toContain('let result = calculate(42, 3.14, 0.00001);');
+    expect(code).toContain('let result = await calculate(42, 3.14, 0.00001);');
     expect(code).toContain('args: [5000, 3]');
   });
 
@@ -136,7 +136,7 @@ mcp server { command: "test", verbose: true }
     const code = generateCodeForTest(ast);
 
     expect(code).toContain(
-      'let result = processData("input", 42, true, false);'
+      'let result = await processData("input", 42, true, false);'
     );
     expect(code).toContain('verbose: true');
   });

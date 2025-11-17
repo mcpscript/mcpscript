@@ -19,7 +19,7 @@ describe('If Statement Codegen', () => {
     const code = generateCodeForTest(statements);
 
     expect(code).toContain('if (x > 0) {');
-    expect(code).toContain('  print("positive");');
+    expect(code).toContain('  await print("positive");');
     expect(code).toContain('}');
   });
 
@@ -33,7 +33,7 @@ describe('If Statement Codegen', () => {
 
     expect(code).toContain('if (enabled) {');
     expect(code).toContain('  let x = 10;');
-    expect(code).toContain('  print(x);');
+    expect(code).toContain('  await print(x);');
     expect(code).toContain('}');
   });
 
@@ -82,12 +82,12 @@ describe('If Statement Codegen', () => {
   });
 
   it('should generate if with function call condition', () => {
-    const source = 'if (isValid()) proceed()';
+    const source = 'if (await isValid()) proceed()';
     const statements = parseSource(source);
     const code = generateCodeForTest(statements);
 
-    expect(code).toContain('if (isValid()) {');
-    expect(code).toContain('  proceed();');
+    expect(code).toContain('if (await isValid()) {');
+    expect(code).toContain('  await proceed();');
     expect(code).toContain('}');
   });
 
@@ -134,7 +134,7 @@ describe('If Statement Codegen', () => {
     const code = generateCodeForTest(statements);
 
     expect(code).toContain('if (!disabled) {');
-    expect(code).toContain('  activate();');
+    expect(code).toContain('  await activate();');
     expect(code).toContain('}');
   });
 
@@ -163,10 +163,10 @@ describe('If Statement Codegen', () => {
 
     expect(code).toContain('if (condition) {');
     expect(code).toContain('  let x = 10;');
-    expect(code).toContain('  print(x);');
+    expect(code).toContain('  await print(x);');
     expect(code).toContain('} else {');
     expect(code).toContain('  let y = 20;');
-    expect(code).toContain('  print(y);');
+    expect(code).toContain('  await print(y);');
     expect(code).toContain('}');
   });
 
@@ -245,14 +245,14 @@ describe('If Statement Codegen', () => {
   });
 
   it('should generate if-else with function calls', () => {
-    const source = 'if (isValid()) success() else error()';
+    const source = 'if (await isValid()) success() else error()';
     const statements = parseSource(source);
     const code = generateCodeForTest(statements);
 
-    expect(code).toContain('if (isValid()) {');
-    expect(code).toContain('  success();');
+    expect(code).toContain('if (await isValid()) {');
+    expect(code).toContain('  await success();');
     expect(code).toContain('} else {');
-    expect(code).toContain('  error();');
+    expect(code).toContain('  await error();');
     expect(code).toContain('}');
   });
 
