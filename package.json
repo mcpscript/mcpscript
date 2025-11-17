@@ -1,9 +1,13 @@
 {
   "name": "mcp-script",
   "version": "0.1.0",
-  "description": "MCP Script - A scripting language for agentic workflows with native MCP support",
+  "description": "A scripting language for building agentic workflows with native Model Context Protocol (MCP) support",
   "author": "Kun Chen",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atinylittleshell/mcp-script.git"
+  },
   "type": "module",
   "private": true,
   "workspaces": [

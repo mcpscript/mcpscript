@@ -1,7 +1,7 @@
 {
   "name": "@mcps/transpiler",
   "version": "0.1.0",
-  "description": "MCP Script transpiler and parser",
+  "description": "Transpiler and parser for MCP Script using tree-sitter grammar - converts .mcps source code to executable JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -19,5 +19,10 @@
     "tree-sitter": "^0.25.0"
   },
   "author": "Kun Chen",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atinylittleshell/mcp-script.git",
+    "directory": "packages/transpiler"
+  }
 }

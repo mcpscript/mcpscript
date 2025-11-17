@@ -1,7 +1,7 @@
 {
   "name": "@mcps/cli",
   "version": "0.1.0",
-  "description": "MCP Script command line interface",
+  "description": "Command-line interface to run and compile MCP scripts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -24,6 +24,11 @@
   },
   "author": "Kun Chen",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/atinylittleshell/mcp-script.git",
+    "directory": "packages/cli"
+  },
   "devDependencies": {
     "@types/react": "^19.2.5"
   }
