@@ -144,7 +144,7 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Verify package entry points and exports are correct
 - ✅ **DONE** - Add CONTRIBUTING.md with development guidelines
 - ✅ **DONE** - Add CODE_OF_CONDUCT.md
-- 🔲 **TODO** - Set up issue templates for GitHub
+- ✅ **DONE** - Set up issue templates for GitHub
 - 🔲 **TODO** - Verify build artifacts are properly .gitignored
 - 🔲 **TODO** - Set up automated npm package release via GitHub Actions
   - Create release workflow using `semantic-release`
