@@ -1,6 +1,6 @@
 {
   "name": "@mcpscript/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Command-line interface to run and compile MCP scripts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

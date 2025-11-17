@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.1...mcpscript-v0.1.2) (2025-11-17)
+
+
+### Bug Fixes
+
+* agent example ([a98585b](https://github.com/mcpscript/mcpscript/commit/a98585b50f96d2cbe940776722b67fa2d77e2c00))
+
 ## [0.1.1](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.0...mcpscript-v0.1.1) (2025-11-17)
 
 

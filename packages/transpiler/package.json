@@ -1,6 +1,6 @@
 {
   "name": "@mcpscript/transpiler",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Transpiler and parser for MCP Script using tree-sitter grammar - converts .mcps source code to executable JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
