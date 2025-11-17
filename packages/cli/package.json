@@ -18,7 +18,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
     "@mcpscript/runtime": "file:../runtime",

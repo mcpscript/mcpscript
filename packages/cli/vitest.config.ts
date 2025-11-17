@@ -8,7 +8,12 @@ export default defineConfig({
     environment: 'node',
     globals: true,
     include: ['src/**/*.test.ts'],
-    exclude: ['node_modules/**', 'dist/**'],
+    exclude: [
+      'node_modules/**',
+      'dist/**',
+      // Exclude E2E tests in CI (they require Ollama and GPU)
+      ...(process.env.CI ? ['src/__tests__/e2e/**'] : []),
+    ],
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/**', 'dist/**', '**/*.test.ts', '**/*.spec.ts'],
