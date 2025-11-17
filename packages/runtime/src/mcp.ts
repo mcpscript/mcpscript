@@ -95,7 +95,7 @@ export function createUserTool(
     get(target, prop) {
       if (prop === '__mcps_params') return params;
       if (prop === '__mcps_name') return name;
-      return (target as Record<string, unknown>)[prop as string];
+      return Reflect.get(target, prop);
     },
     apply(target, thisArg, args) {
       return target.apply(thisArg, args);

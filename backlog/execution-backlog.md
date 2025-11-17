@@ -134,9 +134,8 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Add robust error management**
 
-- 🔲 **TODO** - Try-catch block parsing (`try { ... } catch (error) { ... }`)
+- 🔲 **TODO** - Try-catch (finally as well) block parsing (`try { ... } catch (error) { ... }`)
 - 🔲 **TODO** - Throw statement parsing (supports throwing strings or values)
-- 🔲 **TODO** - Finally block parsing
 - 🔲 **TODO** - Error handling generation in codegen
   - `throw "message"` → transpile to `throw new Error("message")`
   - `throw value` → transpile to `throw new Error(String(value))`
