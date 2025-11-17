@@ -28,12 +28,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atinylittleshell/mcp-script.git",
+    "url": "git+https://github.com/mcpscript/mcpscript.git",
     "directory": "packages/transpiler"
   },
-  "homepage": "https://github.com/atinylittleshell/mcp-script#readme",
+  "homepage": "https://github.com/mcpscript/mcpscript#readme",
   "bugs": {
-    "url": "https://github.com/atinylittleshell/mcp-script/issues"
+    "url": "https://github.com/mcpscript/mcpscript/issues"
   },
   "keywords": [
     "mcp",

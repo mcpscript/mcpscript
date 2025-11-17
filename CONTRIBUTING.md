@@ -48,7 +48,7 @@ MCP Script is a scripting language for building agentic workflows with native Mo
 2. Clone your fork locally:
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/mcp-script.git
+   git clone https://github.com/YOUR_USERNAME/mcpscript.git
    cd mcp-script
    ```
 
