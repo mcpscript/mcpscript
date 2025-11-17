@@ -1,6 +1,6 @@
 {
   "name": "mcpscript",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A scripting language for building agentic workflows with native Model Context Protocol (MCP) support",
   "author": "Kun Chen",
   "license": "MIT",
