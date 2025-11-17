@@ -1,4 +1,4 @@
-// @mcps/cli - Command line interface
+// @mcpscript/cli - Command line interface
 import { Command } from 'commander';
 import { runCommand, compileCommand } from './commands/index.js';
 import type { RunOptions, CompileOptions } from './types.js';

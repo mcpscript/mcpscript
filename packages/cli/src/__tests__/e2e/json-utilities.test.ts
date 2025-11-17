@@ -1,8 +1,8 @@
 // E2E tests for JSON utilities
 import { describe, it, expect } from 'vitest';
-import { parseSource } from '@mcps/transpiler';
-import { generateCode } from '@mcps/transpiler';
-import { executeInVM } from '@mcps/runtime';
+import { parseSource } from '@mcpscript/transpiler';
+import { generateCode } from '@mcpscript/transpiler';
+import { executeInVM } from '@mcpscript/runtime';
 
 describe('E2E - JSON Utilities', () => {
   describe('JSON.parse()', () => {

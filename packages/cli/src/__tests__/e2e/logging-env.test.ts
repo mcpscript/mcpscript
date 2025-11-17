@@ -8,8 +8,8 @@ import {
   afterEach,
   type MockInstance,
 } from 'vitest';
-import { parseSource, generateCode } from '@mcps/transpiler';
-import { executeInVM } from '@mcps/runtime';
+import { parseSource, generateCode } from '@mcpscript/transpiler';
+import { executeInVM } from '@mcpscript/runtime';
 
 describe('E2E: Logging and Environment', () => {
   let consoleDebugSpy: MockInstance;

@@ -831,7 +831,7 @@ const context = {
   StdioClientTransport: StdioClientTransport,
 
   // Runtime functions
-  print: runtimeModule.print, // @mcps/runtime
+  print: runtimeModule.print, // @mcpscript/runtime
   log: runtimeModule.log,
   env: runtimeModule.env,
 

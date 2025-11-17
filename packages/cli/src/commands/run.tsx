@@ -2,8 +2,8 @@
 import React from 'react';
 import { readFile } from 'fs/promises';
 import { render } from 'ink';
-import { parseSource, generateCode } from '@mcps/transpiler';
-import { AppMessage, AppState, executeInVM } from '@mcps/runtime';
+import { parseSource, generateCode } from '@mcpscript/transpiler';
+import { AppMessage, AppState, executeInVM } from '@mcpscript/runtime';
 import type { RunOptions } from '../types.js';
 import { App } from '../ui/App.js';
 

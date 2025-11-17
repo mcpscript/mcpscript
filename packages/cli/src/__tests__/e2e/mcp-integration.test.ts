@@ -1,7 +1,7 @@
 // End-to-end integration tests with real MCP server
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { parseSource, generateCode } from '@mcps/transpiler';
-import { executeInVM } from '@mcps/runtime';
+import { parseSource, generateCode } from '@mcpscript/transpiler';
+import { executeInVM } from '@mcpscript/runtime';
 import * as fs from 'fs/promises';
 
 const TEST_DIR = 'tmp_e2e_test_mcp';

@@ -1,6 +1,6 @@
 // mcps compile command
 import { readFile } from 'fs/promises';
-import { parseSource, generateCode } from '@mcps/transpiler';
+import { parseSource, generateCode } from '@mcpscript/transpiler';
 import type { CompileOptions } from '../types.js';
 
 export async function compileCommand(options: CompileOptions): Promise<void> {

@@ -22,9 +22,9 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 MCP Script is a scripting language for building agentic workflows with native Model Context Protocol (MCP) support. The project is built in TypeScript and organized as a monorepo with three main packages:
 
-- **@mcps/cli** - Command-line interface to run and compile MCP scripts
-- **@mcps/runtime** - Runtime library for MCP Script execution
-- **@mcps/transpiler** - Transpiler and parser using tree-sitter grammar
+- **@mcpscript/cli** - Command-line interface to run and compile MCP scripts
+- **@mcpscript/runtime** - Runtime library for MCP Script execution
+- **@mcpscript/transpiler** - Transpiler and parser using tree-sitter grammar
 
 ## Development Setup
 
@@ -239,11 +239,11 @@ describe('YourFeature', () => {
 
 ### E2E Test Pattern
 
-Always use `executeInVM` from `@mcps/runtime` for E2E tests:
+Always use `executeInVM` from `@mcpscript/runtime` for E2E tests:
 
 ```typescript
-import { executeInVM } from '@mcps/runtime';
-import { parseSource, generateCode } from '@mcps/transpiler';
+import { executeInVM } from '@mcpscript/runtime';
+import { parseSource, generateCode } from '@mcpscript/transpiler';
 
 const source = `
   // Your MCP Script code

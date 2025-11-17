@@ -1,5 +1,5 @@
 {
-  "name": "@mcps/runtime",
+  "name": "@mcpscript/runtime",
   "version": "0.1.0",
   "description": "Runtime library for MCP Script execution",
   "main": "dist/index.js",

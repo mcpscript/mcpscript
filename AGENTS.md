@@ -63,11 +63,11 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 
 - Avoid relative imports across package boundaries (violates `rootDir` constraints)
 - Add proper package dependencies in `package.json` when tests need cross-package imports
-- Use package imports (`@mcps/transpiler`) instead of relative paths (`../../../transpiler/src/`)
+- Use package imports (`@mcpscript/transpiler`) instead of relative paths (`../../../transpiler/src/`)
 - Example pattern for test dependencies:
   ```json
   "devDependencies": {
-    "@mcps/transpiler": "file:../transpiler"
+    "@mcpscript/transpiler": "file:../transpiler"
   }
   ```
 
@@ -80,13 +80,13 @@ MCP Script is a scripting language for agentic workflows with native MCP (Model 
 
 ### E2E Test Patterns
 
-- **Always use `executeInVM` from `@mcps/runtime`** for E2E tests, never raw Node.js `vm` module
+- **Always use `executeInVM` from `@mcpscript/runtime`** for E2E tests, never raw Node.js `vm` module
 - Benefits: Proper dependency injection, consistent test patterns, sandboxing, timeout support
 - Standard pattern:
 
   ```typescript
-  import { executeInVM } from '@mcps/runtime';
-  import { parseSource, generateCode } from '@mcps/transpiler';
+  import { executeInVM } from '@mcpscript/runtime';
+  import { parseSource, generateCode } from '@mcpscript/transpiler';
 
   const ast = parseSource(source);
   const code = generateCode(ast);

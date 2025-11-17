@@ -1,5 +1,5 @@
 {
-  "name": "@mcps/cli",
+  "name": "@mcpscript/cli",
   "version": "0.1.0",
   "description": "Command-line interface to run and compile MCP scripts",
   "main": "dist/index.js",
@@ -21,8 +21,8 @@
     "test": "vitest run --coverage"
   },
   "dependencies": {
-    "@mcps/runtime": "file:../runtime",
-    "@mcps/transpiler": "file:../transpiler",
+    "@mcpscript/runtime": "file:../runtime",
+    "@mcpscript/transpiler": "file:../transpiler",
     "@mishieck/ink-titled-box": "^0.3.0",
     "commander": "^14.0.2",
     "ink": "^6.5.0",

@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Text } from 'ink';
 import { TitledBox } from '@mishieck/ink-titled-box';
 
-import type { AppState, AppMessage } from '@mcps/runtime';
+import type { AppState, AppMessage } from '@mcpscript/runtime';
 
 interface AppProps {
   state: AppState;
