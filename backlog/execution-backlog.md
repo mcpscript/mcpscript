@@ -128,7 +128,35 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Tool runtime tests with agents
 - ✅ **DONE** - Create example scripts demonstrating tool usage with agents
 
-**→ Complete Phase 7 before Phase 9**
+**→ Complete Phase 7 before Phase 8**
+
+### Phase 8: MVP Release Preparation
+
+**Goal: Prepare for public release on GitHub and npm**
+
+- ✅ **DONE** - Update all packages to MIT license
+  - Modified `package.json` license field in all packages
+  - Added MIT LICENSE file to repository root
+- 🔲 **TODO** - Add repository field to all `package.json` files
+- 🔲 **TODO** - Ensure all packages have proper descriptions
+- 🔲 **TODO** - Review and update package.json homepage/bugs URLs
+- 🔲 **TODO** - Set up package keywords for npm discoverability
+- 🔲 **TODO** - Verify package entry points and exports are correct
+- 🔲 **TODO** - Add CONTRIBUTING.md with development guidelines
+- 🔲 **TODO** - Set up issue templates for GitHub
+- 🔲 **TODO** - Add CODE_OF_CONDUCT.md
+- 🔲 **TODO** - Verify build artifacts are properly .gitignored
+- 🔲 **TODO** - Set up automated npm package release via GitHub Actions
+  - Create release workflow using `semantic-release`
+  - Tell me how to set up NPM_TOKEN secret in GitHub repository settings
+  - Tell me how to enable npm provenance for supply-chain security
+- 🔲 **TODO** - Update examples to be more practical
+  - Review and enhance existing examples in `examples/` directory
+  - Ideate real-world use cases with me (e.g., file processing, API integration)
+  - Produce practical examples demonstrating key language features
+- 🔲 **TODO** - Write comprehensive README.md
+
+**→ Complete Phase 8 before Phase 9**
 
 ### Phase 9: Runtime Type Validation
 

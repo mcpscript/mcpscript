@@ -23,7 +23,7 @@
     "react": "^19.2.0"
   },
   "author": "Kun Chen",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/react": "^19.2.5"
   }
