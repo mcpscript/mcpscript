@@ -16,7 +16,7 @@ Thank you for your interest in contributing to MCP Script! This document provide
 
 ## Code of Conduct
 
-This project adheres to a code of conduct that all contributors are expected to follow. Please be respectful and constructive in all interactions.
+This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code. Please report unacceptable behavior by opening an issue or contacting the project maintainers.
 
 ## Getting Started
 
