@@ -5,3 +5,8 @@ export * from './types.js';
 export * from './vm-executor.js';
 export * from './conversation.js';
 export * from './agent.js';
+
+// Explicitly re-export commonly used functions and types for clarity
+export { executeInVM, createVMContext } from './vm-executor.js';
+export type { VMExecutionOptions } from './vm-executor.js';
+export type { AppState, AppMessage } from './types.js';

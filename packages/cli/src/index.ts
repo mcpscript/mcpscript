@@ -4,6 +4,9 @@ import { runCommand, compileCommand } from './commands/index.js';
 import type { RunOptions, CompileOptions } from './types.js';
 import packageJson from '../package.json' with { type: 'json' };
 
+// Re-export types for consumers
+export type { RunOptions, CompileOptions } from './types.js';
+
 export async function main(args: string[]): Promise<void> {
   const program = new Command();
 
