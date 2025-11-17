@@ -49,7 +49,7 @@ MCP Script is a scripting language for building agentic workflows with native Mo
 
    ```bash
    git clone https://github.com/YOUR_USERNAME/mcpscript.git
-   cd mcp-script
+   cd mcpscript
    ```
 
 3. Install dependencies:
@@ -72,7 +72,7 @@ MCP Script is a scripting language for building agentic workflows with native Mo
 ## Project Structure
 
 ```
-mcp-script/
+mcpscript/
 ├── packages/
 │   ├── cli/              # Command-line interface
 │   │   ├── src/          # Source files
