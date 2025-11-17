@@ -26,5 +26,9 @@
     "type": "git",
     "url": "https://github.com/atinylittleshell/mcp-script.git",
     "directory": "packages/runtime"
+  },
+  "homepage": "https://github.com/atinylittleshell/mcp-script#readme",
+  "bugs": {
+    "url": "https://github.com/atinylittleshell/mcp-script/issues"
   }
 }

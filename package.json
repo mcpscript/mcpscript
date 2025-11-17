@@ -8,6 +8,10 @@
     "type": "git",
     "url": "https://github.com/atinylittleshell/mcp-script.git"
   },
+  "homepage": "https://github.com/atinylittleshell/mcp-script#readme",
+  "bugs": {
+    "url": "https://github.com/atinylittleshell/mcp-script/issues"
+  },
   "type": "module",
   "private": true,
   "workspaces": [
