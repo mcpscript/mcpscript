@@ -1,6 +1,6 @@
 {
   "name": "mcpscript",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agent-Oriented Programming. A scripting language designed to help you build agentic workflows.",
   "author": "Kun Chen",
   "license": "MIT",
