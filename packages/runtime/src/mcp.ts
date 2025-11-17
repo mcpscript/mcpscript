@@ -79,6 +79,10 @@ export function createToolProxy(
       if (prop === '__mcp_tools') return tools;
       return target[prop as string];
     },
+    has(target, prop) {
+      if (prop === '__mcp_tools') return true;
+      return prop in target;
+    },
   });
 }
 

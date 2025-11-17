@@ -6,6 +6,15 @@
 // Requirements:
 //   - Ollama running locally with gpt-oss:20b model installed
 
+// Configure a local AI model using Ollama
+model gpt {
+  provider: "openai",
+  apiKey: "ollama",
+  baseURL: "http://localhost:11434/v1",
+  model: "gpt-oss:20b",
+  temperature: 0.5
+}
+
 // Define custom tools that the agent can use
 tool add(a, b) {
   print("Tool 'add' called with: a=" + a + ", b=" + b)
@@ -22,19 +31,10 @@ tool square(x) {
   return x * x
 }
 
-// Configure a local AI model using Ollama
-model gpt {
-  provider: "openai",
-  apiKey: "ollama",
-  baseURL: "http://localhost:11434/v1",
-  model: "gpt-oss:20b",
-  temperature: 0.7
-}
-
 // Create an agent with access to our custom math tools
 agent MathAssistant {
   model: gpt,
-  systemPrompt: "You are a helpful math assistant. You have access to add, multiply, and square tools. Use them to help solve math problems.",
+  systemPrompt: "You are a helpful math assistant. You have a few tools to help you solve math problems.",
   tools: [add, multiply, square]
 }
 
@@ -47,5 +47,3 @@ print("\n=== Problem 2: Multiplication ===")
 
 print("\n=== Problem 3: Multi-step Calculation ===")
 "What is 5 squared plus 10?" -> MathAssistant
-
-print("\n=== Done! ===")

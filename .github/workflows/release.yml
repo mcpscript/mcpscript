@@ -50,4 +50,4 @@ jobs:
 
       - name: Publish to npm
         run: cd packages/cli && npm publish
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.releases_created }}
