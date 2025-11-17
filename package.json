@@ -12,6 +12,23 @@
   "bugs": {
     "url": "https://github.com/atinylittleshell/mcp-script/issues"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "scripting",
+    "scripting-language",
+    "ai",
+    "llm",
+    "agents",
+    "agentic",
+    "workflow",
+    "automation",
+    "llamaindex",
+    "openai",
+    "anthropic",
+    "claude",
+    "gpt"
+  ],
   "type": "module",
   "private": true,
   "workspaces": [

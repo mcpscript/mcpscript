@@ -28,5 +28,17 @@
   "homepage": "https://github.com/atinylittleshell/mcp-script#readme",
   "bugs": {
     "url": "https://github.com/atinylittleshell/mcp-script/issues"
-  }
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "transpiler",
+    "compiler",
+    "parser",
+    "tree-sitter",
+    "scripting-language",
+    "codegen",
+    "ast",
+    "syntax"
+  ]
 }

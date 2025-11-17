@@ -33,6 +33,20 @@
   "bugs": {
     "url": "https://github.com/atinylittleshell/mcp-script/issues"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "command-line",
+    "scripting",
+    "ai",
+    "llm",
+    "agents",
+    "workflow",
+    "automation",
+    "transpiler",
+    "compiler"
+  ],
   "devDependencies": {
     "@types/react": "^19.2.5"
   }

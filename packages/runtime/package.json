@@ -30,5 +30,21 @@
   "homepage": "https://github.com/atinylittleshell/mcp-script#readme",
   "bugs": {
     "url": "https://github.com/atinylittleshell/mcp-script/issues"
-  }
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "runtime",
+    "ai",
+    "llm",
+    "agents",
+    "llamaindex",
+    "openai",
+    "anthropic",
+    "google",
+    "gemini",
+    "ollama",
+    "tools",
+    "function-calling"
+  ]
 }
