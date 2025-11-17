@@ -1,9 +1,0 @@
-mcp filesystem {
-  command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
-  stderr: "ignore"
-}
-
-message = "Hello from MCP Script!"
-print(message)
-print("MCP filesystem server is ready!")

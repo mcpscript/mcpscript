@@ -45,6 +45,9 @@ jobs:
         uses: googleapis/release-please-action@v4
         id: release
 
+      - name: Debug release-please outputs
+        run: echo '${{ toJSON(steps.release.outputs) }}'
+
       - name: Publish to npm
         run: cd packages/cli && npm publish
         if: ${{ steps.release.outputs.release_created }}

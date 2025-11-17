@@ -1,2 +1,6 @@
+// Example: Hello World
+// This is a simple MCP Script program - it prints a message to the console.
+// A great starting point for trying out the language!
+
 message = "Hello world, from MCP Script!"
 print(message)

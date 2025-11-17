@@ -1,0 +1,14 @@
+// Example: MCP Tool Call
+// This demonstrates how to make a deterministic MCP tool call.
+// It connects to a filesystem MCP server and calls a specific tool with concrete parameters.
+
+mcp filesystem {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-filesystem", "/private/tmp"],
+  stderr: "ignore"
+}
+
+result = filesystem.list_directory({ path: "/private/tmp" })
+
+print("Directory listing result:")
+print(result)
