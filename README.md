@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://atlassian.com/rovo-dev">Built with Rovo Dev</a> •
-  <a href="https://github.com/run-llama/LlamaIndexTS">LlamaIndex.TS</a> •
-  <a href="https://github.com/tree-sitter/tree-sitter">Tree Sitter</a> •
-  <a href="https://modelcontextprotocol.io">MCP</a>
+  <a href="https://atlassian.com/rovo-dev" target="_blank">Built with Rovo Dev - #1 SWE-Bench Agent</a> •
+  <a href="https://github.com/run-llama/LlamaIndexTS" target="_blank">Based on LlamaIndex.TS</a> •
+  <a href="https://github.com/tree-sitter/tree-sitter" target="_blank">Parsed with Tree Sitter</a> •
+  <a href="https://modelcontextprotocol.io" target="_blank">Model Context Protocol</a>
 </p>
 
 ---

@@ -147,11 +147,11 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Set up issue templates for GitHub
 - ✅ **DONE** - Verify build artifacts are properly .gitignored
 - ✅ **DONE** - Set up automated npm package release via GitHub Actions
-- 🔲 **TODO** - Update examples to be more practical
-  - Review and enhance existing examples in `examples/` directory
-  - Ideate real-world use cases with me (e.g., file processing, API integration)
-  - Produce practical examples demonstrating key language features
-- 🔲 **TODO** - Write comprehensive README.md
+- ✅ **DONE** - Update examples to be more practical
+- ✅ **DONE** - Write comprehensive README.md
+- 🔲 **TODO** - Make sure README example works
+- 🔲 **TODO** - Support conversation concatenation
+- 🔲 **TODO** - Support type annotation on tool parameters and return types (Phase 9)
 
 **→ Complete Phase 8 before Phase 9**
 
