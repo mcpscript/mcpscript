@@ -1,11 +1,6 @@
-# MCP Script
+# MCP Script Language Specification
 
-## Technical Proposal: Language Specification
-
-**Version:** 0.1.0
-**Author:** [Kun Chen]
 **Date:** October 2025
-**Status:** Draft for Technical Review
 
 ---
 

@@ -28,7 +28,7 @@ body:
     attributes:
       label: Documentation Location
       description: Where is the documentation located? (URL or file path)
-      placeholder: e.g., README.md, design/mcp-script-spec.md, or https://...
+      placeholder: e.g., README.md, spec/mcp-script-spec.md, or https://...
 
   - type: textarea
     id: issue

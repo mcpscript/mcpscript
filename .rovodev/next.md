@@ -1,4 +1,4 @@
-- Look at the full content of backlog/execution-backlog.md and design/mcp-script-spec.md
+- Look at the full content of backlog/execution-backlog.md and spec/mcp-script-spec.md
 - Implement only the immediate next pending work item in the backlog, cover it with test cases, make sure all tests pass
 - Run "npm run format" and "npm run lint" and ensure no issues
 - Update execution backlog to mark it done - do NOT leave any implementation notes while doing so

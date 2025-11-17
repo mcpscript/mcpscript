@@ -334,7 +334,7 @@ Please use the appropriate issue template when creating new issues on GitHub.
 
 ## Additional Resources
 
-- [Language Specification](design/mcp-script-spec.md)
+- [Language Specification](spec/mcp-script-spec.md)
 - [Development Backlog](backlog/execution-backlog.md)
 - [Examples](examples/)
 
