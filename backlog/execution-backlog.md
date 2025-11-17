@@ -128,22 +128,7 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Tool runtime tests with agents
 - ✅ **DONE** - Create example scripts demonstrating tool usage with agents
 
-**→ Complete Phase 7 before Phase 8**
-
-### Phase 8: Error Handling
-
-**Goal: Add robust error management**
-
-- 🔲 **TODO** - Try-catch (finally as well) block parsing (`try { ... } catch (error) { ... }`)
-- 🔲 **TODO** - Throw statement parsing (supports throwing strings or values)
-- 🔲 **TODO** - Error handling generation in codegen
-  - `throw "message"` → transpile to `throw new Error("message")`
-  - `throw value` → transpile to `throw new Error(String(value))`
-- 🔲 **TODO** - Error propagation through async operations
-- 🔲 **TODO** - MCP tool call error handling
-- 🔲 **TODO** - Error handling runtime tests
-
-**→ Complete Phase 8 before Phase 9**
+**→ Complete Phase 7 before Phase 9**
 
 ### Phase 9: Runtime Type Validation
 
@@ -233,6 +218,11 @@ Do NOT drop implementation notes into this document.
 - 🔲 **TODO** - Syntax error reporting with line/column numbers
 - 🔲 **TODO** - Type error messages during compilation
 - 🔲 **TODO** - Runtime error source mapping to .mcps files
+- 🔲 **TODO** - Source map generation for transpiled code
+  - Generate inline or external source maps during transpilation
+  - Map generated JavaScript back to original .mcps source locations
+  - Enable accurate stack traces and debugging in original source
+  - Support source map consumption in runtime for error reporting
 - 🔲 **TODO** - `mcps check` command for syntax/type checking
 - 🔲 **TODO** - Automatic system logging (tool lifecycle with tool names, agent delegation)
 - 🔲 **TODO** - Log configuration via environment variables
@@ -253,7 +243,22 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Set/Map runtime tests
 - 🔲 **TODO** - array, Set, Map iteration support in for-of loops
 
-**→ Complete Phase 14.5 before Phase 15**
+**→ Complete Phase 14.5 before Phase 14.6**
+
+### Phase 14.6: Error Handling
+
+**Goal: Add robust error management**
+
+- 🔲 **TODO** - Try-catch (finally as well) block parsing (`try { ... } catch (error) { ... }`)
+- 🔲 **TODO** - Throw statement parsing (supports throwing strings or values)
+- 🔲 **TODO** - Error handling generation in codegen
+  - `throw "message"` → transpile to `throw new Error("message")`
+  - `throw value` → transpile to `throw new Error(String(value))`
+- 🔲 **TODO** - Error propagation through async operations
+- 🔲 **TODO** - MCP tool call error handling
+- 🔲 **TODO** - Error handling runtime tests
+
+**→ Complete Phase 14.6 before Phase 15**
 
 ### Phase 15: Advanced Language Features
 
