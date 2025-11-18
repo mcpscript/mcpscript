@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.2...mcpscript-v0.1.3) (2025-11-18)
+
+
+### Bug Fixes
+
+* mcp roots ([e6bfaa4](https://github.com/mcpscript/mcpscript/commit/e6bfaa4f77f3312dd4ff0ad1d8f9cbf69b9e09cc))
+
 ## [0.1.2](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.1...mcpscript-v0.1.2) (2025-11-17)
 
 
