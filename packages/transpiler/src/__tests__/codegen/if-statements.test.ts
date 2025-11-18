@@ -82,7 +82,7 @@ describe('If Statement Codegen', () => {
   });
 
   it('should generate if with function call condition', () => {
-    const source = 'if (await isValid()) proceed()';
+    const source = 'if (isValid()) proceed()';
     const statements = parseSource(source);
     const code = generateCodeForTest(statements);
 
@@ -245,7 +245,7 @@ describe('If Statement Codegen', () => {
   });
 
   it('should generate if-else with function calls', () => {
-    const source = 'if (await isValid()) success() else error()';
+    const source = 'if (isValid()) success() else error()';
     const statements = parseSource(source);
     const code = generateCodeForTest(statements);
 

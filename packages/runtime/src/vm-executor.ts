@@ -1,6 +1,6 @@
 // VM-based script execution with dependency injection
 import vm from 'vm';
-import { mcp } from '@llamaindex/tools';
+import { mcp } from './mcp-client.js';
 import {
   print,
   log,

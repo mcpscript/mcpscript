@@ -34,7 +34,7 @@ describe('Break and Continue Statement Codegen', () => {
   });
 
   it('should generate continue in for loop', () => {
-    const source = `for (let i = 0; i < 10; i = i + 1) {
+    const source = `for (i = 0; i < 10; i = i + 1) {
       if (i % 2 == 0) continue
       print(i)
     }`;
@@ -44,12 +44,12 @@ describe('Break and Continue Statement Codegen', () => {
     expect(code).toContain('for (let i = 0; i < 10; i = i + 1) {');
     expect(code).toContain('if (i % 2 == 0) {');
     expect(code).toContain('continue;');
-    expect(code).toContain('print(i);');
+    expect(code).toContain('await print(i);');
   });
 
   it('should generate nested loops with break and continue', () => {
     const source = `while (outer) {
-      for (let i = 0; i < 5; i = i + 1) {
+      for (i = 0; i < 5; i = i + 1) {
         if (i == 2) continue
         if (i == 4) break
         print(i)
@@ -70,7 +70,7 @@ describe('Break and Continue Statement Codegen', () => {
   });
 
   it('should generate break and continue with proper indentation', () => {
-    const source = `for (let i = 0; i < 10; i = i + 1) {
+    const source = `for (i = 0; i < 10; i = i + 1) {
       if (skip) {
         continue
       } else {

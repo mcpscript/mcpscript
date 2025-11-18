@@ -1,5 +1,6 @@
 // @mcpscript/runtime - Core runtime library
 export * from './mcp.js';
+export * from './mcp-client.js';
 export * from './globals.js';
 export * from './types.js';
 export * from './vm-executor.js';

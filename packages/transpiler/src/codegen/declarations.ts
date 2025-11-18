@@ -64,11 +64,6 @@ function generateMCPServerConfig(
     const url = JSON.stringify(config.url);
     const params: string[] = [`url: ${url}`];
 
-    // Add verbose flag if specified
-    if (config.verbose !== undefined) {
-      params.push(`verbose: ${config.verbose}`);
-    }
-
     // Add useSSETransport flag if specified
     if (config.useSSETransport !== undefined) {
       params.push(`useSSETransport: ${config.useSSETransport}`);
@@ -88,11 +83,6 @@ function generateMCPServerConfig(
     // Add stderr if specified
     if (config.stderr !== undefined) {
       params.push(`stderr: ${serializeConfigValue(config.stderr)}`);
-    }
-
-    // Add verbose flag if specified
-    if (config.verbose !== undefined) {
-      params.push(`verbose: ${config.verbose}`);
     }
 
     return `{ ${params.join(', ')} }`;

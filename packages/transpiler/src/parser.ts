@@ -29,6 +29,22 @@ export function parseSource(content: string): Statement[] {
   parser.setLanguage(MCPScriptLanguage);
 
   const tree = parser.parse(content);
+
+  // Check for parse errors
+  if (tree.rootNode.hasError) {
+    // Find the first error node to provide a helpful error message
+    const errorNode = findFirstError(tree.rootNode);
+    if (errorNode) {
+      const line = errorNode.startPosition.row + 1;
+      const column = errorNode.startPosition.column + 1;
+      const snippet = errorNode.text.substring(0, 50);
+      throw new Error(
+        `Parse error at line ${line}, column ${column}: Unexpected syntax near "${snippet}"`
+      );
+    }
+    throw new Error('Parse error: The source code contains syntax errors');
+  }
+
   const statements: Statement[] = [];
 
   for (const child of tree.rootNode.children) {
@@ -41,6 +57,24 @@ export function parseSource(content: string): Statement[] {
   }
 
   return statements;
+}
+
+/**
+ * Find the first error node in the syntax tree
+ */
+function findFirstError(node: Parser.SyntaxNode): Parser.SyntaxNode | null {
+  if (node.type === 'ERROR' || node.isMissing) {
+    return node;
+  }
+
+  for (const child of node.children) {
+    const errorNode = findFirstError(child);
+    if (errorNode) {
+      return errorNode;
+    }
+  }
+
+  return null;
 }
 
 // Re-export for backward compatibility

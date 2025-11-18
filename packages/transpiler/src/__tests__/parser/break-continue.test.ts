@@ -49,7 +49,7 @@ describe('Break and Continue Statement Parsing', () => {
   });
 
   it('should parse continue in for loop', () => {
-    const source = `for (let i = 0; i < 10; i = i + 1) {
+    const source = `for (i = 0; i < 10; i = i + 1) {
       if (i % 2 == 0) continue
       print(i)
     }`;

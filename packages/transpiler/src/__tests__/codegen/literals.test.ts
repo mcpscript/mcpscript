@@ -129,7 +129,7 @@ config = { enabled: true, debug: false, verbose: true }
   it('should generate code for booleans in function calls', () => {
     const source = `
 result = processData("input", 42, true, false)
-mcp server { command: "test", verbose: true }
+mcp server { command: "test", args: ["arg1"] }
     `.trim();
 
     const ast = parseSource(source);
@@ -138,6 +138,6 @@ mcp server { command: "test", verbose: true }
     expect(code).toContain(
       'let result = await processData("input", 42, true, false);'
     );
-    expect(code).toContain('verbose: true');
+    expect(code).toContain('args: ["arg1"]');
   });
 });

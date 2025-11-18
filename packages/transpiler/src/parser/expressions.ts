@@ -88,10 +88,11 @@ function parseStringLiteral(node: Parser.SyntaxNode): StringLiteral {
   // Parse string by removing quotes and processing escape sequences
   let text = node.text;
 
-  // Remove surrounding quotes
+  // Remove surrounding quotes (double, single, or backtick)
   if (
     (text.startsWith('"') && text.endsWith('"')) ||
-    (text.startsWith("'") && text.endsWith("'"))
+    (text.startsWith("'") && text.endsWith("'")) ||
+    (text.startsWith('`') && text.endsWith('`'))
   ) {
     text = text.slice(1, -1);
   }
@@ -105,7 +106,8 @@ function parseStringLiteral(node: Parser.SyntaxNode): StringLiteral {
     .replace(/\\f/g, '\f')
     .replace(/\\\\/g, '\\')
     .replace(/\\"/g, '"')
-    .replace(/\\'/g, "'");
+    .replace(/\\'/g, "'")
+    .replace(/\\`/g, '`');
 
   return {
     type: 'string',

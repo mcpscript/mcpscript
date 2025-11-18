@@ -1,0 +1,49 @@
+// 1. Declare a model to use
+model gptoss {
+  provider: "openai",
+  apiKey: "ollama",
+  baseURL: "http://localhost:11434/v1",
+  model: "gpt-oss:20b",
+  temperature: 0.3
+}
+
+// 2. Use an MCP server
+mcp filesystem {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-filesystem"]
+}
+
+// 3. You can make deterministic tool calls
+code = filesystem.read_file({ path: "AGENTS.md" })
+print(code)
+
+// 4. Write tools like how you write functions
+tool checkComplexity(filepath) {
+  // Tools can call other tools
+  code = filesystem.read_file({ path: filepath })
+  lines = code.split("\n")
+  if (lines.length > 200) {
+    return "High complexity: " + lines.length + " lines"
+  }
+  return "Acceptable complexity"
+}
+
+// 5. Declare an agent with a mix of MCP and custom tools
+agent CodeReviewer {
+  model: gptoss,
+  systemPrompt: "You are a senior software engineer conducting code reviews. Focus on security, performance, and maintainability. Use the provided tools to analyze code and save your findings.",
+  tools: [
+    filesystem,         // Import all tools from the MCP server
+    checkComplexity,    // Custom tool
+  ]
+}
+
+// 6. Let the agent analyze and create a report
+conv = `Review the code at AGENTS.md and save a detailed report to tmp_review.md.` -> CodeReviewer
+
+// 7. Agent execution results in a conversation
+print(conv.result())
+
+// 8. Read and print the generated report
+report = filesystem.read_file({ path: "tmp_review.md" })
+print(report)

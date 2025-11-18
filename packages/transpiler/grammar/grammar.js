@@ -2,8 +2,9 @@
 module.exports = grammar({
   name: 'mcpscript',
 
-  extras: _$ => [
+  extras: $ => [
     /\s/, // whitespace
+    $.comment,
   ],
 
   rules: {
@@ -154,37 +155,56 @@ module.exports = grammar({
 
     property: $ => seq($.identifier, ':', $.expression),
 
-    string: $ => choice($.double_quoted_string, $.single_quoted_string),
+    string: $ =>
+      choice($.double_quoted_string, $.single_quoted_string, $.template_string),
 
-    double_quoted_string: $ =>
-      seq(
-        '"',
-        repeat(
-          choice(
-            /[^"\\]/, // Any character except " or \
-            $.escape_sequence
-          )
-        ),
-        '"'
+    double_quoted_string: _ =>
+      token(
+        seq(
+          '"',
+          repeat(
+            choice(
+              /[^"\\]/, // Any character except " or \
+              seq('\\', /./) // Escape sequence
+            )
+          ),
+          '"'
+        )
       ),
 
-    single_quoted_string: $ =>
-      seq(
-        "'",
-        repeat(
-          choice(
-            /[^'\\]/, // Any character except ' or \
-            $.escape_sequence
-          )
-        ),
-        "'"
+    single_quoted_string: _ =>
+      token(
+        seq(
+          "'",
+          repeat(
+            choice(
+              /[^'\\]/, // Any character except ' or \
+              seq('\\', /./) // Escape sequence
+            )
+          ),
+          "'"
+        )
+      ),
+
+    template_string: _ =>
+      token(
+        seq(
+          '`',
+          repeat(
+            choice(
+              /[^`\\]/, // Any character except ` or \
+              seq('\\', /./) // Escape sequence
+            )
+          ),
+          '`'
+        )
       ),
 
     escape_sequence: _ =>
       seq(
         '\\',
         choice(
-          /["'\\nrtbf]/, // Common escape sequences: " ' \ n r t b f
+          /["'`\\nrtbf]/, // Common escape sequences: " ' ` \ n r t b f
           /u[0-9a-fA-F]{4}/, // Unicode: \u1234
           /x[0-9a-fA-F]{2}/, // Hex: \x41
           /[0-7]{1,3}/ // Octal: \123

@@ -32,10 +32,7 @@ text = "Hello \"World\" with \\n newline"
       (expression
         (literal
           (string
-            (double_quoted_string
-              (escape_sequence)
-              (escape_sequence)
-              (escape_sequence))))))))
+            (double_quoted_string)))))))
 
 =====================================
 Single quoted with escapes
@@ -53,9 +50,7 @@ message = 'Can\'t escape \\backslash'
       (expression
         (literal
           (string
-            (single_quoted_string
-              (escape_sequence)
-              (escape_sequence))))))))
+            (single_quoted_string)))))))
 
 =====================================
 Mixed quote styles in arguments
@@ -84,9 +79,7 @@ func("double", 'single', "with \"escapes\"")
             (expression
               (literal
                 (string
-                  (double_quoted_string
-                    (escape_sequence)
-                    (escape_sequence)))))))))))
+                  (double_quoted_string))))))))))
 
 =====================================
 Unicode and hex escapes
@@ -104,9 +97,7 @@ unicode = "Unicode: \\u0041 Hex: \\x42"
       (expression
         (literal
           (string
-            (double_quoted_string
-              (escape_sequence)
-              (escape_sequence))))))))
+            (double_quoted_string)))))))
 
 =====================================
 Empty strings
