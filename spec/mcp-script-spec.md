@@ -534,38 +534,49 @@ agent CreativeWriter {
 
 ### Agent Invocation and Conversations
 
-Agents are invoked using the `->` operator, which creates and manages conversations - representing the full context and state of an LLM interaction. This enables powerful patterns like agent handoffs, multi-step workflows, and context preservation.
+Agents are invoked using the pipe `|` operator, which creates and manages conversations - representing the full context and state of an LLM interaction. The pipe operator provides a natural, bash-like syntax for data flow through agentic pipelines.
+
+**Pipe Operator Semantics:**
+
+- `String | Agent` - Creates a new conversation with the string as the initial message, executes the agent, returns the conversation
+- `Conversation | String` - Appends the string as a user message to the conversation, returns a new conversation
+- `Conversation | Agent` - Executes the agent with the conversation context, returns the updated conversation
+
+All operations are chainable, enabling elegant left-to-right data flow patterns.
 
 #### Basic Agent Invocation
 
 ```mcps
-// String literals implicitly create conversations
-conv = "Analyze customer satisfaction trends for Q3 2024" -> DataAnalyst
+// String literals pipe through agents to create conversations
+conv = "Analyze customer satisfaction trends for Q3 2024" | DataAnalyst
 
 // Simple one-shot invocation
-result = "Review this code for security issues: ${code}" -> CodeReviewer
+result = "Review this code for security issues: ${code}" | CodeReviewer
 ```
 
 #### Multi-Message Conversations
 
 ```mcps
-// Build up conversation context
-conv = "Here's our customer data: ${customerData}" -> DataAnalyst
-conv += "What trends do you see?"
-conv = conv -> DataAnalyst
-conv += "Can you be more specific about the Q3 decline?"
-conv = conv -> DataAnalyst
+// Build up conversation context with pipes - reads like a natural flow
+conv = "Here's our customer data: ${customerData}" | DataAnalyst
+     | "What trends do you see?"
+     | DataAnalyst
+     | "Can you be more specific about the Q3 decline?"
+     | DataAnalyst
+
+// Equivalent sequential form
+conv = "Here's our customer data: ${customerData}" | DataAnalyst
+conv = conv | "What trends do you see?" | DataAnalyst
+conv = conv | "Can you be more specific about the Q3 decline?" | DataAnalyst
 ```
 
 #### Agent Handoffs
 
 ```mcps
-// Start with one agent
-conv = "Analyze this sales data: ${data}" -> DataAnalyst
-conv += "Now write a professional report based on your analysis"
-
-// Hand off to another agent (preserves full conversation context)
-conv = conv -> ReportWriter
+// Start with one agent, add context, hand off to another
+conv = "Analyze this sales data: ${data}" | DataAnalyst
+     | "Now write a professional report based on your analysis"
+     | ReportWriter
 
 // ReportWriter sees the entire conversation history including DataAnalyst's analysis
 ```
@@ -574,9 +585,9 @@ conv = conv -> ReportWriter
 
 ```mcps
 tool analyzeWithAgent(inputPath) {
-    conv = "Analyze the file at ${inputPath} and create a summary report" -> DataAnalyst
-    conv += "Save the report to report.md"
-    conv = conv -> DataAnalyst
+    conv = "Analyze the file at ${inputPath} and create a summary report" | DataAnalyst
+         | "Save the report to report.md"
+         | DataAnalyst
 
     return conv
 }
@@ -587,7 +598,7 @@ tool analyzeWithAgent(inputPath) {
 ```mcps
 tool intelligentProcessing(data, useAgent) {
     if (useAgent) {
-        result = "Process this data: ${data}" -> DataAnalyst
+        result = "Process this data: ${data}" | DataAnalyst
         return result.getLastMessage()
     } else {
         return standardProcess(data)

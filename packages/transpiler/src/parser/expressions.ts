@@ -303,7 +303,7 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
       c.type === '&&' ||
       c.type === '||' ||
       c.type === '??' ||
-      c.type === '->'
+      c.type === '|'
   );
 
   if (expressionNodes.length !== 2 || !operatorNode) {
@@ -327,7 +327,7 @@ function parseBinaryExpression(node: Parser.SyntaxNode): BinaryExpression {
     | '&&'
     | '||'
     | '??'
-    | '->';
+    | '|';
 
   return {
     type: 'binary',

@@ -30,4 +30,4 @@ agent fileAssistant {
 }
 
 // Use the agent to read and analyze the file
-"Read the file /private/tmp/example.txt and tell me what number is mentioned in it" -> fileAssistant
+"Read the file /private/tmp/example.txt and tell me what number is mentioned in it" | fileAssistant

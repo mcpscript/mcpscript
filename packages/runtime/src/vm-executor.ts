@@ -12,7 +12,7 @@ import {
 import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
-import { Conversation } from './conversation.js';
+import { Conversation, pipe } from './conversation.js';
 import { Agent } from './agent.js';
 import { createToolProxy, createUserTool } from './mcp.js';
 import type { AppMessage } from './types.js';
@@ -53,6 +53,9 @@ function createVMContext(
     // MCP utility functions
     __createToolProxy: createToolProxy,
     __createUserTool: createUserTool,
+
+    // Pipe operator function
+    __pipe: pipe,
 
     // App message function for UI integration
     __addAppMessage: addAppMessage,

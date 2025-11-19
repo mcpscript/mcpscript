@@ -146,7 +146,7 @@ export function generateBracketExpression(expr: BracketExpression): string {
  */
 function generateBinaryExpression(expr: BinaryExpression): string {
   // Handle agent delegation operator specially
-  if (expr.operator === '->') {
+  if (expr.operator === '|') {
     return generateAgentDelegation(expr);
   }
 
@@ -182,13 +182,16 @@ function requiresNullishCoalescingParens(
 }
 
 /**
- * Generate code for agent delegation (-> operator)
+ * Generate code for agent delegation (| operator)
+ *
+ * Uses the runtime __pipe() function to handle dynamic type checking
+ * and all cases (string|Agent, Conversation|string, Conversation|Agent)
  */
 function generateAgentDelegation(expr: BinaryExpression): string {
-  const prompt = generateExpression(expr.left);
-  const agentName = generateExpression(expr.right);
+  const left = generateExpression(expr.left);
+  const right = generateExpression(expr.right);
 
-  return `await ${agentName}.run(${prompt})`;
+  return `await __pipe(${left}, ${right})`;
 }
 
 /**
@@ -231,7 +234,7 @@ function needsParentheses(
  */
 function getOperatorPrecedence(op: string): number {
   switch (op) {
-    case '->':
+    case '|':
       return 0;
     case '??':
       return 1;

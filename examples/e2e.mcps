@@ -39,7 +39,7 @@ agent CodeReviewer {
 }
 
 // 6. Let the agent analyze and create a report
-conv = `Review the code at AGENTS.md and save a detailed report to tmp_review.md.` -> CodeReviewer
+conv = `Review the code at AGENTS.md and save a detailed report to tmp_review.md.` | CodeReviewer
 
 // 7. Agent execution results in a conversation
 print(conv.result())

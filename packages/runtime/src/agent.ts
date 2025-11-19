@@ -30,6 +30,9 @@ export interface AgentConfig {
  * Provides a clean interface for agent delegation without exposing LlamaIndex internals
  */
 export class Agent {
+  // Marker to identify Agent instances reliably
+  readonly __isAgent = true;
+
   private config: AgentConfig;
   private wrappedTools: BaseTool[];
 

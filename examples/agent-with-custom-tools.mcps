@@ -40,10 +40,10 @@ agent MathAssistant {
 
 // Ask the agent to solve problems using the tools
 print("=== Problem 1: Simple Addition ===")
-"What is 15 plus 27?" -> MathAssistant
+"What is 15 plus 27?" | MathAssistant
 
 print("\n=== Problem 2: Multiplication ===")
-"Calculate 8 times 12" -> MathAssistant
+"Calculate 8 times 12" | MathAssistant
 
 print("\n=== Problem 3: Multi-step Calculation ===")
-"What is 5 squared plus 10?" -> MathAssistant
+"What is 5 squared plus 10?" | MathAssistant

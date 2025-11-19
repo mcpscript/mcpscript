@@ -40,7 +40,7 @@ describe('E2E - Agent with User-Defined Tools', () => {
         tools: [double]
       }
 
-      result = "Double the number 21" -> Calculator
+      result = "Double the number 21" | Calculator
       print("Agent executed successfully")
     `;
 
@@ -77,7 +77,7 @@ describe('E2E - Agent with User-Defined Tools', () => {
         tools: [add, multiply]
       }
 
-      result = "What is 5 plus 3?" -> MathAssistant
+      result = "What is 5 plus 3?" | MathAssistant
       print("Agent executed with multiple tools")
     `;
 
@@ -110,7 +110,7 @@ describe('E2E - Agent with User-Defined Tools', () => {
         tools: [getAnswer]
       }
 
-      result = "What is the answer to life, the universe, and everything?" -> Oracle
+      result = "What is the answer to life, the universe, and everything?" | Oracle
       print("Agent executed with no-param tool")
     `;
 
@@ -148,7 +148,7 @@ describe('E2E - Agent with User-Defined Tools', () => {
         tools: [processData]
       }
 
-      result = "Process the data" -> DataProcessor
+      result = "Process the data" | DataProcessor
       print("Agent executed with complex tool")
     `;
 

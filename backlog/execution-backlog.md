@@ -149,9 +149,9 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Set up automated npm package release via GitHub Actions
 - ✅ **DONE** - Update examples to be more practical
 - ✅ **DONE** - Write comprehensive README.md
-- 🔲 **TODO** - Support conversation concatenation
-- 🔲 **TODO** - Support type annotation on tool parameters and return types (Phase 9)
+- ✅ **DONE** - Support conversation chaining
 - 🔲 **TODO** - Support stdin
+- 🔲 **TODO** - Support type annotation on tool parameters and return types (Phase 9)
 
 **→ Complete Phase 8 before Phase 9**
 

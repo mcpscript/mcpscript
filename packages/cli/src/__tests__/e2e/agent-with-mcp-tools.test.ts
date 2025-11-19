@@ -55,7 +55,7 @@ describe('Agent with MCP Server Tools', () => {
       }
 
       // Use the agent to read and analyze the file
-      "Read the file ${testDir}/test.txt and tell me what number is mentioned in it" -> fileAssistant
+      "Read the file ${testDir}/test.txt and tell me what number is mentioned in it" | fileAssistant
     `;
 
     const ast = parseSource(source);
@@ -100,7 +100,7 @@ describe('Agent with MCP Server Tools', () => {
       }
 
       // Use the agent
-      "What is 6 times 7?" -> mixedAssistant
+      "What is 6 times 7?" | mixedAssistant
     `;
 
     const ast = parseSource(source);

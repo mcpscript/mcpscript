@@ -93,7 +93,7 @@ describe('Validator - Undefined Variables', () => {
           tools: []
         }
         
-        result = "Hello" -> MyAgent
+        result = "Hello" | MyAgent
       `;
       const statements = parseSource(source);
       expect(() => validateStatements(statements)).not.toThrow();
@@ -327,7 +327,7 @@ describe('Validator - Undefined Variables', () => {
 
     it('should detect undefined variable in agent delegation', () => {
       const source = `
-        result = "prompt" -> UndefinedAgent
+        result = "prompt" | UndefinedAgent
       `;
       const statements = parseSource(source);
       expect(() => validateStatements(statements)).toThrow(
@@ -463,7 +463,7 @@ describe('Validator - Undefined Variables', () => {
 
     it('should allow forward references to agents', () => {
       const source = `
-        result = "prompt" -> MyAgent
+        result = "prompt" | MyAgent
         
         model gpt4 {
           provider: "openai",

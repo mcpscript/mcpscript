@@ -1,0 +1,31 @@
+// Conversation Chaining Example
+// This demonstrates how conversations can flow through multiple agents
+// using the pipe operator, preserving context across agent handoffs
+
+// Define a local LLM model for testing (using Ollama with OpenAI-compatible API)
+model localModel {
+  provider: "openai",
+  apiKey: "ollama",
+  baseURL: "http://localhost:11434/v1",
+  model: "gpt-oss:20b"
+}
+
+// Define agents with different roles
+agent DataAnalyst {
+  model: localModel,
+  systemPrompt: "You are a data analyst. Analyze data and provide insights in a clear, structured format."
+}
+
+agent ReportWriter {
+  model: localModel,
+  systemPrompt: "You are a professional report writer. Take analysis and create polished, executive-ready reports."
+}
+
+// Simple two-agent pipeline demonstrating conversation chaining
+result = "Analyze these quarterly sales numbers: Q1: $2.5M, Q2: $3.1M, Q3: $2.8M, Q4: $3.5M"
+       | DataAnalyst
+       | "Now write a brief executive summary based on your analysis"
+       | ReportWriter
+
+print("Final result:")
+print(result.result())
