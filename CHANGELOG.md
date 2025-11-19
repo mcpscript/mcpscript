@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.3...mcpscript-v0.1.4) (2025-11-19)
+
+
+### Features
+
+* conversation chaining ([adc505c](https://github.com/mcpscript/mcpscript/commit/adc505ca1123218d186a2a9a8b5b5f0ce560199a))
+* user input ([39b4c81](https://github.com/mcpscript/mcpscript/commit/39b4c81f0f8d526b9e865f006c6001b486fb2256))
+
 ## [0.1.3](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.2...mcpscript-v0.1.3) (2025-11-18)
 
 
