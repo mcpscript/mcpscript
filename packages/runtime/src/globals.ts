@@ -6,39 +6,52 @@ import { AppMessage } from './types';
 /**
  * Add message callback type for UI integration
  */
-type AddMessageHandler = (msg: AppMessage) => void;
+export type AddMessageHandler = (msg: AppMessage) => void;
 
 /**
- * Add message callback for UI integration
+ * User input callback type for UI integration
  */
-let addMessage: AddMessageHandler | null = null;
+export type UserInputHandler = (message: string) => Promise<string>;
 
 /**
- * Configure print function for UI integration
+ * Print chat message callback type for agent integration
  */
-export function configurePrint(
-  addMessageHandler: AddMessageHandler | null
-): void {
-  addMessage = addMessageHandler;
+export type PrintChatMessageFn = (agentName: string, msg: ChatMessage) => void;
+
+/**
+ * Runtime handlers that can be injected into the VM context
+ */
+export interface RuntimeHandlers {
+  addMessage?: AddMessageHandler;
+  userInput?: UserInputHandler;
 }
 
 /**
- * Print output. Integrates with UI when configured, otherwise uses console.log
+ * Create a print function with the given handler
  */
-export function print(...values: unknown[]): void {
-  if (addMessage) {
-    const message = values.map(v => String(v)).join(' ');
-    addMessage({ title: '', body: message });
-  } else {
-    console.log(...values);
-  }
+export function createPrint(addMessage?: AddMessageHandler) {
+  return function print(...values: unknown[]): void {
+    if (addMessage) {
+      const message = values.map(v => String(v)).join(' ');
+      addMessage({ title: '', body: message });
+    } else {
+      console.log(...values);
+    }
+  };
 }
 
-export function printChatMessage(agentName: string, msg: ChatMessage): void {
-  const content =
-    typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content);
-  const author = msg.role === 'user' ? 'User' : `Agent[${agentName}]`;
-  addMessage?.({ title: author, body: content });
+/**
+ * Create a printChatMessage function with the given handler
+ */
+export function createPrintChatMessage(addMessage?: AddMessageHandler) {
+  return function printChatMessage(agentName: string, msg: ChatMessage): void {
+    const content =
+      typeof msg.content === 'string'
+        ? msg.content
+        : JSON.stringify(msg.content);
+    const author = msg.role === 'user' ? 'User' : `Agent[${agentName}]`;
+    addMessage?.({ title: author, body: content });
+  };
 }
 
 /**
@@ -108,4 +121,18 @@ export function createMap<K = unknown, V = unknown>(
   iterable?: Iterable<readonly [K, V]>
 ): Map<K, V> {
   return new Map(iterable);
+}
+
+/**
+ * Create an input function with the given handler
+ */
+export function createInput(userInputHandler?: UserInputHandler) {
+  return async function input(message: string): Promise<string> {
+    if (!userInputHandler) {
+      throw new Error(
+        'User input handler not configured. Cannot get user input.'
+      );
+    }
+    return await userInputHandler(message);
+  };
 }

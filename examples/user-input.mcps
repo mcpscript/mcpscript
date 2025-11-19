@@ -1,0 +1,24 @@
+// Example: Interactive user input with input()
+// This script demonstrates how to get user input during execution
+
+// Get user's name
+name = input("What is your name? ")
+print("Hello, " + name + "!")
+
+// Get user's age
+ageStr = input("How old are you? ")
+age = parseInt(ageStr)
+print("You are " + age + " years old.")
+
+// Calculate birth year (approximate)
+currentYear = 2025
+birthYear = currentYear - age
+print("You were born around " + birthYear + ".")
+
+// Ask a yes/no question
+answer = input("Do you like programming? (yes/no) ")
+if (answer == "yes") {
+  print("That's great! Keep coding!")
+} else {
+  print("That's okay, it's not for everyone.")
+}

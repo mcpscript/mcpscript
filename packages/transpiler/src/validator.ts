@@ -35,6 +35,9 @@ const ALLOWED_GLOBALS = new Set([
   // Environment
   'env',
 
+  // User input
+  'input',
+
   // Collections
   'Set',
   'Map',

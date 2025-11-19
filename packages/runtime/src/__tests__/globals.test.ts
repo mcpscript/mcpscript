@@ -7,7 +7,7 @@ import {
   afterEach,
   type MockInstance,
 } from 'vitest';
-import { print, log, env } from '../globals.js';
+import { createPrint, log, env } from '../globals.js';
 
 describe('globals', () => {
   describe('print function', () => {
@@ -24,6 +24,7 @@ describe('globals', () => {
     });
 
     it('should call console.log with the provided value', () => {
+      const print = createPrint();
       const testValue = 'Hello, World!';
       print(testValue);
 
@@ -32,6 +33,7 @@ describe('globals', () => {
     });
 
     it('should handle string values', () => {
+      const print = createPrint();
       const stringValue = 'test string';
       print(stringValue);
 
@@ -39,6 +41,7 @@ describe('globals', () => {
     });
 
     it('should handle number values', () => {
+      const print = createPrint();
       const numberValue = 42;
       print(numberValue);
 
@@ -46,6 +49,7 @@ describe('globals', () => {
     });
 
     it('should handle boolean values', () => {
+      const print = createPrint();
       const booleanValue = true;
       print(booleanValue);
 
@@ -53,18 +57,21 @@ describe('globals', () => {
     });
 
     it('should handle null values', () => {
+      const print = createPrint();
       print(null);
 
       expect(consoleLogSpy).toHaveBeenCalledWith(null);
     });
 
     it('should handle undefined values', () => {
+      const print = createPrint();
       print(undefined);
 
       expect(consoleLogSpy).toHaveBeenCalledWith(undefined);
     });
 
     it('should handle object values', () => {
+      const print = createPrint();
       const objectValue = { key: 'value', number: 123 };
       print(objectValue);
 
@@ -72,6 +79,7 @@ describe('globals', () => {
     });
 
     it('should handle array values', () => {
+      const print = createPrint();
       const arrayValue = [1, 2, 3, 'test'];
       print(arrayValue);
 
@@ -79,6 +87,7 @@ describe('globals', () => {
     });
 
     it('should handle function values', () => {
+      const print = createPrint();
       const functionValue = () => 'test';
       print(functionValue);
 
@@ -86,6 +95,7 @@ describe('globals', () => {
     });
 
     it('should handle multiple calls independently', () => {
+      const print = createPrint();
       print('first');
       print('second');
       print(123);
@@ -97,12 +107,14 @@ describe('globals', () => {
     });
 
     it('should return void', () => {
+      const print = createPrint();
       const result = print('test');
 
       expect(result).toBeUndefined();
     });
 
     it('should handle multiple arguments', () => {
+      const print = createPrint();
       print('Hello', 'World', 123);
 
       expect(consoleLogSpy).toHaveBeenCalledOnce();
@@ -110,6 +122,7 @@ describe('globals', () => {
     });
 
     it('should handle mixed types as multiple arguments', () => {
+      const print = createPrint();
       const obj = { key: 'value' };
       const arr = [1, 2, 3];
       print('string', 42, true, null, undefined, obj, arr);
@@ -126,6 +139,7 @@ describe('globals', () => {
     });
 
     it('should handle no arguments', () => {
+      const print = createPrint();
       print();
 
       expect(consoleLogSpy).toHaveBeenCalledOnce();
@@ -133,6 +147,7 @@ describe('globals', () => {
     });
 
     it('should handle multiple arguments in separate calls', () => {
+      const print = createPrint();
       print('first', 'call');
       print('second', 'call', 123);
       print('third');
@@ -144,6 +159,7 @@ describe('globals', () => {
     });
 
     it('should handle many arguments', () => {
+      const print = createPrint();
       print(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 
       expect(consoleLogSpy).toHaveBeenCalledWith(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

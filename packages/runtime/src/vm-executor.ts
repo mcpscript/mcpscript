@@ -2,27 +2,27 @@
 import vm from 'vm';
 import { mcp } from './mcp-client.js';
 import {
-  print,
+  createPrint,
+  createPrintChatMessage,
+  createInput,
   log,
   env,
-  configurePrint,
   createSet,
   createMap,
+  type RuntimeHandlers,
 } from './globals.js';
 import { OpenAI } from '@llamaindex/openai';
 import { Anthropic } from '@llamaindex/anthropic';
 import { Gemini } from '@llamaindex/google';
 import { Conversation, pipe } from './conversation.js';
-import { Agent } from './agent.js';
+import { createAgent } from './agent.js';
 import { createToolProxy, createUserTool } from './mcp.js';
 import type { AppMessage } from './types.js';
 
 /**
  * Create a VM context with all required dependencies injected
  */
-function createVMContext(
-  addAppMessage?: (msg: AppMessage) => void
-): vm.Context {
+function createVMContext(handlers: RuntimeHandlers): vm.Context {
   // Create a safe subset of process object
   const safeProcess = {
     env: process.env,
@@ -36,10 +36,12 @@ function createVMContext(
     // LlamaIndex MCP adapter
     __llamaindex_mcp: mcp,
 
-    // Runtime functions (imported from globals)
-    print: print,
+    // Runtime functions (created with injected handlers)
+    print: createPrint(handlers.addMessage),
+    printChatMessage: createPrintChatMessage(handlers.addMessage),
     log: log,
     env: env,
+    input: createInput(handlers.userInput),
 
     // LlamaIndex model classes
     __llamaindex_OpenAI: OpenAI,
@@ -48,7 +50,7 @@ function createVMContext(
 
     // Runtime classes
     __Conversation: Conversation,
-    __Agent: Agent,
+    __Agent: createAgent(createPrintChatMessage(handlers.addMessage)),
 
     // MCP utility functions
     __createToolProxy: createToolProxy,
@@ -58,7 +60,7 @@ function createVMContext(
     __pipe: pipe,
 
     // App message function for UI integration
-    __addAppMessage: addAppMessage,
+    __addAppMessage: handlers.addMessage,
 
     // Standard APIs (limited)
     console: console,
@@ -127,6 +129,8 @@ export interface VMExecutionOptions {
   timeout?: number;
   /** Callback to add a message to the app state from within the VM */
   addMessage?: (msg: AppMessage) => void;
+  /** Callback to request user input from within the VM */
+  userInput?: (message: string) => Promise<string>;
 }
 
 /**
@@ -136,33 +140,32 @@ export async function executeInVM(
   code: string,
   options: VMExecutionOptions = {}
 ): Promise<Record<string, unknown>> {
-  // Configure print function for UI integration if callback provided
-  if (options.addMessage) {
-    configurePrint(options.addMessage);
-  }
+  // Create VM context with injected handlers
+  const context = createVMContext({
+    addMessage: options.addMessage,
+    userInput: options.userInput,
+  });
 
-  const context = createVMContext(options.addMessage);
-
-  try {
-    // Wrap code to assign variables to the context for test access
-    // We convert 'let variable = value' to 'this.variable = value'
-    // so that variables are accessible on the context after execution
-    const wrappedCode = `
+  // Wrap code to assign variables to the context for test access
+  // We convert 'let variable = value' to 'this.variable = value'
+  // so that variables are accessible on the context after execution
+  const wrappedCode = `
 (async function() {
 ${code.replace(/\blet\s+(\w+)/g, 'this.$1')}
 }).call(this)`;
 
-    // Execute the code in the VM context
-    const script = new vm.Script(wrappedCode);
-    const vmOptions: vm.RunningScriptOptions = {
-      displayErrors: true,
-    };
+  // Execute the code in the VM context
+  const script = new vm.Script(wrappedCode);
+  const vmOptions: vm.RunningScriptOptions = {
+    displayErrors: true,
+  };
 
-    // Add timeout if specified (0 means no timeout)
-    if (options.timeout !== 0) {
-      vmOptions.timeout = options.timeout ?? 30000;
-    }
+  // Add timeout if specified (0 means no timeout)
+  if (options.timeout !== 0) {
+    vmOptions.timeout = options.timeout ?? 30000;
+  }
 
+  try {
     const result = script.runInContext(context, vmOptions);
 
     // Wait for the async function to complete
@@ -188,9 +191,6 @@ ${code.replace(/\blet\s+(\w+)/g, 'this.$1')}
     } else {
       throw error;
     }
-  } finally {
-    // Reset print configuration after execution
-    configurePrint(null);
   }
 }
 

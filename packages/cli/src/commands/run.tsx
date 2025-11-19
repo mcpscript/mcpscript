@@ -33,6 +33,21 @@ export async function runCommand(options: RunOptions): Promise<void> {
     rerender(<App state={appState} />);
   };
 
+  // User input handler function that can be called from VM
+  const handleUserInput = (message: string): Promise<string> => {
+    return new Promise<string>(resolve => {
+      appState.userInput = {
+        message,
+        onSubmit: (value: string) => {
+          appState.userInput = undefined;
+          rerender(<App state={appState} />);
+          resolve(value);
+        },
+      };
+      rerender(<App state={appState} />);
+    });
+  };
+
   try {
     // Read the source file
     const source = await readFile(file, 'utf-8');
@@ -47,6 +62,7 @@ export async function runCommand(options: RunOptions): Promise<void> {
     await executeInVM(jsCode, {
       timeout: options.timeout,
       addMessage: addMessage,
+      userInput: handleUserInput,
     });
 
     // Wait for user to exit

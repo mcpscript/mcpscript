@@ -2,8 +2,8 @@
 import type { BaseLLM } from '@llamaindex/core/llms';
 import type { BaseTool } from '@llamaindex/core/llms';
 import { Conversation } from './conversation.js';
-import { printChatMessage } from './globals.js';
 import { wrapToolForAgent } from './mcp.js';
+import type { PrintChatMessageFn } from './globals.js';
 
 /**
  * Configuration options for creating an agent
@@ -35,9 +35,16 @@ export class Agent {
 
   private config: AgentConfig;
   private wrappedTools: BaseTool[];
+  private printChatMessage: PrintChatMessageFn;
 
-  constructor(config: AgentConfig) {
+  constructor(
+    config: AgentConfig,
+    printChatMessage: PrintChatMessageFn = () => {
+      /* no-op by default */
+    }
+  ) {
     this.config = config;
+    this.printChatMessage = printChatMessage;
     // Wrap user-defined tools at runtime
     this.wrappedTools = this.wrapTools(config.tools || []);
   }
@@ -136,7 +143,7 @@ export class Agent {
     }
 
     for (const msg of messages) {
-      printChatMessage(this.config.name, msg);
+      this.printChatMessage(this.config.name, msg);
     }
 
     // Agent loop: repeatedly call llm.exec until no more tool calls
@@ -149,7 +156,7 @@ export class Agent {
       messages.push(...newMessages);
 
       for (const msg of newMessages) {
-        printChatMessage(this.config.name, msg);
+        this.printChatMessage(this.config.name, msg);
       }
 
       exit = toolCalls.length === 0;
@@ -179,4 +186,15 @@ export class Agent {
   get description(): string | undefined {
     return this.config.description;
   }
+}
+
+/**
+ * Create an Agent constructor that injects the printChatMessage handler
+ * @param printChatMessage The handler to use for printing chat messages
+ * @returns A constructor function that creates Agent instances with the handler injected
+ */
+export function createAgent(printChatMessage: PrintChatMessageFn) {
+  return function (config: AgentConfig): Agent {
+    return new Agent(config, printChatMessage);
+  };
 }

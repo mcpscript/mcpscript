@@ -150,7 +150,7 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Update examples to be more practical
 - ✅ **DONE** - Write comprehensive README.md
 - ✅ **DONE** - Support conversation chaining
-- 🔲 **TODO** - Support stdin
+- ✅ **DONE** - Support user input. A function that can be called from the script to prompt the user for input during execution.
 - 🔲 **TODO** - Support type annotation on tool parameters and return types (Phase 9)
 
 **→ Complete Phase 8 before Phase 9**

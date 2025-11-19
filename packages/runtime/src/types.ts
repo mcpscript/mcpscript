@@ -15,6 +15,12 @@ export type AppMessage = {
   body: string;
 };
 
+export interface UserInputRequest {
+  message: string;
+  onSubmit: (value: string) => void;
+}
+
 export interface AppState {
   messages: AppMessage[];
+  userInput?: UserInputRequest;
 }
