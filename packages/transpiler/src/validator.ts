@@ -226,7 +226,7 @@ function validateToolDeclaration(
   try {
     // Declare all parameters in the tool's scope
     for (const param of stmt.parameters) {
-      scope.declare(param);
+      scope.declare(param.name);
     }
 
     // Validate the tool body

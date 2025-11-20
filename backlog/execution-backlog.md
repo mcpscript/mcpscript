@@ -151,7 +151,6 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Write comprehensive README.md
 - ✅ **DONE** - Support conversation chaining
 - ✅ **DONE** - Support user input. A function that can be called from the script to prompt the user for input during execution.
-- 🔲 **TODO** - Support type annotation on tool parameters and return types (Phase 9)
 
 **→ Complete Phase 8 before Phase 9**
 
@@ -159,24 +158,20 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Add optional runtime type checking using Zod**
 
-- 🔲 **TODO** - Tool parameter parsing with optional type annotations
+- ✅ **DONE** - Tool parameter parsing with optional type annotations
+  - Support primitive types (string, number, boolean, any)
+  - Support array types (e.g., string[], number[][])
+  - Support object types with properties
+  - Support union types (e.g., string | number)
   - Parse `param: type` syntax
   - Parse `param?: type` for optional parameters
   - Parse return type annotations `: type`
-- 🔲 **TODO** - Add Zod dependency to runtime package
-- 🔲 **TODO** - Generate Zod schemas from type annotations in codegen
-  - Primitives: `string`, `number`, `boolean`, `any`
-  - Arrays: `string[]`, `number[]`, etc.
-  - Objects: `{ key: string, value: number }`
-  - Union types: `string | number`
-  - Optional parameters: `param?: string`
-- 🔲 **TODO** - Generate runtime validation wrappers in codegen
+- ✅ **DONE** - Generate Zod schemas from type annotations in codegen
+- ✅ **DONE** - Generate runtime validation wrappers in codegen
   - Wrap tool bodies with parameter validation
   - Wrap return statements with return type validation
-- 🔲 **TODO** - Error messages for type validation failures
-- 🔲 **TODO** - Support for nested object types
-- 🔲 **TODO** - Support for complex array types
-- 🔲 **TODO** - Runtime type validation tests
+  - Error messages on validation failure
+- ✅ **DONE** - Runtime type validation tests
 
 **→ Complete Phase 9 before Phase 10**
 

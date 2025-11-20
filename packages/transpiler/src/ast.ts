@@ -177,8 +177,43 @@ export interface ReturnStatement extends ASTNode {
 export interface ToolDeclaration extends ASTNode {
   type: 'tool_declaration';
   name: string;
-  parameters: string[];
+  parameters: ToolParameter[];
+  returnType?: TypeExpression;
   body: BlockStatement;
+}
+
+export interface ToolParameter {
+  name: string;
+  optional: boolean;
+  typeAnnotation?: TypeExpression;
+}
+
+export type TypeExpression = PrimitiveType | ArrayType | ObjectType | UnionType;
+
+export interface PrimitiveType {
+  type: 'primitive_type';
+  value: 'string' | 'number' | 'boolean' | 'any' | 'null';
+}
+
+export interface ArrayType {
+  type: 'array_type';
+  elementType: TypeExpression;
+}
+
+export interface ObjectType {
+  type: 'object_type';
+  properties: TypeProperty[];
+}
+
+export interface TypeProperty {
+  name: string;
+  optional: boolean;
+  typeAnnotation: TypeExpression;
+}
+
+export interface UnionType {
+  type: 'union_type';
+  types: TypeExpression[];
 }
 
 export interface Comment extends ASTNode {

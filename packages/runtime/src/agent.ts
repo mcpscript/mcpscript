@@ -112,7 +112,12 @@ export class Agent {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const func = tool as any;
       if (func.__mcps_params && func.__mcps_name) {
-        return wrapToolForAgent(func.__mcps_name, func, func.__mcps_params);
+        return wrapToolForAgent(
+          func.__mcps_name,
+          func,
+          func.__mcps_params,
+          func.__mcps_schema
+        );
       }
 
       // If no metadata, it might be a regular function passed directly

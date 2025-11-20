@@ -88,17 +88,19 @@ export function createToolProxy(
 
 /**
  * Create a user-defined tool with metadata attached via Proxy
- * This wraps an async function with __mcps_params and __mcps_name metadata
+ * This wraps an async function with __mcps_params, __mcps_name, and __mcps_schema metadata
  */
 export function createUserTool(
   name: string,
   params: string[],
-  func: (...args: unknown[]) => Promise<unknown>
+  func: (...args: unknown[]) => Promise<unknown>,
+  schema?: z.ZodObject<z.ZodRawShape>
 ): (...args: unknown[]) => Promise<unknown> {
   return new Proxy(func, {
     get(target, prop) {
       if (prop === '__mcps_params') return params;
       if (prop === '__mcps_name') return name;
+      if (prop === '__mcps_schema') return schema;
       return Reflect.get(target, prop);
     },
     apply(target, thisArg, args) {
@@ -115,22 +117,23 @@ export function createUserTool(
 export function wrapToolForAgent(
   toolName: string,
   toolFunction: (...args: unknown[]) => Promise<unknown>,
-  parameterNames: string[]
+  parameterNames: string[],
+  zodSchema?: z.ZodObject<z.ZodRawShape>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
-  // Build a Zod schema dynamically from parameter names
-  const schemaShape: Record<string, z.ZodString> = {};
-  for (const paramName of parameterNames) {
-    // Default to string for now (type annotations not yet implemented)
-    schemaShape[paramName] = z.string().describe(`Parameter: ${paramName}`);
+  // If no schema provided, build a default one with all parameters as strings
+  let finalSchema: z.ZodObject<z.ZodRawShape> = zodSchema || z.object({});
+  if (!zodSchema) {
+    const schemaShape: Record<string, z.ZodString> = {};
+    for (const paramName of parameterNames) {
+      schemaShape[paramName] = z.string().describe(`Parameter: ${paramName}`);
+    }
+    finalSchema = z.object(schemaShape);
   }
-
-  // Create a Zod object schema
-  const zodSchema = z.object(schemaShape);
 
   // Create the FunctionTool using LlamaIndex's FunctionTool.from with Zod schema
   return FunctionTool.from(
-    async (input: z.infer<typeof zodSchema>) => {
+    async (input: z.infer<typeof finalSchema>) => {
       // Convert the input object to positional arguments
       const args = parameterNames.map(name => input[name]);
       const result = await toolFunction(...args);
@@ -140,7 +143,7 @@ export function wrapToolForAgent(
     {
       name: toolName,
       description: `User-defined tool: ${toolName}`,
-      parameters: zodSchema,
+      parameters: finalSchema,
     }
   );
 }

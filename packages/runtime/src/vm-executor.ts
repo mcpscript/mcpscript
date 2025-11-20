@@ -18,6 +18,69 @@ import { Conversation, pipe } from './conversation.js';
 import { createAgent } from './agent.js';
 import { createToolProxy, createUserTool } from './mcp.js';
 import type { AppMessage } from './types.js';
+import { z } from 'zod';
+
+/**
+ * Schema definition type for __buildZodSchema
+ */
+type SchemaDefinition =
+  | { type: 'string' }
+  | { type: 'number' }
+  | { type: 'boolean' }
+  | { type: 'any' }
+  | { type: 'null' }
+  | { type: 'array'; elementType: SchemaDefinition }
+  | { type: 'object'; properties: Record<string, SchemaDefinition> }
+  | { type: 'union'; types: SchemaDefinition[] }
+  | { type: 'optional'; schema: SchemaDefinition };
+
+/**
+ * Build a Zod schema from a simple definition object
+ * This reduces generated code size by moving schema construction logic to runtime
+ */
+function buildZodSchema(def: SchemaDefinition): z.ZodTypeAny {
+  switch (def.type) {
+    case 'string':
+      return z.string();
+    case 'number':
+      return z.number();
+    case 'boolean':
+      return z.boolean();
+    case 'any':
+      return z.any();
+    case 'null':
+      return z.null();
+    case 'array':
+      return z.array(buildZodSchema(def.elementType));
+    case 'object': {
+      const shape: Record<string, z.ZodTypeAny> = {};
+      for (const [key, value] of Object.entries(def.properties)) {
+        shape[key] = buildZodSchema(value);
+      }
+      return z.object(shape);
+    }
+    case 'union': {
+      if (def.types.length === 0) {
+        throw new Error('Union type must have at least one type');
+      }
+      if (def.types.length === 1) {
+        return buildZodSchema(def.types[0]);
+      }
+      const schemas = def.types.map(t => buildZodSchema(t)) as [
+        z.ZodTypeAny,
+        z.ZodTypeAny,
+        ...z.ZodTypeAny[],
+      ];
+      return z.union(schemas);
+    }
+    case 'optional':
+      return buildZodSchema(def.schema).optional();
+    default:
+      throw new Error(
+        `Unknown schema definition type: ${(def as { type: string }).type}`
+      );
+  }
+}
 
 /**
  * Create a VM context with all required dependencies injected
@@ -55,6 +118,10 @@ function createVMContext(handlers: RuntimeHandlers): vm.Context {
     // MCP utility functions
     __createToolProxy: createToolProxy,
     __createUserTool: createUserTool,
+
+    // Zod for runtime type validation
+    __zod: z,
+    __buildZodSchema: buildZodSchema,
 
     // Pipe operator function
     __pipe: pipe,

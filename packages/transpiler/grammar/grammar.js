@@ -72,11 +72,37 @@ module.exports = grammar({
         '(',
         optional($.parameter_list),
         ')',
+        optional($.return_type_annotation),
         $.block_statement
       ),
 
     parameter_list: $ =>
-      seq($.identifier, repeat(seq(',', $.identifier)), optional(',')),
+      seq($.parameter, repeat(seq(',', $.parameter)), optional(',')),
+
+    parameter: $ =>
+      seq($.identifier, optional('?'), optional($.type_annotation)),
+
+    type_annotation: $ => seq(':', $.type_expression),
+
+    return_type_annotation: $ => seq(':', $.type_expression),
+
+    type_expression: $ =>
+      choice($.primitive_type, $.array_type, $.object_type, $.union_type),
+
+    primitive_type: _$ => choice('string', 'number', 'boolean', 'any', 'null'),
+
+    array_type: $ => seq($.type_expression, '[', ']'),
+
+    object_type: $ => seq('{', optional($.type_property_list), '}'),
+
+    type_property_list: $ =>
+      seq($.type_property, repeat(seq(',', $.type_property)), optional(',')),
+
+    type_property: $ =>
+      seq($.identifier, optional('?'), ':', $.type_expression),
+
+    union_type: $ =>
+      prec.left(1, seq($.type_expression, '|', $.type_expression)),
 
     expression_statement: $ => $.expression,
 

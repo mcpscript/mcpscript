@@ -31,7 +31,8 @@ describe('Parser - Tool Declarations', () => {
 
     const tool = statements[0] as ToolDeclaration;
     expect(tool.name).toBe('processData');
-    expect(tool.parameters).toEqual(['input']);
+    expect(tool.parameters).toHaveLength(1);
+    expect(tool.parameters[0].name).toBe('input');
   });
 
   it('should parse a tool declaration with multiple parameters', () => {
@@ -46,7 +47,10 @@ describe('Parser - Tool Declarations', () => {
 
     const tool = statements[0] as ToolDeclaration;
     expect(tool.name).toBe('calculateScore');
-    expect(tool.parameters).toEqual(['points', 'multiplier', 'bonus']);
+    expect(tool.parameters).toHaveLength(3);
+    expect(tool.parameters[0].name).toBe('points');
+    expect(tool.parameters[1].name).toBe('multiplier');
+    expect(tool.parameters[2].name).toBe('bonus');
     expect(tool.body.statements).toHaveLength(2);
   });
 
@@ -61,7 +65,10 @@ describe('Parser - Tool Declarations', () => {
 
     const tool = statements[0] as ToolDeclaration;
     expect(tool.name).toBe('myTool');
-    expect(tool.parameters).toEqual(['a', 'b', 'c']);
+    expect(tool.parameters).toHaveLength(3);
+    expect(tool.parameters[0].name).toBe('a');
+    expect(tool.parameters[1].name).toBe('b');
+    expect(tool.parameters[2].name).toBe('c');
   });
 
   it('should parse a tool with return statement', () => {
@@ -109,7 +116,9 @@ describe('Parser - Tool Declarations', () => {
 
     const tool = statements[0] as ToolDeclaration;
     expect(tool.name).toBe('analyzeData');
-    expect(tool.parameters).toEqual(['data', 'threshold']);
+    expect(tool.parameters).toHaveLength(2);
+    expect(tool.parameters[0].name).toBe('data');
+    expect(tool.parameters[1].name).toBe('threshold');
     expect(tool.body.statements).toHaveLength(1);
     expect(tool.body.statements[0].type).toBe('if_statement');
   });

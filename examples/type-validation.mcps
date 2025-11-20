@@ -1,0 +1,110 @@
+// Type Validation Example
+// Demonstrates runtime type checking for tool parameters and return types
+
+// Tool with primitive type annotations
+tool greet(name: string, age: number): string {
+  return "Hello " + name + ", you are " + age + " years old"
+}
+
+// Tool with nullable parameters
+tool greetOptional(name: string | null): string {
+  if (name == null) {
+    return "Hello, stranger"
+  }
+  return "Hello " + name
+}
+
+// Tool with optional parameters
+tool formatMessage(text: string, prefix?: string): string {
+  if (prefix) {
+    return prefix + ": " + text
+  }
+  return text
+}
+
+// Tool with array types
+tool sumNumbers(numbers: number[]): number {
+  total = 0
+  for (i = 0; i < numbers.length; i = i + 1) {
+    total = total + numbers[i]
+  }
+  return total
+}
+
+// Tool with union types
+tool processValue(value: string | number): string {
+  return "Processed: " + value
+}
+
+// Tool with object types
+tool createUser(data: { name: string, age: number, active: boolean }): string {
+  status = "inactive"
+  if (data.active) {
+    status = "active"
+  }
+  return data.name + " (" + data.age + " years old) - " + status
+}
+
+// Tool with nested arrays
+tool sumMatrix(matrix: number[][]): number {
+  total = 0
+  for (i = 0; i < matrix.length; i = i + 1) {
+    row = matrix[i]
+    for (j = 0; j < row.length; j = j + 1) {
+      total = total + row[j]
+    }
+  }
+  return total
+}
+
+// Examples with correct types - these will succeed
+print("=== Successful Type Validations ===")
+
+result1 = greet("Alice", 30)
+print(result1)
+
+result2 = formatMessage("Hello", "INFO")
+print(result2)
+
+result3 = formatMessage("World")
+print(result3)
+
+result4 = sumNumbers([1, 2, 3, 4, 5])
+print("Sum: " + result4)
+
+result5 = processValue("text")
+print(result5)
+
+result6 = processValue(42)
+print(result6)
+
+result7 = createUser({ name: "Bob", age: 25, active: true })
+print(result7)
+
+result8 = sumMatrix([[1, 2], [3, 4], [5, 6]])
+print("Matrix sum: " + result8)
+
+result9 = greetOptional("Charlie")
+print(result9)
+
+result10 = greetOptional(null)
+print(result10)
+
+// Uncomment the following to see type validation errors:
+
+// This will fail - wrong type for name parameter (expects string, got number)
+// badResult1 = greet(123, 30)
+
+// This will fail - wrong type for age parameter (expects number, got string)
+// badResult2 = greet("Alice", "thirty")
+
+// This will fail - array contains wrong types (expects number[], got mixed)
+// badResult3 = sumNumbers([1, "two", 3])
+
+// This will fail - union type mismatch (expects string | number, got boolean)
+// badResult4 = processValue(true)
+
+// This will fail - object property wrong type (expects number, got string)
+// badResult5 = createUser({ name: "Charlie", age: "unknown", active: true })
+
+print("\n=== Type validation working correctly! ===")

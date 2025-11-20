@@ -11,6 +11,7 @@ import {
   BooleanLiteral,
   ArrayLiteral,
   Identifier,
+  TypeExpression,
 } from '../ast.js';
 import { generateExpression } from './expressions.js';
 import { ScopeStack, generateBlockStatement } from './statements.js';
@@ -361,18 +362,84 @@ export function generateToolDeclaration(decl: ToolDeclaration): string {
 
   // Declare all parameters in the tool's scope
   for (const param of decl.parameters) {
-    scopeStack.declare(param);
+    scopeStack.declare(param.name);
   }
 
   // Generate the tool body
   const bodyCode = generateBlockStatement(decl.body, scopeStack, false);
 
-  // Generate tool using __createUserTool helper
-  const params = decl.parameters.join(', ');
-  const paramsJson = JSON.stringify(decl.parameters);
-  const nameJson = JSON.stringify(decl.name);
+  return generateValidatedTool(decl, bodyCode);
+}
 
-  return `const ${decl.name} = __createUserTool(${nameJson}, ${paramsJson}, async (${params}) => ${bodyCode});`;
+/**
+ * Generate a tool with Zod schema metadata
+ * The schema is passed to __createUserTool and attached via Proxy for agent registration
+ */
+function generateValidatedTool(
+  decl: ToolDeclaration,
+  bodyCode: string
+): string {
+  const nameJson = JSON.stringify(decl.name);
+  const paramsJson = JSON.stringify(decl.parameters.map(p => p.name));
+  const params = decl.parameters.map(p => p.name).join(', ');
+
+  // Generate schema definition object for all parameters
+  // Unannotated parameters are treated as 'any' type
+  const paramSchemas: Record<string, string> = {};
+  for (const param of decl.parameters) {
+    const schemaDef = param.typeAnnotation
+      ? generateSchemaDefinition(param.typeAnnotation)
+      : '{ type: "any" }';
+    const optionalDef = param.optional
+      ? `{ type: "optional", schema: ${schemaDef} }`
+      : schemaDef;
+    paramSchemas[param.name] = optionalDef;
+  }
+
+  // Build the schema definition object
+  const schemaProps = Object.entries(paramSchemas)
+    .map(([key, value]) => `${key}: ${value}`)
+    .join(', ');
+
+  // Create the tool with schema attached
+  return `const ${decl.name} = __createUserTool(${nameJson}, ${paramsJson}, async (${params}) => ${bodyCode}, __buildZodSchema({ type: "object", properties: { ${schemaProps} } }));`;
+}
+
+/**
+ * Generate schema definition object from type expression
+ * This generates a simple object that __buildZodSchema can convert to a Zod schema at runtime
+ */
+function generateSchemaDefinition(typeExpr: TypeExpression): string {
+  switch (typeExpr.type) {
+    case 'primitive_type':
+      return `{ type: "${typeExpr.value}" }`;
+    case 'array_type':
+      return `{ type: "array", elementType: ${generateSchemaDefinition(typeExpr.elementType)} }`;
+    case 'object_type': {
+      const props = typeExpr.properties.map(prop => {
+        const propDef = generateSchemaDefinition(prop.typeAnnotation);
+        const finalDef = prop.optional
+          ? `{ type: "optional", schema: ${propDef} }`
+          : propDef;
+        return `${prop.name}: ${finalDef}`;
+      });
+      return `{ type: "object", properties: { ${props.join(', ')} } }`;
+    }
+    case 'union_type': {
+      if (typeExpr.types.length === 0) {
+        throw new Error('Union type must have at least one type');
+      }
+      if (typeExpr.types.length === 1) {
+        return generateSchemaDefinition(typeExpr.types[0]);
+      }
+      const types = typeExpr.types.map(t => generateSchemaDefinition(t));
+      return `{ type: "union", types: [${types.join(', ')}] }`;
+    }
+    default:
+      throw new Error(
+        `Unknown type expression: ${(typeExpr as { type: string }).type}`
+      );
+  }
 }
 
 /**
