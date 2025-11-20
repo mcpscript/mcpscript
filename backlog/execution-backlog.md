@@ -151,6 +151,7 @@ Do NOT drop implementation notes into this document.
 - ✅ **DONE** - Write comprehensive README.md
 - ✅ **DONE** - Support conversation chaining
 - ✅ **DONE** - Support user input. A function that can be called from the script to prompt the user for input during execution.
+- 🔲 **TODO** - Add tests for sensible error messages on common parsing errors
 
 **→ Complete Phase 8 before Phase 9**
 

@@ -4,6 +4,8 @@ import { Agent } from '../agent.js';
 import { Conversation } from '../conversation.js';
 import type { BaseLLM, ToolCall } from '@llamaindex/core/llms';
 import type { BaseTool } from '@llamaindex/core/llms';
+import { createUserTool } from '../mcp.js';
+import { z } from 'zod';
 
 describe('Agent', () => {
   let mockLLM: BaseLLM;
@@ -226,5 +228,112 @@ describe('Agent', () => {
 
     expect(conversation).toBeDefined();
     expect(conversation.result()).toBe('Response to prompt');
+  });
+
+  it('should pass typed tool schema to LLM during execution', async () => {
+    // Create a typed tool with schema (simulating generated code)
+    const schema = z.object({
+      x: z.number(),
+      y: z.number(),
+    });
+
+    const addTool = createUserTool(
+      'add',
+      ['x', 'y'],
+      async (x: unknown, y: unknown) => {
+        return (x as number) + (y as number);
+      },
+      schema
+    );
+
+    // Mock LLM to return immediately (we're just checking the tool schema passed)
+    vi.mocked(mockLLM.exec).mockResolvedValue({
+      newMessages: [
+        {
+          role: 'assistant',
+          content: 'Result is 8',
+        },
+      ],
+      toolCalls: [],
+    });
+
+    const agent = new Agent({
+      name: 'Calculator',
+      llm: mockLLM,
+      tools: [addTool],
+    });
+
+    await agent.run('What is 5 plus 3?');
+
+    // Verify llm.exec was called with tools
+    expect(mockLLM.exec).toHaveBeenCalledTimes(1);
+    const execCall = vi.mocked(mockLLM.exec).mock.calls[0][0];
+    expect(execCall.tools).toBeDefined();
+    expect(execCall.tools.length).toBe(1);
+
+    // Verify the tool has correct metadata
+    const tool = execCall.tools[0];
+    expect(tool.metadata.name).toBe('add');
+    expect(tool.metadata.parameters).toBeDefined();
+
+    // Verify the schema contains correct type information
+    const params = tool.metadata.parameters;
+    expect(params.type).toBe('object');
+    expect(params.properties).toBeDefined();
+    expect(params.properties.x).toBeDefined();
+    expect(params.properties.y).toBeDefined();
+    expect(params.properties.x.type).toBe('number');
+    expect(params.properties.y.type).toBe('number');
+    expect(params.required).toEqual(['x', 'y']);
+  });
+
+  it('should pass complex typed tool schema to LLM', async () => {
+    // Create a tool with multiple types including optional parameters
+    const schema = z.object({
+      name: z.string(),
+      age: z.number(),
+      active: z.boolean().optional(),
+    });
+
+    const processTool = createUserTool(
+      'processUser',
+      ['name', 'age', 'active'],
+      async (name: unknown, age: unknown, active: unknown) => {
+        return { name, age, active };
+      },
+      schema
+    );
+
+    vi.mocked(mockLLM.exec).mockResolvedValue({
+      newMessages: [
+        {
+          role: 'assistant',
+          content: 'Processed',
+        },
+      ],
+      toolCalls: [],
+    });
+
+    const agent = new Agent({
+      name: 'Processor',
+      llm: mockLLM,
+      tools: [processTool],
+    });
+
+    await agent.run('Process user data');
+
+    const execCall = vi.mocked(mockLLM.exec).mock.calls[0][0];
+    const tool = execCall.tools[0];
+    const params = tool.metadata.parameters;
+
+    // Verify all parameter types
+    expect(params.properties.name.type).toBe('string');
+    expect(params.properties.age.type).toBe('number');
+    expect(params.properties.active.type).toBe('boolean');
+
+    // Verify required vs optional
+    expect(params.required).toEqual(['name', 'age']);
+    // 'active' should not be in required list since it's optional
+    expect(params.required).not.toContain('active');
   });
 });
