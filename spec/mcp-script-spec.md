@@ -2,22 +2,24 @@
 
 **Date:** October 2025
 
+Note: Some of the features described in this specification are planned but not yet implemented.
+
 ---
 
 ## 1. Introduction & Motivation
 
 ### The Problem Space
 
-Modern agentic workflows require orchestrating both deterministic computational steps and agent-driven intelligent decision-making. Developers currently piece together these workflows using general-purpose languages with external orchestration frameworks, leading to:
+Most agentic applications require orchestrating both deterministic steps and intelligent agents.
+Developers currently piece together these applications using general-purpose programming languages with external orchestration frameworks, often leading to:
 
-- Verbose boilerplate for agent configuration and tool provisioning
-- Unclear boundaries between deterministic and agent-delegated execution
-- Poor integration with tool ecosystems like the Model Context Protocol (MCP)
-- Difficulty expressing hybrid workflows that seamlessly blend both paradigms
+- Verbose boilerplate for agent configuration, workflow orchestration and tool integration
+- Difficulty expressing agentic workflows that seamlessly blend both deterministic and agentic logic
+- Easy to introduce antipatterns that lead to brittle, unmaintainable codebases
 
-### Why MCP Script?
+### Introducing MCP Script
 
-MCP Script is a scripting language designed specifically for building agentic workflows with native support for MCP servers. MCP Script treats agents and tools as first-class language constructs, making it natural to express complex logic where some steps execute deterministically while others are delegated to intelligent agents.
+MCP Script is the first agent-oriented programming language specifically designed to express agentic applications.
 
 ### Design Goals
 
@@ -26,15 +28,6 @@ MCP Script is a scripting language designed specifically for building agentic wo
 3. **Type Safety**: Provide strong typing with inference for compile-time safety while maintaining concise syntax
 4. **Familiarity**: Follow TypeScript conventions for most non-MCP features
 
-**⚠️ Important Compatibility Notes:**
-
-MCP Script syntax is **inspired by TypeScript** but is **NOT a TypeScript superset or extension**.
-
-- ✅ Uses familiar TypeScript-like syntax for types, control flow, and collections
-- ❌ **NOT compatible with TypeScript code** - different execution semantics
-- ❌ **NOT guaranteed to work with arbitrary npm packages**
-- ❌ **NOT a drop-in replacement for JavaScript/TypeScript**
-
 ### Implementation Strategy
 
 MCP Script is implemented as a **VM-based interpreter**:
@@ -42,9 +35,8 @@ MCP Script is implemented as a **VM-based interpreter**:
 - **Source language**: `.mcps` files with MCP-specific extensions
 - **Execution model**: In-memory transpilation to JavaScript executed in Node.js VM sandbox
 - **Transpiler**: Written in TypeScript
-- **Runtime**: TypeScript-based runtime library with dependency injection
+- **Runtime**: TypeScript-based runtime library injected into VM execution context
 - **Distribution**: Single CLI interpreter (`mcps run`) - no build step required
-- **Security**: Sandboxed execution with controlled access to system resources
 
 ### Quick Example
 
