@@ -31,58 +31,59 @@ Developers currently piece together these applications using general-purpose pro
 
 MCP Script is the first agent-oriented programming language specifically designed to express agentic applications.
 
-Here's an example - a code review assistant that combines deterministic file operations with intelligent AI analysis:
+Here's an example - an Claude Code-like agent:
 
 ```typescript
-// 1. Declare a model to use
-model gptoss {
+// Configure a local AI model using Ollama
+model gpt {
   provider: "openai",
   apiKey: "ollama",
   baseURL: "http://localhost:11434/v1",
   model: "gpt-oss:20b",
-  temperature: 0.3
+  temperature: 0.1
 }
 
-// 2. Use an MCP server
+// Set up the filesystem MCP server
 mcp filesystem {
   command: "npx",
-  args: ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"]
+  args: ["-y", "@modelcontextprotocol/server-filesystem@latest"],
+  stderr: "ignore"
 }
 
-// 3. You can make deterministic tool calls
-code = filesystem.read_file({ path: "/workspace/src/api.ts" })
-print(code)
+// Read the memory file (AGENTS.md) from the current directory
+memoryContent = filesystem.read_file({ path: "AGENTS.md" })
+print("Memory file loaded successfully (" + memoryContent.length + " characters)")
 
-// 4. Write tools like how you write functions
-tool checkComplexity(filepath) {
-  // Tools can call other tools
-  code = filesystem.read_file({ path: filepath })
-  lines = code.split("\n")
-  if (lines.length > 200) {
-    return "High complexity: " + lines.length + " lines"
+// Define a software developer agent with access to filesystem tools
+agent SoftwareDeveloper {
+  model: gpt,
+  systemPrompt: "You are an expert software developer assistant. You have access to filesystem tools and can help with code analysis, debugging, and development tasks. Be concise and helpful.",
+  tools: [filesystem]
+}
+
+print("Type 'exit' or 'quit' to end the conversation.\n")
+
+// Compose the first message
+userMessage = input("You: ")
+initialMessage = "Here is the memory file (AGENTS.md) for context:\n\n" + memoryContent + "\n\n---\n\nUser request: " + userMessage
+
+// Send first message to the SoftwareDeveloper agent
+conversation = initialMessage | SoftwareDeveloper
+
+// REPL
+while (true) {
+  // Get next user input
+  userMessage = input("You: ")
+
+  // Check if user wants to exit
+  if (userMessage == "exit" || userMessage == "quit") {
+    print("Goodbye!")
+    break
   }
-  return "Acceptable complexity"
+
+  // Continue the conversation with the new user message
+  conversation = conversation | userMessage | SoftwareDeveloper
 }
-
-// 5. Declare an agent with a mix of MCP and custom tools
-agent CodeReviewer {
-  model: gptoss,
-  systemPrompt: "You are a senior software engineer conducting code reviews. Focus on security, performance, and maintainability. Use the provided tools to analyze code and save your findings.",
-  tools: [
-    filesystem,         // Import all tools from the MCP server
-    checkComplexity,    // Custom tool
-  ]
-}
-
-// 6. Let the agent analyze and create a report
-conv = `Review the code at /workspace/src/api.ts and save a detailed report to /workspace/review.md.` -> CodeReviewer
-
-// 7. Agent execution results in a conversation
-print(conv.result())
-
-// 8. Read and print the generated report
-report = filesystem.read_file({ path: "/workspace/review.md" })
-print(report)
 ```
 
 ## Getting Started

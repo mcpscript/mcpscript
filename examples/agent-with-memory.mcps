@@ -1,0 +1,66 @@
+// Example: Interactive Software Developer Agent with Memory
+//
+// This example demonstrates:
+// 1. Reading a memory file (AGENTS.md) from the current working directory
+// 2. Creating an agent with filesystem access
+// 3. Interactive conversation loop where user input is continuously collected
+// 4. Each user message is appended to the conversation and sent to the agent
+//
+// Requirements:
+//   - Ollama running locally with gpt-oss:20b model installed
+//   - AGENTS.md file in the current working directory
+
+// Configure a local AI model using Ollama
+model gpt {
+  provider: "openai",
+  apiKey: "ollama",
+  baseURL: "http://localhost:11434/v1",
+  model: "gpt-oss:20b",
+  temperature: 0.1
+}
+
+// Set up the filesystem MCP server
+// By default, it has access to the current working directory
+mcp filesystem {
+  command: "npx",
+  args: ["-y", "@modelcontextprotocol/server-filesystem@latest"],
+  stderr: "ignore"
+}
+
+// Read the memory file (AGENTS.md) from the current directory
+// Relative paths work with the filesystem MCP server
+print("Reading memory file: AGENTS.md")
+
+memoryContent = filesystem.read_file({ path: "AGENTS.md" })
+print("Memory file loaded successfully (" + memoryContent.length + " characters)")
+
+// Define a software developer agent with access to filesystem tools
+agent SoftwareDeveloper {
+  model: gpt,
+  systemPrompt: "You are an expert software developer assistant. You have access to filesystem tools and can help with code analysis, debugging, and development tasks. Be concise and helpful.",
+  tools: [filesystem]
+}
+
+print("Type 'exit' or 'quit' to end the conversation.\n")
+
+// Get initial user input
+userMessage = input("You: ")
+
+// Initialize the conversation with both the memory file and user input
+initialMessage = "Here is the memory file (AGENTS.md) for context:\n\n" + memoryContent + "\n\n---\n\nUser request: " + userMessage
+conversation = initialMessage | SoftwareDeveloper
+
+// Interactive loop: keep getting user input and continuing the conversation
+while (true) {
+  // Get next user input
+  userMessage = input("You: ")
+
+  // Check if user wants to exit
+  if (userMessage == "exit" || userMessage == "quit") {
+    print("Ending conversation. Goodbye!")
+    break
+  }
+
+  // Continue the conversation with the new user message
+  conversation = conversation | userMessage | SoftwareDeveloper
+}
