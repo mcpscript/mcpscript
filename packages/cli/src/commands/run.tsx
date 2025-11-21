@@ -12,7 +12,7 @@ export async function runCommand(options: RunOptions): Promise<void> {
   const { file } = options;
 
   // Load environment variables from .env file
-  dotenvConfig();
+  dotenvConfig({ quiet: true });
 
   if (!file.endsWith('.mcps')) {
     console.error('Error: File must have .mcps extension');

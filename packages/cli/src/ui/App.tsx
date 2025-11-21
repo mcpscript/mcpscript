@@ -25,15 +25,7 @@ export const App: React.FC<AppProps> = ({ state }) => {
               <Text>{msg.body}</Text>
             </TitledBox>
           ) : (
-            <Box
-              key={index}
-              borderStyle="round"
-              flexDirection="column"
-              marginBottom={1}
-              paddingX={1}
-            >
-              <Text>{msg.body}</Text>
-            </Box>
+            <Text key={index}>{msg.body}</Text>
           )
         )}
       {state.userInput && (
