@@ -3,9 +3,9 @@
 </p>
 <p align="center">An Agent-Oriented Programming Language</p>
 <p align="center">
-  <a href="https://discord.gg/Wsy2NpnZDu"><img alt="discord" src="https://img.shields.io/discord/1439901831038763092?style=flat-square&label=discord" /></a>
-  <a href="https://www.npmjs.com/package/@mcpscript/cli"><img alt="npm" src="https://img.shields.io/npm/v/@mcpscript/cli?style=flat-square" /></a>
-  <a href="https://github.com/sst/opencode/actions/workflows/publish.yml"><img alt="build status" src="https://img.shields.io/github/actions/workflow/status/mcpscript/mcpscript/release.yml?style=flat-square&branch=main" /></a>
+  <a href="https://discord.gg/Wsy2NpnZDu" target="_blank"><img alt="discord" src="https://img.shields.io/discord/1439901831038763092?style=flat-square&label=discord" /></a>
+  <a href="https://www.npmjs.com/package/@mcpscript/cli" target="_blank"><img alt="npm" src="https://img.shields.io/npm/v/@mcpscript/cli?style=flat-square" /></a>
+  <a href="https://github.com/sst/opencode/actions/workflows/publish.yml" target="_blank"><img alt="build status" src="https://img.shields.io/github/actions/workflow/status/mcpscript/mcpscript/release.yml?style=flat-square&branch=main" /></a>
 </p>
 
 <p align="center">
