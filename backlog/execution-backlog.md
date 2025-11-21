@@ -197,8 +197,7 @@ Do NOT drop implementation notes into this document.
 
 - 🔲 **TODO** - MCP resource access beyond tools
 - 🔲 **TODO** - MCP server authentication (HTTP/WebSocket)
-- 🔲 **TODO** - MCP server health checking
-- 🔲 **TODO** - Advanced MCP tests
+- 🔲 **TODO** - MCP server health checking and auto recovery
 
 **→ Complete Phase 11 before Phase 12**
 
@@ -208,9 +207,7 @@ Do NOT drop implementation notes into this document.
 
 - 🔲 **TODO** - Parallel execution detection and optimization
 - 🔲 **TODO** - Lazy loading of MCP servers
-- 🔲 **TODO** - Promise-like value handling
 - 🔲 **TODO** - Timeout handling for long operations
-- 🔲 **TODO** - Memory usage optimization
 - 🔲 **TODO** - Performance benchmarking tests
 
 **→ Complete Phase 12 before Phase 13**
@@ -236,15 +233,12 @@ Do NOT drop implementation notes into this document.
 
 **Goal: Improve debugging and tooling**
 
-- 🔲 **TODO** - Syntax error reporting with line/column numbers
 - 🔲 **TODO** - Type error messages during compilation
-- 🔲 **TODO** - Runtime error source mapping to .mcps files
 - 🔲 **TODO** - Source map generation for transpiled code
   - Generate inline or external source maps during transpilation
   - Map generated JavaScript back to original .mcps source locations
   - Enable accurate stack traces and debugging in original source
   - Support source map consumption in runtime for error reporting
-- 🔲 **TODO** - `mcps check` command for syntax/type checking
 - 🔲 **TODO** - Automatic system logging (tool lifecycle with tool names, agent delegation)
 - 🔲 **TODO** - Log configuration via environment variables
 - 🔲 **TODO** - Execution ID tracking across logs
@@ -305,13 +299,9 @@ Do NOT drop implementation notes into this document.
 **Goal: Enhance execution security**
 
 - 🔲 **TODO** - Configurable resource limits (memory, CPU)
-- 🔲 **TODO** - File system access restrictions
-- 🔲 **TODO** - Network access controls
-- 🔲 **TODO** - Process execution limitations
 - 🔲 **TODO** - Module import restrictions
 - 🔲 **TODO** - MCP server capability validation
 - 🔲 **TODO** - Tool permission system
-- 🔲 **TODO** - Secure credential management
 
 **→ Complete Phase 16 before Phase 17**
 
@@ -322,24 +312,7 @@ Do NOT drop implementation notes into this document.
 - 🔲 **TODO** - `mcps format` command for code formatting
 - 🔲 **TODO** - `mcps test` command for running test files
 - 🔲 **TODO** - Verbose logging options (`--verbose`, `--debug`)
-- 🔲 **TODO** - Watch mode for file changes (`--watch`)
 - 🔲 **TODO** - Configuration file support (`.mcpsrc`)
-- 🔲 **TODO** - Source map generation for debugging
-
-**→ Complete Phase 17 before Phase 18**
-
-### Phase 18: Documentation and Examples
-
-**Goal: Complete user-facing materials**
-
-- 🔲 **TODO** - Complete language reference documentation
-- 🔲 **TODO** - Type system guide and best practices
-- 🔲 **TODO** - MCP integration patterns and examples
-- 🔲 **TODO** - Agent workflow examples
-- 🔲 **TODO** - Complex data processing examples
-- 🔲 **TODO** - Error handling pattern examples
-- 🔲 **TODO** - Multi-module project examples
-- 🔲 **TODO** - Migration guide from MVP to full spec
 
 ---
 
@@ -347,19 +320,10 @@ Do NOT drop implementation notes into this document.
 
 ### Advanced Features
 
-- 🔲 **TODO** - Interactive debugger with breakpoints
 - ✅ **DONE** - Use dotenv to load environment variables in CLI's run command
 - 🔲 **TODO** - Language server for IDE integration
-- 🔲 **TODO** - Package manager for MCP Script modules
-- 🔲 **TODO** - CI/CD integration tools
-- 🔲 **TODO** - Performance profiling tools
-- 🔲 **TODO** - Extension API for custom runtime behaviors
-
-### Ecosystem Integration
-
-- 🔲 **TODO** - VS Code extension with syntax highlighting
 - 🔲 **TODO** - Tree-sitter syntax highlighting support for Neovim
-- 🔲 **TODO** - GitHub Actions for MCP Script workflows
-- 🔲 **TODO** - Docker containers for isolated execution
+- 🔲 **TODO** - VS Code extension
+- 🔲 **TODO** - Package manager for MCP Script modules
+- 🔲 **TODO** - Performance profiling tools
 - 🔲 **TODO** - Web-based playground for learning
-- 🔲 **TODO** - Integration with popular workflow engines
