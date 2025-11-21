@@ -20,21 +20,40 @@ export class Conversation {
 
   /**
    * Add a message to the conversation
+   * If the message is from a user and the last message is also from a user,
+   * append to the existing message instead of creating a new one
+   * Returns this for chaining
    */
-  addMessage(message: ChatMessage): void {
-    this.messages.push(message);
+  addMessage(message: ChatMessage): Conversation {
+    if (
+      message.role === 'user' &&
+      this.messages.length > 0 &&
+      this.messages[this.messages.length - 1].role === 'user'
+    ) {
+      // Append to the last user message with a newline separator if needed
+      const lastMessage = this.messages[this.messages.length - 1];
+      const existingContent =
+        typeof lastMessage.content === 'string' ? lastMessage.content : '';
+      const newContent =
+        typeof message.content === 'string' ? message.content : '';
+      const separator = existingContent.endsWith('\n') ? '' : '\n';
+      lastMessage.content = existingContent + separator + newContent;
+    } else {
+      this.messages.push(message);
+    }
+    return this;
   }
 
   /**
    * Add a user message to the conversation (convenience method)
+   * If the last message is also from a user, appends to it instead
    * Returns this for chaining
    */
   addUserMessage(content: string): Conversation {
-    this.messages.push({
+    return this.addMessage({
       role: 'user' as MessageType,
       content: content,
     });
-    return this;
   }
 
   /**
