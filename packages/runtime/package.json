@@ -1,6 +1,6 @@
 {
   "name": "@mcpscript/runtime",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Runtime library for MCP Script execution",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

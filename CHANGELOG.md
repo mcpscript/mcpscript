@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.5](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.4...mcpscript-v0.1.5) (2025-11-21)
+
+
+### Features
+
+* type annotation for tools ([04ab4d7](https://github.com/mcpscript/mcpscript/commit/04ab4d77035547796edf8fe6e3e11114868bba6b))
+
+
+### Bug Fixes
+
+* improve parser errors ([7dc25ee](https://github.com/mcpscript/mcpscript/commit/7dc25ee242d500b5ad0aa210d05cf546e1edbdb5))
+
 ## [0.1.4](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.3...mcpscript-v0.1.4) (2025-11-19)
 
 
