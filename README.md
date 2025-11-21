@@ -10,8 +10,9 @@
 
 <p align="center">
   <a href="https://atlassian.com/rovo-dev" target="_blank">Built with Atlassian Rovo Dev - #1 SWE-Bench Agent</a>
-  <br/>
-  <br/>
+</p>
+
+<p align="center">
   <a href="https://github.com/run-llama/LlamaIndexTS" target="_blank">Based on LlamaIndex.TS</a> •
   <a href="https://github.com/tree-sitter/tree-sitter" target="_blank">Parsed with Tree-Sitter</a> •
   <a href="https://modelcontextprotocol.io" target="_blank">Designed around Model Context Protocol</a>
