@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.6](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.5...mcpscript-v0.1.6) (2025-11-21)
+
+
+### Features
+
+* loading env files before running ([111b9b6](https://github.com/mcpscript/mcpscript/commit/111b9b621bad41ee3861854a3ce2f7ed02e6a278))
+
+
+### Bug Fixes
+
+* more robust add message behavior ([fb49f74](https://github.com/mcpscript/mcpscript/commit/fb49f741d5fecbf24810c5ad05c8a2f1e3130952))
+* print messages without border ([d02c895](https://github.com/mcpscript/mcpscript/commit/d02c895bc1ad2a1cb4851fcd98e448611fef6919))
+
 ## [0.1.5](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.4...mcpscript-v0.1.5) (2025-11-21)
 
 
