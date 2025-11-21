@@ -25,6 +25,7 @@
     "@mcpscript/transpiler": "file:../transpiler",
     "@mishieck/ink-titled-box": "^0.3.0",
     "commander": "^14.0.2",
+    "dotenv": "^17.2.3",
     "ink": "^6.5.0",
     "ink-text-input": "^6.0.0",
     "react": "^19.2.0"

@@ -2,6 +2,7 @@
 import React from 'react';
 import { readFile } from 'fs/promises';
 import { render } from 'ink';
+import { config as dotenvConfig } from 'dotenv';
 import { parseSource, generateCode } from '@mcpscript/transpiler';
 import { AppMessage, AppState, executeInVM } from '@mcpscript/runtime';
 import type { RunOptions } from '../types.js';
@@ -9,6 +10,9 @@ import { App } from '../ui/App.js';
 
 export async function runCommand(options: RunOptions): Promise<void> {
   const { file } = options;
+
+  // Load environment variables from .env file
+  dotenvConfig();
 
   if (!file.endsWith('.mcps')) {
     console.error('Error: File must have .mcps extension');

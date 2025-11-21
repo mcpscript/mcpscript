@@ -348,7 +348,7 @@ Do NOT drop implementation notes into this document.
 ### Advanced Features
 
 - 🔲 **TODO** - Interactive debugger with breakpoints
-- 🔲 **TODO** - Use dotenv to load environment variables in CLI's run command
+- ✅ **DONE** - Use dotenv to load environment variables in CLI's run command
 - 🔲 **TODO** - Language server for IDE integration
 - 🔲 **TODO** - Package manager for MCP Script modules
 - 🔲 **TODO** - CI/CD integration tools
