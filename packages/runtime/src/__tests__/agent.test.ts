@@ -269,10 +269,10 @@ describe('Agent', () => {
     expect(mockLLM.exec).toHaveBeenCalledTimes(1);
     const execCall = vi.mocked(mockLLM.exec).mock.calls[0][0];
     expect(execCall.tools).toBeDefined();
-    expect(execCall.tools.length).toBe(1);
+    expect(execCall.tools!.length).toBe(1);
 
     // Verify the tool has correct metadata
-    const tool = execCall.tools[0];
+    const tool = execCall.tools![0];
     expect(tool.metadata.name).toBe('add');
     expect(tool.metadata.parameters).toBeDefined();
 
@@ -323,7 +323,7 @@ describe('Agent', () => {
     await agent.run('Process user data');
 
     const execCall = vi.mocked(mockLLM.exec).mock.calls[0][0];
-    const tool = execCall.tools[0];
+    const tool = execCall.tools![0];
     const params = tool.metadata.parameters;
 
     // Verify all parameter types

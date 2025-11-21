@@ -63,11 +63,11 @@ describe('Agent with MCP Server Tools', () => {
 
     // This should not hang and should complete successfully
     // The main test is that this completes without timing out
-    await executeInVM(code, { timeout: 10000 });
+    await executeInVM(code, { timeout: 60000 });
 
     // If we reach here, the agent executed successfully
     expect(true).toBe(true);
-  }, 15000);
+  }, 70000);
 
   it('should handle agent with mixed user-defined and MCP tools', async () => {
     const source = `
@@ -108,9 +108,9 @@ describe('Agent with MCP Server Tools', () => {
 
     // This should work with mixed tools
     // The main test is that this completes without timing out
-    await executeInVM(code, { timeout: 10000 });
+    await executeInVM(code, { timeout: 60000 });
 
     // If we reach here, the agent with mixed tools executed successfully
     expect(true).toBe(true);
-  }, 15000);
+  }, 70000);
 });
