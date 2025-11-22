@@ -6,7 +6,6 @@
       "release-type": "node",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "skip-github-release": true,
       "changelog-path": "CHANGELOG.md"
     },
     "packages/runtime": {
