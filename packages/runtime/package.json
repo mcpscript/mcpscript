@@ -52,5 +52,9 @@
     "ollama",
     "tools",
     "function-calling"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }

@@ -1,22 +1,36 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
-    ".": {
-      "component": "mcpscript",
+    "packages/runtime": {
+      "component": "runtime",
       "release-type": "node",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "changelog-path": "CHANGELOG.md",
-      "extra-files": [
-        "packages/cli/package.json",
-        "packages/runtime/package.json",
-        "packages/transpiler/package.json"
-      ]
+      "changelog-path": "../../CHANGELOG.md"
+    },
+    "packages/transpiler": {
+      "component": "transpiler",
+      "release-type": "node",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-path": "../../CHANGELOG.md"
+    },
+    "packages/cli": {
+      "component": "cli",
+      "release-type": "node",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "changelog-path": "../../CHANGELOG.md"
     }
   },
   "plugins": [
     {
       "type": "node-workspace"
+    },
+    {
+      "type": "linked-versions",
+      "groupName": "mcpscript",
+      "components": ["runtime", "transpiler", "cli"]
     }
   ]
 }

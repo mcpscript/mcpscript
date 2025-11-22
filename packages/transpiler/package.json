@@ -21,7 +21,7 @@
     "clean": "rm -rf dist && rm -rf grammar/src && rm -rf grammar/build"
   },
   "dependencies": {
-    "@mcpscript/runtime": "file:../runtime",
+    "@mcpscript/runtime": "^0.1.6",
     "tree-sitter": "^0.25.0"
   },
   "author": "Kun Chen",
@@ -46,5 +46,9 @@
     "codegen",
     "ast",
     "syntax"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
 }

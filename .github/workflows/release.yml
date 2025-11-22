@@ -49,6 +49,14 @@ jobs:
       - name: Debug release-please outputs
         run: echo '${{ toJSON(steps.release.outputs) }}'
 
-      - name: Publish to npm
+      - name: Publish runtime to npm
+        run: cd packages/runtime && npm publish
+        if: ${{ steps.release.outputs['packages/runtime--release_created'] == 'true' }}
+
+      - name: Publish transpiler to npm
+        run: cd packages/transpiler && npm publish
+        if: ${{ steps.release.outputs['packages/transpiler--release_created'] == 'true' }}
+
+      - name: Publish cli to npm
         run: cd packages/cli && npm publish
-        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        if: ${{ steps.release.outputs['packages/cli--release_created'] == 'true' }}

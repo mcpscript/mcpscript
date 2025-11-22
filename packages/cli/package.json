@@ -21,8 +21,8 @@
     "test": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@mcpscript/runtime": "file:../runtime",
-    "@mcpscript/transpiler": "file:../transpiler",
+    "@mcpscript/runtime": "^0.1.6",
+    "@mcpscript/transpiler": "^0.1.6",
     "@mishieck/ink-titled-box": "^0.3.0",
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
