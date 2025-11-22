@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.9](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.8...mcpscript-v0.1.9) (2025-11-22)
+
+
+### Bug Fixes
+
+* postinstall release-please ([d17de08](https://github.com/mcpscript/mcpscript/commit/d17de0803fd4a55f339b743af51b507b09f1f5ff))
+* postinstall script for transpiler ([baa7018](https://github.com/mcpscript/mcpscript/commit/baa7018513aa11479f57d774290b9d9746f7ece8))
+* postinstall script for transpiler ([b4b03c1](https://github.com/mcpscript/mcpscript/commit/b4b03c111dec3efd4ae72fed536c5ea43800f8c0))
+
 ## [0.1.8](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.7...mcpscript-v0.1.8) (2025-11-22)
 
 
