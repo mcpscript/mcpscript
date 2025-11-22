@@ -1,6 +1,6 @@
 {
   "name": "@mcpscript/transpiler",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Transpiler and parser for MCP Script using tree-sitter grammar - converts .mcps source code to executable JavaScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -22,7 +22,7 @@
     "clean": "rm -rf dist && rm -rf grammar/src && rm -rf grammar/build"
   },
   "dependencies": {
-    "@mcpscript/runtime": "^0.1.9",
+    "@mcpscript/runtime": "^0.1.10",
     "tree-sitter": "^0.25.0"
   },
   "author": "Kun Chen",

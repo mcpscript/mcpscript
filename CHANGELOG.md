@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.10](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.9...mcpscript-v0.1.10) (2025-11-22)
+
+
+### Bug Fixes
+
+* release please config ([b812357](https://github.com/mcpscript/mcpscript/commit/b8123577d94b1b91928a46ccd6d20d55caf99898))
+* remove release-please bootstrap-sha ([9be3a16](https://github.com/mcpscript/mcpscript/commit/9be3a1669748fe516f1600657e7991add049153d))
+
 ## [0.1.9](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.8...mcpscript-v0.1.9) (2025-11-22)
 
 

@@ -1,6 +1,6 @@
 {
-  ".": "0.1.9",
-  "packages/runtime": "0.1.9",
-  "packages/transpiler": "0.1.9",
-  "packages/cli": "0.1.9"
+  ".": "0.1.10",
+  "packages/runtime": "0.1.10",
+  "packages/transpiler": "0.1.10",
+  "packages/cli": "0.1.10"
 }
