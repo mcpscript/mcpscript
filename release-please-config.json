@@ -1,26 +1,34 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "packages": {
+    ".": {
+      "component": "mcpscript",
+      "release-type": "node",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "skip-github-release": true,
+      "changelog-path": "CHANGELOG.md"
+    },
     "packages/runtime": {
       "component": "runtime",
       "release-type": "node",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "changelog-path": "../../CHANGELOG.md"
+      "skip-changelog": true
     },
     "packages/transpiler": {
       "component": "transpiler",
       "release-type": "node",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "changelog-path": "../../CHANGELOG.md"
+      "skip-changelog": true
     },
     "packages/cli": {
       "component": "cli",
       "release-type": "node",
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
-      "changelog-path": "../../CHANGELOG.md"
+      "skip-changelog": true
     }
   },
   "plugins": [
@@ -30,7 +38,7 @@
     {
       "type": "linked-versions",
       "groupName": "mcpscript",
-      "components": ["runtime", "transpiler", "cli"]
+      "components": ["mcpscript", "runtime", "transpiler", "cli"]
     }
   ]
 }
