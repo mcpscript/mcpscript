@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.7](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.6...mcpscript-v0.1.7) (2025-11-22)
+
+
+### Bug Fixes
+
+* fix npm publish process for cli ([e7a8594](https://github.com/mcpscript/mcpscript/commit/e7a85949b8ce1575ef79bcd16c925ea43e37ad24))
+* publish all packages ([c1a2239](https://github.com/mcpscript/mcpscript/commit/c1a22399864902b2cf76c2a9e8a1955f544a9c07))
+
 ## [0.1.6](https://github.com/mcpscript/mcpscript/compare/mcpscript-v0.1.5...mcpscript-v0.1.6) (2025-11-21)
 
 
