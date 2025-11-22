@@ -14,7 +14,7 @@
   "scripts": {
     "build": "npm run build:grammar && tsc",
     "build:grammar": "cd grammar && tree-sitter generate && node-gyp rebuild",
-    "postinstall": "cd grammar && (node-gyp-build-test || node-gyp-build)",
+    "install": "test -f ../../package.json && exit 0 || (cd grammar && node-gyp-build)",
     "test": "npm run test:grammar && npm run test:unit",
     "test:grammar": "cd grammar && tree-sitter test",
     "test:unit": "vitest run",
