@@ -1,6 +1,6 @@
 {
   "name": "@mcpscript/cli",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Command-line interface to run and compile MCP scripts",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,8 +21,8 @@
     "test": "vitest run --coverage --passWithNoTests"
   },
   "dependencies": {
-    "@mcpscript/runtime": "^0.1.6",
-    "@mcpscript/transpiler": "^0.1.6",
+    "@mcpscript/runtime": "^0.1.7",
+    "@mcpscript/transpiler": "^0.1.7",
     "@mishieck/ink-titled-box": "^0.3.0",
     "commander": "^14.0.2",
     "dotenv": "^17.2.3",
